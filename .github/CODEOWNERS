@@ -1,0 +1,13 @@
+# Code Owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Each line is a file pattern followed by one or more owners.
+# Order matters — later patterns override earlier ones.
+#
+# Examples:
+# * @default-team
+# *.js @frontend-team
+# /docs/ @tech-writers
+# /src/api/ @backend-team
+# /infra/ @devops-team
+# SECURITY.md @security-team

@@ -1,0 +1,37 @@
+# CodeRabbit AI Code Review Configuration
+# https://docs.coderabbit.ai/getting-started/yaml-configuration
+
+language: "en-US"
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+    incremental_reviews: true
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/vendor/**"
+    - "!**/coverage/**"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/pnpm-lock.yaml"
+  path_instructions:
+    # Add domain-specific review guidance per path. Examples:
+    # - path: "src/api/**"
+    #   instructions: "Focus on input validation, authentication, and rate limiting."
+    # - path: "src/db/**"
+    #   instructions: "Check for SQL injection and proper transaction handling."
+    # - path: "**/*.test.*"
+    #   instructions: "Verify edge cases are covered and assertions are meaningful."
+
+chat:
+  auto_reply: true

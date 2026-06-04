@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "Dev dependencies for CI workflows (commitlint)",
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3"
+  }
+}

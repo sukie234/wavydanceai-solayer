@@ -10,6 +10,24 @@ data
 /web/node_modules
 cmd.md
 .env
+.env.*
+!.env.example
 /one-api
 temp
 .DS_Store
+Thumbs.db
+
+# Node / npm (commitlint at repo root)
+node_modules/
+*.log
+npm-debug.log*
+
+# Mega-Linter
+megalinter-reports/
+
+# Go test coverage
+coverage/
+*.out
+
+# Go vendored deps (not used currently)
+vendor/

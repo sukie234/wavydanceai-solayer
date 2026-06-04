@@ -1,0 +1,29 @@
+# MegaLinter configuration
+# https://megalinter.io/latest/configuration/
+
+# Only lint changed files in PRs
+APPLY_FIXES: none
+PRINT_ALPACA: false
+
+# Report as PR comments
+GITHUB_COMMENT_REPORTER: true
+GITHUB_STATUS_REPORTER: true
+
+# Disable file/folder patterns
+FILTER_REGEX_EXCLUDE: "(node_modules/|dist/|build/|vendor/|coverage/|\\.min\\.|package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml)"
+
+# Enable workflow security linting
+ENABLE_LINTERS:
+  - ACTION_ACTIONLINT
+
+# Disable linters that overlap with other tools in this template
+# Uncomment linters you want to enable per project
+# ENABLE_LINTERS:
+#   - JAVASCRIPT_ES
+#   - TYPESCRIPT_ES
+#   - PYTHON_RUFF
+#   - MARKDOWN_MARKDOWNLINT
+#   - JSON_JSONLINT
+#   - YAML_YAMLLINT
+#   - DOCKERFILE_HADOLINT
+#   - ACTION_ACTIONLINT
