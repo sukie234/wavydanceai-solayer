@@ -51,6 +51,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestDecode(t *testing.T) {
+	t.Skip("skipping: depends on external upload.wikimedia.org URLs and is flaky in CI")
 	// Bytes read: varies sometimes
 	// jpeg: 1063892
 	// png: 294462
@@ -96,6 +97,7 @@ func TestDecode(t *testing.T) {
 }
 
 func TestBase64(t *testing.T) {
+	t.Skip("skipping: depends on external upload.wikimedia.org URLs and is flaky in CI")
 	// Bytes read:
 	// jpeg: 1063892
 	// png: 294462
@@ -149,6 +151,7 @@ func TestBase64(t *testing.T) {
 }
 
 func TestGetImageSize(t *testing.T) {
+	t.Skip("skipping: depends on external upload.wikimedia.org URLs and is flaky in CI")
 	for i, c := range cases {
 		t.Run("Decode:"+strconv.Itoa(i), func(t *testing.T) {
 			width, height, err := img.GetImageSize(c.url)
@@ -160,6 +163,7 @@ func TestGetImageSize(t *testing.T) {
 }
 
 func TestGetImageSizeFromBase64(t *testing.T) {
+	t.Skip("skipping: depends on external upload.wikimedia.org URLs and is flaky in CI")
 	for i, c := range cases {
 		t.Run("Decode:"+strconv.Itoa(i), func(t *testing.T) {
 			resp, err := http.Get(c.url)
