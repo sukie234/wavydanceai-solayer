@@ -18,6 +18,7 @@
       "logs": "Request Logs",
       "analytics": "Analytics",
       "billing": "Billing",
+      "topup": "Top up",
       "profile": "Profile",
       "users": "Users",
       "settings": "Settings"
@@ -308,6 +309,71 @@
       "promptTokens": "Prompt tokens",
       "completionTokens": "Completion tokens",
       "quota": "Quota"
+    }
+  },
+  "topup": {
+    "kicker": "Payments",
+    "title": "Top up balance",
+    "lead": "Add credit to this account via Stripe, Alipay/WeChat or crypto.",
+    "loading": "Checking available payment methods…",
+    "noGateways": "No payment gateways are enabled yet. Ask an admin to turn one on under Settings → Payments.",
+    "quotaUnit": "quota",
+    "errBelowMin": "Amount is below the minimum.",
+    "amount": {
+      "label": "Step 1",
+      "title": "Pick an amount",
+      "custom": "Or enter a custom amount",
+      "customPlaceholder": "e.g. 25.00"
+    },
+    "pay": {
+      "kicker": "Step 2",
+      "title": "Pay with…",
+      "pickFirst": "Choose an amount first.",
+      "summary": "You'll be redirected to complete a {{money}} payment."
+    },
+    "gw": {
+      "stripe": "Credit card (Stripe)",
+      "stripeHint": "Visa · Mastercard · Amex",
+      "epay": "Alipay / WeChat / QQ",
+      "epayHint": "via 易支付 / E-Pay"
+    },
+    "col": {
+      "created": "Created",
+      "gateway": "Gateway",
+      "money": "Paid",
+      "quota": "Quota",
+      "status": "Status",
+      "trade": "Order #",
+      "user": "User"
+    },
+    "history": {
+      "kicker": "Your activity",
+      "title": "Recent top-ups",
+      "empty": "No top-ups yet. Pick an amount above to get started."
+    },
+    "admin": {
+      "kicker": "Admin",
+      "title": "All top-up orders",
+      "allStatus": "All status",
+      "empty": "No orders match this filter.",
+      "complete": "Complete",
+      "completePrompt": "Reason for manual completion (kept in audit log):"
+    },
+    "result": {
+      "successTitle": "Payment received",
+      "successBody": "We credited {{quota}} quota for {{money}} {{currency}}. Thanks!",
+      "failedTitle": "Payment failed",
+      "failedBody": "The gateway reported a failure. Your balance was not charged.",
+      "processingTitle": "Processing…",
+      "processingBody": "We're waiting for the gateway to confirm. This usually takes a few seconds.",
+      "stillPendingTitle": "Still processing",
+      "stillPendingBody": "The gateway hasn't confirmed yet. You can safely close this page — your balance will update automatically once confirmed.",
+      "cancelled": "Payment cancelled",
+      "cancelledHint": "You closed the payment window before completing it. No charge was made.",
+      "missingTrade": "Missing order reference",
+      "missingTradeHint": "We can't find the order this page was opened for.",
+      "backToTopup": "Back to top up",
+      "dashboard": "Dashboard"
     }
   },
   "billing": {

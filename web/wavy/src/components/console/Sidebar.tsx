@@ -10,6 +10,7 @@ import {
   ScrollText,
   BarChart3,
   Receipt,
+  Wallet,
   Users,
   Settings,
   UserCircle,
@@ -34,6 +35,7 @@ const OPERATIONS: NavItem[] = [
   { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
   { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },
   { to: '/console/billing', icon: Receipt, i18n: 'console.nav.billing' },
+  { to: '/console/topup', icon: Wallet, i18n: 'console.nav.topup' },
 ]
 
 const ACCOUNT: NavItem[] = [

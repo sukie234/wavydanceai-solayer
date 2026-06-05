@@ -17,6 +17,7 @@ const PATH_KEYS: Record<string, string> = {
   logs: 'console.nav.logs',
   analytics: 'console.nav.analytics',
   billing: 'console.nav.billing',
+  topup: 'console.nav.topup',
   users: 'console.nav.users',
   settings: 'console.nav.settings',
 }
