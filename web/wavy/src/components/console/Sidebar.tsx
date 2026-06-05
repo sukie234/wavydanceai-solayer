@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard,
@@ -12,18 +13,22 @@ import {
   Users,
   Settings,
 } from 'lucide-react'
+import { authService } from '@/lib/services/auth'
+import { Role, type User } from '@/lib/types'
 import { cn } from '@/lib/cn'
 
 type NavItem = {
   to: string
   icon: typeof LayoutDashboard
   i18n: string
+  /** Minimum role required to see this item. Default = common user. */
+  minRole?: number
 }
 
 const OPERATIONS: NavItem[] = [
   { to: '/console', icon: LayoutDashboard, i18n: 'console.nav.overview' },
-  { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels' },
-  { to: '/console/models', icon: Boxes, i18n: 'console.nav.models' },
+  { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels', minRole: Role.AdminUser },
+  { to: '/console/models', icon: Boxes, i18n: 'console.nav.models', minRole: Role.AdminUser },
   { to: '/console/tokens', icon: KeyRound, i18n: 'console.nav.tokens' },
   { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
   { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },
@@ -31,9 +36,14 @@ const OPERATIONS: NavItem[] = [
 ]
 
 const ACCOUNT: NavItem[] = [
-  { to: '/console/users', icon: Users, i18n: 'console.nav.users' },
-  { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings' },
+  { to: '/console/users', icon: Users, i18n: 'console.nav.users', minRole: Role.AdminUser },
+  { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings', minRole: Role.RootUser },
 ]
+
+function visibleFor(items: NavItem[], user: User | null | undefined): NavItem[] {
+  const role = user?.role ?? Role.Guest
+  return items.filter((it) => (it.minRole ?? Role.CommonUser) <= role)
+}
 
 export function Sidebar() {
   const { t } = useTranslation()
@@ -41,7 +51,19 @@ export function Sidebar() {
   const listRef = useRef<HTMLDivElement>(null)
   const [packetTop, setPacketTop] = useState(0)
 
+  // Live user — the console layout's beforeLoad already gated entry, so this
+  // query will hit the 5s session cache and return immediately. We re-query
+  // here so the sidebar reacts to logout/role changes without a full reload.
+  const { data: user } = useQuery({
+    queryKey: ['self'],
+    queryFn: () => authService.getSelf(),
+    staleTime: 30_000,
+  })
+  const ops = useMemo(() => visibleFor(OPERATIONS, user), [user])
+  const account = useMemo(() => visibleFor(ACCOUNT, user), [user])
+
   // Move the glowing "packet" on the current line to align with the active item.
+  // Re-run when nav items change so the packet doesn't strand on a hidden row.
   useLayoutEffect(() => {
     const list = listRef.current
     if (!list) return
@@ -50,7 +72,7 @@ export function Sidebar() {
     const listRect = list.getBoundingClientRect()
     const itemRect = active.getBoundingClientRect()
     setPacketTop(itemRect.top - listRect.top + itemRect.height / 2)
-  }, [pathname])
+  }, [pathname, ops.length, account.length])
 
   return (
     <aside className="sticky top-0 hidden h-screen w-[260px] flex-shrink-0 flex-col border-r border-[color:var(--border)] bg-[color:var(--surface)] md:flex">
@@ -89,14 +111,18 @@ export function Sidebar() {
         />
 
         <SectionLabel>{t('console.section.operations')}</SectionLabel>
-        {OPERATIONS.map((item) => (
+        {ops.map((item) => (
           <NavRow key={item.to} item={item} t={t} pathname={pathname} />
         ))}
 
-        <SectionLabel className="mt-7">{t('console.section.account')}</SectionLabel>
-        {ACCOUNT.map((item) => (
-          <NavRow key={item.to} item={item} t={t} pathname={pathname} />
-        ))}
+        {account.length > 0 && (
+          <>
+            <SectionLabel className="mt-7">{t('console.section.account')}</SectionLabel>
+            {account.map((item) => (
+              <NavRow key={item.to} item={item} t={t} pathname={pathname} />
+            ))}
+          </>
+        )}
       </div>
 
       <SupportRow />
