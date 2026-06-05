@@ -1,0 +1,28 @@
+wavydance.ai
+Copyright (c) 2026 Jimmy Hu
+
+This product is distributed under the PolyForm Noncommercial License 1.0.0
+(see LICENSE). In plain terms:
+
+  Allowed     Personal learning, research, classroom use, hobbyist tinkering,
+              non-profit organizations.
+
+  Not allowed Any commercial use — hosted service, resale, embedding in a paid
+              product, or internal use at a for-profit organization.
+
+  Commercial  Commercial licenses are available for purchase. Contact:
+                hujieming213@gmail.com
+                (subject line: "wavydance.ai commercial license")
+
+================================================================================
+Upstream attribution
+================================================================================
+
+This project is a brand-and-feature fork of:
+
+  One API — https://github.com/songquanpeng/one-api
+  Copyright (c) 2023 JustSong, MIT License
+
+Portions of this codebase derived from One API remain available under the
+original MIT terms from the original source. This NOTICE and the LICENSE in
+this repository govern the combined distribution.
