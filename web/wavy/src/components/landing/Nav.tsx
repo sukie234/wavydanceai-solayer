@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useTheme } from '@/lib/theme'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
@@ -57,10 +56,11 @@ export function Nav() {
 }
 
 function Logo() {
-  const { theme } = useTheme()
-  const src =
-    theme === 'dark'
-      ? 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-dark.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=2f6e56d868d5149426f1c475850b010c'
-      : 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3'
-  return <img src={src} alt="Solayer" className="h-7 w-auto" />
+  return (
+    <img
+      src="https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3"
+      alt="Solayer"
+      className="h-7 w-auto"
+    />
+  )
 }
