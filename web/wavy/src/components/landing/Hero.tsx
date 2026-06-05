@@ -11,18 +11,18 @@ export function Hero() {
     // load the scrolling vendor banner peeks at the bottom edge as a scroll cue.
     <header className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-gradient-to-b from-[color:var(--bg)] to-[color:var(--bg2)] px-[6vw] pb-20 pt-[140px]">
       <div
-        className="pointer-events-none absolute -left-40 -top-56 z-0 h-[680px] w-[680px] rounded-full bg-[#3FB3D9] blur-[140px]"
+        className="pointer-events-none absolute -left-40 -top-56 z-0 h-[680px] w-[680px] rounded-full bg-[#084D3E] blur-[140px]"
         style={{ opacity: 'var(--glow-op)' }}
       />
       <div
-        className="pointer-events-none absolute -right-52 -top-28 z-0 h-[680px] w-[680px] rounded-full bg-[#4ED4DC] blur-[140px]"
+        className="pointer-events-none absolute -right-52 -top-28 z-0 h-[680px] w-[680px] rounded-full bg-[#0d6b53] blur-[140px]"
         style={{ opacity: 'var(--glow-op)' }}
       />
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1180px] items-center gap-14 md:grid-cols-[1.05fr_0.95fr]">
         <div className="text-left">
-          <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--live)]" />
+          <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-[color:var(--primary)]/40 bg-[color:var(--primary)]/10 px-4 py-1.5 font-mono text-[0.82rem] text-[color:var(--primary)]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--primary)]" />
             {t('hero.tag')}
           </span>
 
@@ -46,19 +46,6 @@ export function Hero() {
           <HeroStats />
         </div>
 
-        <div className="relative flex justify-center md:translate-x-0">
-          <video
-            className="aspect-square w-[min(95vw,1240px)] rounded-[2.5rem] object-cover opacity-80 mix-blend-multiply [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_88%)]"
-            src="/hero-bg.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster="/hero-bg-poster.jpg"
-            aria-hidden
-          />
-        </div>
       </div>
 
       <WavesBg />
@@ -110,13 +97,13 @@ function Stat({ label, value, ticking }: { label: string; value: string; ticking
   return (
     <div>
       <b className="flex items-center gap-2 font-display text-[1.7rem] tabular-nums text-current-ink">
-        <span className="h-2 w-2 flex-none rounded-full bg-[color:var(--live)] [animation:wavy-ping_2.2s_infinite]" />
+        <span className="h-2 w-2 flex-none rounded-full bg-[color:var(--primary)] [animation:wavy-ping_2.2s_infinite]" />
         <span className={`transition-opacity duration-200 ${ticking ? 'opacity-50' : 'opacity-100'}`}>
           {value}
         </span>
       </b>
       <span className="text-[0.85rem] text-[color:var(--muted)]">{label}</span>
-      <style>{`@keyframes wavy-ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--live) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}`}</style>
+      <style>{`@keyframes wavy-ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--primary) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}`}</style>
     </div>
   )
 }

@@ -93,7 +93,7 @@ function ModelsPage() {
 
       {/* Search */}
       <div className="mb-4 max-w-sm">
-        <div className="flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-2 transition focus-within:border-[color:var(--cyan)]">
+        <div className="flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-2 transition focus-within:border-[color:var(--primary)]">
           <Search className="h-3.5 w-3.5 text-[color:var(--muted)]" />
           <input
             type="search"
@@ -146,8 +146,8 @@ function SummaryTile({
       type="button"
       onClick={onClick}
       className={cn(
-        'group flex flex-col items-start gap-1 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-3.5 py-3 text-left transition-all hover:-translate-y-0.5 hover:border-[color:var(--cyan)]/60',
-        active && 'border-[color:var(--cyan)]/80 bg-[color:var(--cyan)]/[.06]',
+        'group flex flex-col items-start gap-1 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-3.5 py-3 text-left transition-all hover:-translate-y-0.5 hover:border-[color:var(--primary)]/60',
+        active && 'border-[color:var(--primary)]/80 bg-[color:var(--primary)]/[.06]',
       )}
     >
       <span className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-[color:var(--muted)] group-hover:text-[color:var(--text)]">

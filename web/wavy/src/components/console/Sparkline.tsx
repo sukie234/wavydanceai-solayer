@@ -10,8 +10,8 @@ export function Sparkline({
   values,
   width = 120,
   height = 36,
-  stroke = 'var(--cyan)',
-  fill = 'var(--cyan)',
+  stroke = 'var(--primary)',
+  fill = 'var(--primary)',
 }: Props) {
   if (values.length < 2) return null
   const min = Math.min(...values)
