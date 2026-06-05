@@ -107,8 +107,8 @@ function Connector({ delay }: { delay?: boolean }) {
           width: 10,
           height: 10,
           borderRadius: '50%',
-          background: 'var(--mint)',
-          boxShadow: '0 0 12px var(--mint)',
+          background: 'var(--primary)',
+          boxShadow: '0 0 12px var(--primary)',
           animation: `wavy-pkt 2.4s ease-in-out infinite ${delay ? '1.2s' : '0s'}`,
         }}
       />

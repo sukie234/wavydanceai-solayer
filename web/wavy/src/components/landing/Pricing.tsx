@@ -94,7 +94,7 @@ function Tier({
       <ul className="mb-7 mt-5 list-none text-[0.9rem] text-[color:var(--muted)]">
         {features.map((f) => (
           <li key={f} className="flex items-center gap-2.5 py-1.5">
-            <span className="font-mono font-bold text-[color:var(--mint)]">~</span>
+            <span className="font-mono font-bold text-[color:var(--primary)]">~</span>
             {f}
           </li>
         ))}
