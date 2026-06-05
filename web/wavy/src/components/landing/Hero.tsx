@@ -46,19 +46,6 @@ export function Hero() {
           <HeroStats />
         </div>
 
-        <div className="relative flex justify-center md:translate-x-0">
-          <video
-            className="aspect-square w-[min(95vw,1240px)] rounded-[2.5rem] object-cover opacity-80 mix-blend-multiply [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_88%)]"
-            src="/hero-bg.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster="/hero-bg-poster.jpg"
-            aria-hidden
-          />
-        </div>
       </div>
 
       <WavesBg />

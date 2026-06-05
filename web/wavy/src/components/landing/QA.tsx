@@ -34,10 +34,10 @@ export function QA() {
           <h3 className="mb-2 font-display text-[1.25rem]">{t('community.title')}</h3>
           <p className="mb-5 text-[0.9rem] leading-[1.6] text-[color:var(--muted)]">{t('community.lead')}</p>
 
-          <SocRow color="#5865F2" name="Discord" sub="discord.gg/solayer" icon={DiscordIcon} />
-          <SocRow color="#24292F" name="GitHub" sub="github.com/solayer-ai" icon={GithubIcon} />
-          <SocRow color="#0F1419" name="X / Twitter" sub="@solayer_ai" icon={XIcon} />
-          <SocRow color="#229ED9" name="Telegram" sub="t.me/solayer" icon={TelegramIcon} />
+          <SocRow href="https://discord.com/invite/solayerlabs" color="#5865F2" name="Discord" sub="discord.com/invite/solayerlabs" icon={DiscordIcon} />
+          <SocRow href="https://github.com/solayer-labs" color="#24292F" name="GitHub" sub="github.com/solayer-labs" icon={GithubIcon} />
+          <SocRow href="https://x.com/solayer_labs" color="#0F1419" name="X / Twitter" sub="@solayer_labs" icon={XIcon} />
+          <SocRow href="https://solayer.org/" color="#084d3e" name="Website" sub="solayer.org" icon={GlobeIcon} />
         </aside>
       </div>
     </section>
@@ -45,11 +45,13 @@ export function QA() {
 }
 
 function SocRow({
+  href,
   color,
   name,
   sub,
   icon: Icon,
 }: {
+  href: string
   color: string
   name: string
   sub: string
@@ -57,7 +59,9 @@ function SocRow({
 }) {
   return (
     <a
-      href="#"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className="flex items-center gap-3.5 rounded-xl border border-transparent p-3 transition hover:translate-x-1 hover:border-[color:var(--primary)]"
     >
       <span
@@ -97,10 +101,18 @@ function XIcon() {
     </svg>
   )
 }
-function TelegramIcon() {
+function GlobeIcon() {
   return (
-    <svg {...ICON_PROPS}>
-      <path d="M21.9 3.4 2.5 10.9c-1.3.5-1.3 1.3-.2 1.6l5 1.6 1.9 5.9c.2.7.1 1 .9 1 .6 0 .9-.3 1.2-.6l2.9-2.8 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.9-1.4-1.6z" />
-    </svg>
+    <span
+      className="block h-5 w-5"
+      style={{
+        maskImage: 'url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/duotone/globe.svg")',
+        maskRepeat: 'no-repeat',
+        maskPosition: 'center center',
+        maskSize: 'contain',
+        backgroundColor: 'currentColor',
+      }}
+      aria-hidden="true"
+    />
   )
 }
