@@ -21,7 +21,7 @@ export function ActivityFeed({ logs, loading }: Props) {
   return (
     <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
       <header className="mb-5 flex items-baseline justify-between">
-        <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.activity')}</h3>
+        <h3 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{t('console.dash.activity')}</h3>
         <Link
           to="/console/logs"
           className="font-mono text-xs uppercase tracking-[1.5px] text-[color:var(--primary)] hover:underline"

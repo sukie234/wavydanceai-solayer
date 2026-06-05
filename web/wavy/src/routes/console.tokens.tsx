@@ -236,7 +236,7 @@ function CreateTokenModal({ onClose, onCreated }: { onClose: () => void; onCreat
         onClick={(e) => e.stopPropagation()}
       >
         <div className="kicker mb-2">{t('tk.modal.kicker')}</div>
-        <h3 className="mb-5 font-display text-xl font-bold tracking-[-0.5px]">{t('tk.modal.title')}</h3>
+        <h3 className="mb-5 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">{t('tk.modal.title')}</h3>
 
         <label className="mb-4 block">
           <span className="mb-1.5 block font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">

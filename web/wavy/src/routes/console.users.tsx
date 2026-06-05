@@ -299,7 +299,7 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
         className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
       >
         <div className="kicker mb-1.5">{t('users.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">{t('users.newUser')}</h2>
+        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">{t('users.newUser')}</h2>
 
         <DialogField label={t('users.col.username')} value={username} onChange={setUsername} autoFocus />
         <DialogField label="Password" type="password" value={password} onChange={setPassword} />

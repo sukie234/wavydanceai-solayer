@@ -40,7 +40,7 @@ export function TopModelsPanel({ data, loading }: Props) {
   return (
     <div className="flex h-full flex-col rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
       <header className="mb-5 flex items-baseline justify-between">
-        <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.topModels')}</h3>
+        <h3 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{t('console.dash.topModels')}</h3>
         <span className="font-mono text-xs tracking-[1.5px] text-[color:var(--muted)] uppercase">7d</span>
       </header>
 

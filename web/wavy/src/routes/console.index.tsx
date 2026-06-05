@@ -48,7 +48,7 @@ export default function Dashboard() {
           <div className="font-mono text-xs uppercase tracking-[2.5px] text-[color:var(--primary)]">
             {t('console.dash.kicker')}
           </div>
-          <h1 className="mt-2 font-display text-[2rem] font-bold leading-tight tracking-[-1px]">
+          <h1 className="mt-2 font-display text-[2rem] font-bold leading-tight tracking-[-1px] text-[color:var(--title)]">
             {t('console.dash.title')}
           </h1>
           <p className="mt-1.5 text-sm text-[color:var(--muted)]">{t('console.dash.lead')}</p>
@@ -113,7 +113,7 @@ export default function Dashboard() {
         >
           <header className="mb-1 flex items-baseline justify-between">
             <div>
-              <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.chart.title')}</h3>
+              <h3 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{t('console.dash.chart.title')}</h3>
               <p className="mt-1 text-xs text-[color:var(--muted)]">{t('console.dash.chart.sub')}</p>
             </div>
             <span className="rounded-md bg-gradient-to-r from-[#084D3E] to-[#0d6b53] px-2.5 py-1 font-mono text-xs font-bold tracking-[1px] text-[#0c0d0e]">

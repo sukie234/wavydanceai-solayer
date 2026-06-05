@@ -141,7 +141,7 @@ function SectionCard({
   return (
     <section className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-jelly)]">
       <header className="border-b border-[color:var(--border)] bg-[color:var(--bg2)]/50 px-6 py-4">
-        <h2 className="font-display text-base font-bold tracking-[-0.3px]">{section.title}</h2>
+        <h2 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{section.title}</h2>
         {section.desc && <p className="mt-0.5 text-xs text-[color:var(--muted)]">{section.desc}</p>}
       </header>
       <div className="divide-y divide-[color:var(--border)]/60">

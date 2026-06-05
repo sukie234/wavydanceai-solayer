@@ -146,7 +146,7 @@ function RedeemCard({ onRedeemed }: { onRedeemed: () => void }) {
     >
       <div className="mb-3 flex items-center gap-2">
         <Gift className="h-4 w-4 text-[color:var(--primary)]" />
-        <h3 className="font-display text-base font-bold">{t('billing.redeem.title')}</h3>
+        <h3 className="font-display text-base font-bold text-[color:var(--title)]">{t('billing.redeem.title')}</h3>
       </div>
       <p className="mb-4 text-xs text-[color:var(--muted)]">{t('billing.redeem.help')}</p>
 
@@ -248,7 +248,7 @@ function RedemptionsAdminSection() {
           <div className="font-mono text-xs uppercase tracking-[2px] text-[color:var(--primary)]">
             {t('billing.redemption.kicker')}
           </div>
-          <h2 className="mt-1 font-display text-xl font-bold tracking-[-0.5px]">
+          <h2 className="mt-1 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">
             {t('billing.redemption.title')}
           </h2>
         </div>
@@ -341,7 +341,7 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
         className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
       >
         <div className="kicker mb-1.5">{t('billing.redemption.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">
+        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">
           {t('billing.redemption.create')}
         </h2>
 

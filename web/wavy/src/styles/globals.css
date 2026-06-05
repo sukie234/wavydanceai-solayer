@@ -14,6 +14,7 @@
     --border: #eef0ef;
     --text: #3e4040;
     --muted: #3e4040;
+    --title: #111827;
     --cyan: #2e8fb0;
     --primary: #084d3e;
     --primary-hover: rgba(8, 77, 62, 0.9);
@@ -48,8 +49,9 @@
     --bg2: #111213;
     --surface: #161718;
     --border: #252727;
-    --text: #eafbfe;
-    --muted: #92c5d1;
+    --text: #9ea0a0;
+    --muted: #9ea0a0;
+    --title: #e5e7eb;
     --cyan: #3fb3d9;
     --primary: #a4e58f;
     --primary-hover: rgba(164, 229, 143, 0.9);
@@ -105,6 +107,7 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
+  --color-title: var(--title);
   --color-mint-jelly: var(--mint);
   --color-glass: var(--glass);
   --color-coral: var(--coral);
