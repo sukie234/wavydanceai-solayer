@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTheme } from '@/lib/theme'
-import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate, useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -113,6 +113,12 @@ function LoginPage() {
           </Button>
 
           <p className="mt-5 text-center text-xs text-[color:var(--muted)]">
+            {t('login.noAccount')}{' '}
+            <Link to="/register" className="text-[color:var(--cyan)] hover:underline">
+              {t('login.signUp')}
+            </Link>
+          </p>
+          <p className="mt-2 text-center text-xs text-[color:var(--muted)]">
             {t('login.helper')}{' '}
             <a className="text-[color:var(--primary)] hover:underline" href="/">
               {t('login.backHome')}

@@ -259,7 +259,23 @@
     "signIn": "Sign in",
     "failed": "Login failed",
     "helper": "Lost your way?",
-    "backHome": "Back to homepage"
+    "backHome": "Back to homepage",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up"
+  },
+  "register": {
+    "kicker": "wavydance.ai · sign up",
+    "title": "Create your account",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "Use at least 8 characters.",
+    "passwordShort": "Password must be at least 8 characters.",
+    "confirmMismatch": "Passwords don't match.",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "failed": "Registration failed"
   },
   "users": {
     "kicker": "Account",

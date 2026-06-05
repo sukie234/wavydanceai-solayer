@@ -7,6 +7,23 @@ export const authService = {
     return unwrap(res)
   },
 
+  /**
+   * Self-service registration. Backend gates this on RegisterEnabled +
+   * PasswordRegisterEnabled options; both default to true. When admin
+   * enables email verification, callers must also pass `email` +
+   * `verification_code`.
+   */
+  async register(input: {
+    username: string
+    password: string
+    email?: string
+    verification_code?: string
+    aff_code?: string
+  }): Promise<void> {
+    const res = await api.post<ApiResponse>('/user/register', input)
+    unwrap(res)
+  },
+
   async logout(): Promise<void> {
     await api.get('/user/logout')
   },
