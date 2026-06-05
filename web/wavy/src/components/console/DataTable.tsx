@@ -89,11 +89,11 @@ export function StatusPill({ active, label }: { active: boolean; label: string }
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-xs uppercase tracking-[1px]',
         active
-          ? 'bg-[color:var(--live)]/12 text-[color:var(--live)]'
+          ? 'bg-[color:var(--primary)]/12 text-[color:var(--primary)]'
           : 'bg-[#E2607B]/12 text-[#E2607B]',
       )}
     >
-      <span className={cn('h-1.5 w-1.5 rounded-full', active ? 'bg-[color:var(--live)]' : 'bg-[#E2607B]')} />
+      <span className={cn('h-1.5 w-1.5 rounded-full', active ? 'bg-[color:var(--primary)]' : 'bg-[#E2607B]')} />
       {label}
     </span>
   )

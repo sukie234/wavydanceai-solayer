@@ -111,7 +111,7 @@
   --color-mint-jelly: var(--primary);
   --color-glass: var(--glass);
   --color-coral: var(--coral);
-  --color-live: var(--live);
+  --color-live: var(--primary);
 
   --font-display: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
   --font-body: 'Inter', 'Noto Sans SC', system-ui, sans-serif;

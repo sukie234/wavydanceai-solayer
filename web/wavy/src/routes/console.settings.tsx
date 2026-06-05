@@ -200,7 +200,7 @@ function FieldRow({
           }}
         />
         {savedFlash && (
-          <span className="absolute right-20 mt-1 text-xs text-[color:var(--live)]">
+          <span className="absolute right-20 mt-1 text-xs text-[color:var(--primary)]">
             <Check className="inline h-3 w-3" />
           </span>
         )}

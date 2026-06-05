@@ -114,7 +114,7 @@ export function Leaderboard() {
                 <span
                   className={cn(
                     'text-right font-mono text-xs tabular-nums',
-                    d.trend >= 0 ? 'text-[color:var(--live)]' : 'text-[#E2607B]',
+                    d.trend >= 0 ? 'text-[color:var(--primary)]' : 'text-[#E2607B]',
                   )}
                 >
                   {d.trend >= 0 ? '▲' : '▼'} {Math.abs(d.trend)}%

@@ -63,7 +63,7 @@ export function Topbar() {
       </div>
 
       {/* Live status indicator */}
-      <div className="hidden items-center gap-2 rounded-full border border-[color:var(--live)]/30 bg-[color:var(--live)]/10 px-2.5 py-1 font-mono text-xs text-[color:var(--live)] lg:flex">
+      <div className="hidden items-center gap-2 rounded-full border border-[color:var(--primary)]/30 bg-[color:var(--primary)]/10 px-2.5 py-1 font-mono text-xs text-[color:var(--primary)] lg:flex">
         <Activity className="h-3 w-3" strokeWidth={2.5} />
         <span className="tracking-[1px]">{t('console.allFlowing')}</span>
       </div>

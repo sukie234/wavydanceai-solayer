@@ -164,7 +164,7 @@ function RedeemCard({ onRedeemed }: { onRedeemed: () => void }) {
         </div>
       )}
       {okMsg && (
-        <div className="mt-3 rounded-lg border border-[color:var(--live)]/30 bg-[color:var(--live)]/10 px-3 py-2 text-xs text-[color:var(--live)]">
+        <div className="mt-3 rounded-lg border border-[color:var(--primary)]/30 bg-[color:var(--primary)]/10 px-3 py-2 text-xs text-[color:var(--primary)]">
           <Check className="mr-1 inline h-3 w-3" />
           {okMsg}
         </div>
@@ -296,7 +296,7 @@ function CodeCell({ value }: { value: string }) {
         }}
         className={cn(
           'flex h-6 w-6 flex-shrink-0 items-center justify-center rounded transition hover:text-[color:var(--primary)]',
-          copied ? 'text-[color:var(--live)]' : 'text-[color:var(--muted)]',
+          copied ? 'text-[color:var(--primary)]' : 'text-[color:var(--muted)]',
         )}
         title="Copy"
       >

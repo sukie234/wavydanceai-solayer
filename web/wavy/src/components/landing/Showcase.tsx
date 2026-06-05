@@ -61,8 +61,8 @@ export function Showcase() {
                 <span className="rounded-full border border-[color:var(--primary)]/40 px-2.5 py-0.5 font-mono text-[0.7rem] uppercase tracking-[1.5px] text-[color:var(--primary)]">
                   {t(c.tag)}
                 </span>
-                <span className="ml-auto flex items-center gap-1.5 font-mono text-[0.78rem] text-[color:var(--live)]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--live)]" />
+                <span className="ml-auto flex items-center gap-1.5 font-mono text-[0.78rem] text-[color:var(--primary)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--primary)]" />
                   {c.lat}
                 </span>
               </header>

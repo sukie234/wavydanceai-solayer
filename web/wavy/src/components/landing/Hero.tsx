@@ -22,7 +22,7 @@ export function Hero() {
       <div className="relative z-10 mx-auto grid w-full max-w-[1180px] items-center gap-14 md:grid-cols-[1.05fr_0.95fr]">
         <div className="text-left">
           <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-[color:var(--primary)]/40 bg-[color:var(--primary)]/10 px-4 py-1.5 font-mono text-[0.82rem] text-[color:var(--primary)]">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--live)]" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--primary)]" />
             {t('hero.tag')}
           </span>
 
@@ -110,13 +110,13 @@ function Stat({ label, value, ticking }: { label: string; value: string; ticking
   return (
     <div>
       <b className="flex items-center gap-2 font-display text-[1.7rem] tabular-nums text-current-ink">
-        <span className="h-2 w-2 flex-none rounded-full bg-[color:var(--live)] [animation:wavy-ping_2.2s_infinite]" />
+        <span className="h-2 w-2 flex-none rounded-full bg-[color:var(--primary)] [animation:wavy-ping_2.2s_infinite]" />
         <span className={`transition-opacity duration-200 ${ticking ? 'opacity-50' : 'opacity-100'}`}>
           {value}
         </span>
       </b>
       <span className="text-[0.85rem] text-[color:var(--muted)]">{label}</span>
-      <style>{`@keyframes wavy-ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--live) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}`}</style>
+      <style>{`@keyframes wavy-ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--primary) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}`}</style>
     </div>
   )
 }
