@@ -76,13 +76,13 @@ function Tier({
           ? {
               border: '1.5px solid transparent',
               background:
-                'linear-gradient(var(--surface),var(--surface)) padding-box, linear-gradient(110deg,#3FB3D9 0%,#4ED4DC 55%,#B5ECF2 100%) border-box',
+                'linear-gradient(var(--surface),var(--surface)) padding-box, linear-gradient(110deg,#084D3E 0%,#0d6b53 55%,#a4e58f 100%) border-box',
             }
           : undefined
       }
     >
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC] px-3.5 py-1 text-[0.72rem] font-bold tracking-[1px] text-[#052832]">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-[#084D3E] to-[#0d6b53] px-3.5 py-1 text-[0.72rem] font-bold tracking-[1px] text-[#0c0d0e]">
           {badge}
         </span>
       )}
@@ -94,7 +94,7 @@ function Tier({
       <ul className="mb-7 mt-5 list-none text-[0.9rem] text-[color:var(--muted)]">
         {features.map((f) => (
           <li key={f} className="flex items-center gap-2.5 py-1.5">
-            <span className="font-mono font-bold text-[color:var(--mint)]">~</span>
+            <span className="font-mono font-bold text-[color:var(--primary)]">~</span>
             {f}
           </li>
         ))}

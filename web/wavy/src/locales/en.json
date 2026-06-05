@@ -150,7 +150,7 @@
   "lb": {
     "kicker": "Leaderboard",
     "title": "What the wave is riding",
-    "lead": "Most-used models on wavydance.ai, ranked by tokens processed in the last 24 hours.",
+    "lead": "Most-used models on solayer.org, ranked by tokens processed in the last 24 hours.",
     "note": "Tokens = last 24h · arrow = 3-day trend",
     "tab": { "all": "All", "llm": "LLM", "image": "Image", "video": "Video" }
   },
@@ -226,7 +226,7 @@
     "title": "Questions, answered.",
     "lead": "The things developers ask before their first request.",
     "q1": {
-      "q": "Is wavydance.ai compatible with the OpenAI SDK?",
+      "q": "Is solayer.org compatible with the OpenAI SDK?",
       "a": "Yes — for chat and vision models the API is fully OpenAI-compatible. Point your existing SDK at our base_url and switch providers by changing the model string. Image and video go through the unified async task API instead."
     },
     "q2": {
@@ -251,7 +251,7 @@
     "lead": "8,000+ developers share routing recipes, cost dashboards and early model access in our community."
   },
   "login": {
-    "kicker": "wavydance.ai · sign in",
+    "kicker": "solayer.org · sign in",
     "title": "Welcome back.",
     "username": "Username",
     "password": "Password",
