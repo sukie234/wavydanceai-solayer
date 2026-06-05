@@ -98,7 +98,7 @@ function AnalyticsPage() {
 
       {/* Per-model breakdown */}
       <section>
-        <h3 className="mb-3 font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">
+        <h3 className="mb-3 font-display text-base font-bold tracking-[-0.3px]">
           {t('analytics.byModel')}
         </h3>
         <DataTable
@@ -117,7 +117,7 @@ function AnalyticsPage() {
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
-      <h3 className="mb-4 font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{title}</h3>
+      <h3 className="mb-4 font-display text-base font-bold tracking-[-0.3px]">{title}</h3>
       {children}
     </div>
   )

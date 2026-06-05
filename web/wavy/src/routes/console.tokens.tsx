@@ -168,7 +168,7 @@ function KeyCell({ value }: { value: string }) {
     <button
       type="button"
       onClick={() => navigator.clipboard?.writeText(`sk-${value}`)}
-      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--border)] bg-[color:var(--bg2)] px-2 py-0.5 font-mono text-xs text-[color:var(--muted)] hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
+      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--border)] bg-[color:var(--bg2)] px-2 py-0.5 font-mono text-xs text-[color:var(--muted)] hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
       title="Copy full key"
     >
       <Copy className="h-3 w-3" />
@@ -196,7 +196,7 @@ function IconBtn({
       className={
         tone === 'coral'
           ? 'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--coral)] hover:text-[color:var(--coral)]'
-          : 'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]'
+          : 'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]'
       }
     >
       {children}
@@ -236,7 +236,7 @@ function CreateTokenModal({ onClose, onCreated }: { onClose: () => void; onCreat
         onClick={(e) => e.stopPropagation()}
       >
         <div className="kicker mb-2">{t('tk.modal.kicker')}</div>
-        <h3 className="mb-5 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">{t('tk.modal.title')}</h3>
+        <h3 className="mb-5 font-display text-xl font-bold tracking-[-0.5px]">{t('tk.modal.title')}</h3>
 
         <label className="mb-4 block">
           <span className="mb-1.5 block font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">
@@ -247,7 +247,7 @@ function CreateTokenModal({ onClose, onCreated }: { onClose: () => void; onCreat
             onChange={(e) => setName(e.target.value)}
             autoFocus
             placeholder="production-app"
-            className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm placeholder:text-[color:var(--muted)]/70 focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
+            className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm placeholder:text-[color:var(--muted)]/70 focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
           />
         </label>
 
@@ -266,7 +266,7 @@ function CreateTokenModal({ onClose, onCreated }: { onClose: () => void; onCreat
               min="1"
               value={quotaInDollars}
               onChange={(e) => setQuotaInDollars(e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
+              className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
             />
           </label>
         )}

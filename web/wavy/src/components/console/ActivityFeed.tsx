@@ -21,10 +21,10 @@ export function ActivityFeed({ logs, loading }: Props) {
   return (
     <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
       <header className="mb-5 flex items-baseline justify-between">
-        <h3 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{t('console.dash.activity')}</h3>
+        <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.activity')}</h3>
         <Link
           to="/console/logs"
-          className="font-mono text-xs uppercase tracking-[1.5px] text-[color:var(--primary)] hover:underline"
+          className="font-mono text-xs uppercase tracking-[1.5px] text-[color:var(--cyan)] hover:underline"
         >
           {t('console.dash.openLog')} →
         </Link>
@@ -40,9 +40,9 @@ export function ActivityFeed({ logs, loading }: Props) {
           rows.map((log) => (
             <li key={log.id} className="relative grid grid-cols-[32px_1fr_auto] items-start gap-3 py-2.5">
               <span
-                className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--primary)]/40 bg-[color:var(--surface)]"
+                className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--surface)]"
               >
-                <ScrollText className="h-3.5 w-3.5 text-[color:var(--primary)]" strokeWidth={2.25} />
+                <ScrollText className="h-3.5 w-3.5 text-[color:var(--cyan)]" strokeWidth={2.25} />
               </span>
               <div className="min-w-0">
                 <div className="truncate text-sm font-medium text-[color:var(--text)]">

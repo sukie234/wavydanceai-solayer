@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { Search, Bell, Moon, Sun, ChevronRight, Activity, LogOut, User as UserIcon } from 'lucide-react'
+import { Search, Bell, Moon, Sun, Globe, ChevronRight, Activity, LogOut, User as UserIcon } from 'lucide-react'
 import { useTheme } from '@/lib/theme'
 import { authService } from '@/lib/services/auth'
 import { clearSessionCache } from '@/lib/session'
@@ -22,7 +22,7 @@ const PATH_KEYS: Record<string, string> = {
 }
 
 export function Topbar() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { theme, toggle } = useTheme()
   const { pathname } = useLocation()
 
@@ -35,6 +35,8 @@ export function Topbar() {
     queryFn: () => authService.getSelf(),
     staleTime: 30_000,
   })
+
+  const cycleLang = () => i18n.changeLanguage(i18n.language?.startsWith('zh') ? 'en' : 'zh-CN')
 
   return (
     <header className="sticky top-0 z-30 flex h-[60px] items-center gap-3 border-b border-[color:var(--border)] bg-[color-mix(in_srgb,var(--bg)_82%,transparent)] px-6 [backdrop-filter:blur(14px)_saturate(1.3)]">
@@ -49,7 +51,7 @@ export function Topbar() {
 
       {/* Search */}
       <div className="mx-auto w-full max-w-md">
-        <div className="group relative flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 transition-colors focus-within:border-[color:var(--primary)]">
+        <div className="group relative flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 transition-colors focus-within:border-[color:var(--cyan)]">
           <Search className="h-3.5 w-3.5 text-[color:var(--muted)]" strokeWidth={2} />
           <input
             type="search"
@@ -63,15 +65,25 @@ export function Topbar() {
       </div>
 
       {/* Live status indicator */}
-      <div className="hidden items-center gap-2 rounded-full border border-[color:var(--primary)]/30 bg-[color:var(--primary)]/10 px-2.5 py-1 font-mono text-xs text-[color:var(--primary)] lg:flex">
+      <div className="hidden items-center gap-2 rounded-full border border-[color:var(--live)]/30 bg-[color:var(--live)]/10 px-2.5 py-1 font-mono text-xs text-[color:var(--live)] lg:flex">
         <Activity className="h-3 w-3" strokeWidth={2.5} />
         <span className="tracking-[1px]">{t('console.allFlowing')}</span>
       </div>
 
       <button
         type="button"
+        onClick={cycleLang}
+        className="flex h-9 items-center gap-1.5 rounded-lg border border-[color:var(--border)] px-2.5 text-xs text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
+        aria-label="Language"
+      >
+        <Globe className="h-3.5 w-3.5" />
+        <span className="font-mono uppercase">{i18n.language?.startsWith('zh') ? 'zh' : 'en'}</span>
+      </button>
+
+      <button
+        type="button"
         onClick={toggle}
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
         aria-label="Toggle theme"
       >
         {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -79,7 +91,7 @@ export function Topbar() {
 
       <button
         type="button"
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
         aria-label="Notifications"
       >
         <Bell className="h-4 w-4" />
@@ -136,13 +148,13 @@ function UserMenu({ user }: { user: User | null }) {
         aria-haspopup="menu"
         aria-expanded={open}
         className={cn(
-          'flex items-center gap-2.5 rounded-full border border-[color:var(--border)] bg-[color:var(--bg2)] py-0.5 pl-0.5 pr-3 transition hover:border-[color:var(--primary)]',
-          open && 'border-[color:var(--primary)]',
+          'flex items-center gap-2.5 rounded-full border border-[color:var(--border)] bg-[color:var(--bg2)] py-0.5 pl-0.5 pr-3 transition hover:border-[color:var(--cyan)]',
+          open && 'border-[color:var(--cyan)]',
         )}
       >
         <span
-          className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-[#0c0d0e]"
-          style={{ background: 'linear-gradient(135deg,#084D3E,#0d6b53,#a4e58f)' }}
+          className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-[#052832]"
+          style={{ background: 'linear-gradient(135deg,#3FB3D9,#4ED4DC,#B5ECF2)' }}
         >
           {initials}
         </span>

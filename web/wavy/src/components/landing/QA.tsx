@@ -17,11 +17,11 @@ export function QA() {
             <details
               key={k}
               open={i === 0}
-              className="group mb-3 overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] transition hover:border-[color:var(--primary)]"
+              className="group mb-3 overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] transition hover:border-[color:var(--cyan)]"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3.5 p-4 text-[0.95rem] font-semibold [&::-webkit-details-marker]:hidden">
                 <span>{t(`qa.${k}.q`)}</span>
-                <span className="flex-none font-mono text-[1.15rem] text-[color:var(--primary)] transition-transform group-open:rotate-45">
+                <span className="flex-none font-mono text-[1.15rem] text-[color:var(--cyan)] transition-transform group-open:rotate-45">
                   +
                 </span>
               </summary>
@@ -34,10 +34,10 @@ export function QA() {
           <h3 className="mb-2 font-display text-[1.25rem]">{t('community.title')}</h3>
           <p className="mb-5 text-[0.9rem] leading-[1.6] text-[color:var(--muted)]">{t('community.lead')}</p>
 
-          <SocRow href="https://discord.com/invite/solayerlabs" color="#5865F2" name="Discord" sub="discord.com/invite/solayerlabs" icon={DiscordIcon} />
-          <SocRow href="https://github.com/solayer-labs" color="#24292F" name="GitHub" sub="github.com/solayer-labs" icon={GithubIcon} />
-          <SocRow href="https://x.com/solayer_labs" color="#0F1419" name="X / Twitter" sub="@solayer_labs" icon={XIcon} />
-          <SocRow href="https://solayer.org/" color="#084d3e" name="Website" sub="solayer.org" icon={GlobeIcon} />
+          <SocRow color="#5865F2" name="Discord" sub="discord.gg/wavydance" icon={DiscordIcon} />
+          <SocRow color="#24292F" name="GitHub" sub="github.com/wavydance-ai" icon={GithubIcon} />
+          <SocRow color="#0F1419" name="X / Twitter" sub="@wavydance_ai" icon={XIcon} />
+          <SocRow color="#229ED9" name="Telegram" sub="t.me/wavydance" icon={TelegramIcon} />
         </aside>
       </div>
     </section>
@@ -45,13 +45,11 @@ export function QA() {
 }
 
 function SocRow({
-  href,
   color,
   name,
   sub,
   icon: Icon,
 }: {
-  href: string
   color: string
   name: string
   sub: string
@@ -59,10 +57,8 @@ function SocRow({
 }) {
   return (
     <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center gap-3.5 rounded-xl border border-transparent p-3 transition hover:translate-x-1 hover:border-[color:var(--primary)]"
+      href="#"
+      className="flex items-center gap-3.5 rounded-xl border border-transparent p-3 transition hover:translate-x-1 hover:border-[color:var(--cyan)]"
     >
       <span
         className="flex h-9 w-9 flex-none items-center justify-center rounded-xl text-white"
@@ -101,18 +97,10 @@ function XIcon() {
     </svg>
   )
 }
-function GlobeIcon() {
+function TelegramIcon() {
   return (
-    <span
-      className="block h-5 w-5"
-      style={{
-        maskImage: 'url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/duotone/globe.svg")',
-        maskRepeat: 'no-repeat',
-        maskPosition: 'center center',
-        maskSize: 'contain',
-        backgroundColor: 'currentColor',
-      }}
-      aria-hidden="true"
-    />
+    <svg {...ICON_PROPS}>
+      <path d="M21.9 3.4 2.5 10.9c-1.3.5-1.3 1.3-.2 1.6l5 1.6 1.9 5.9c.2.7.1 1 .9 1 .6 0 .9-.3 1.2-.6l2.9-2.8 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.9-1.4-1.6z" />
+    </svg>
   )
 }

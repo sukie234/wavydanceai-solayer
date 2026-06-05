@@ -62,9 +62,9 @@ export function Leaderboard() {
               type="button"
               onClick={() => setTab(tabItem.id)}
               className={cn(
-                'rounded-full border border-[color:var(--border)] bg-transparent px-5 py-2 font-mono text-[0.8rem] tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]',
+                'rounded-full border border-[color:var(--border)] bg-transparent px-5 py-2 font-mono text-[0.8rem] tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]',
                 tab === tabItem.id &&
-                  'border-transparent bg-gradient-to-r from-[#084D3E] to-[#0d6b53] font-bold text-[#0c0d0e]',
+                  'border-transparent bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC] font-bold text-[#052832]',
               )}
             >
               {t(tabItem.key)}
@@ -104,7 +104,7 @@ export function Leaderboard() {
                 </span>
                 <span className="hidden h-2 overflow-hidden rounded-full bg-[color:var(--border)]/55 md:block">
                   <i
-                    className="block h-full rounded-full bg-gradient-to-r from-[#084D3E] via-[#0d6b53] to-[#a4e58f] transition-[width] duration-700"
+                    className="block h-full rounded-full bg-gradient-to-r from-[#3FB3D9] via-[#4ED4DC] to-[#B5ECF2] transition-[width] duration-700"
                     style={{ width: `${(d.tok / max) * 100}%` }}
                   />
                 </span>
@@ -114,7 +114,7 @@ export function Leaderboard() {
                 <span
                   className={cn(
                     'text-right font-mono text-xs tabular-nums',
-                    d.trend >= 0 ? 'text-[color:var(--primary)]' : 'text-[#E2607B]',
+                    d.trend >= 0 ? 'text-[color:var(--live)]' : 'text-[#E2607B]',
                   )}
                 >
                   {d.trend >= 0 ? '▲' : '▼'} {Math.abs(d.trend)}%
