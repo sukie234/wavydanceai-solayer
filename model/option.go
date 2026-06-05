@@ -75,6 +75,13 @@ func InitOptionMap() {
 	config.OptionMap["QuotaPerUnit"] = strconv.FormatFloat(config.QuotaPerUnit, 'f', -1, 64)
 	config.OptionMap["RetryTimes"] = strconv.Itoa(config.RetryTimes)
 	config.OptionMap["Theme"] = config.Theme
+	// Payments (P0)
+	config.OptionMap["PaymentEnabled"] = strconv.FormatBool(config.PaymentEnabled)
+	config.OptionMap["StripeEnabled"] = strconv.FormatBool(config.StripeEnabled)
+	config.OptionMap["EpayEnabled"] = strconv.FormatBool(config.EpayEnabled)
+	config.OptionMap["PaymentCallbackBaseURL"] = config.PaymentCallbackBaseURL
+	config.OptionMap["PaymentReturnURL"] = config.PaymentReturnURL
+	config.OptionMap["CryptoAdaptersEnabled"] = strings.Join(config.CryptoAdaptersEnabled, ",")
 	config.OptionMapRWMutex.Unlock()
 	loadOptionsFromDatabase()
 }
@@ -153,6 +160,12 @@ func updateOptionMap(key string, value string) (err error) {
 			config.DisplayInCurrencyEnabled = boolValue
 		case "DisplayTokenStatEnabled":
 			config.DisplayTokenStatEnabled = boolValue
+		case "PaymentEnabled":
+			config.PaymentEnabled = boolValue
+		case "StripeEnabled":
+			config.StripeEnabled = boolValue
+		case "EpayEnabled":
+			config.EpayEnabled = boolValue
 		}
 	}
 	switch key {
@@ -239,6 +252,18 @@ func updateOptionMap(key string, value string) (err error) {
 		config.QuotaPerUnit, _ = strconv.ParseFloat(value, 64)
 	case "Theme":
 		config.Theme = value
+	case "PaymentCallbackBaseURL":
+		config.PaymentCallbackBaseURL = value
+	case "PaymentReturnURL":
+		config.PaymentReturnURL = value
+	case "CryptoAdaptersEnabled":
+		var enabled []string
+		for _, name := range strings.Split(value, ",") {
+			if trimmed := strings.TrimSpace(name); trimmed != "" {
+				enabled = append(enabled, trimmed)
+			}
+		}
+		config.CryptoAdaptersEnabled = enabled
 	}
 	return err
 }

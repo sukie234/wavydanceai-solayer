@@ -30,6 +30,10 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.GET("/oauth/wechat/bind", middleware.CriticalRateLimit(), middleware.UserAuth(), auth.WeChatBind)
 		apiRouter.GET("/oauth/email/bind", middleware.CriticalRateLimit(), middleware.UserAuth(), controller.EmailBind)
 		apiRouter.POST("/topup", middleware.AdminAuth(), controller.AdminTopUp)
+		apiRouter.POST("/stripe/webhook", controller.StripeWebhook)
+		apiRouter.POST("/epay/notify", controller.EpayNotify)
+		apiRouter.GET("/epay/notify", controller.EpayNotify)
+		apiRouter.POST("/crypto/webhook/:adapter", controller.CryptoWebhook)
 
 		userRoute := apiRouter.Group("/user")
 		{
@@ -46,7 +50,13 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.DELETE("/self", controller.DeleteSelf)
 				selfRoute.GET("/token", controller.GenerateAccessToken)
 				selfRoute.GET("/aff", controller.GetAffCode)
-				selfRoute.POST("/topup", controller.TopUp)
+				selfRoute.POST("/topup", controller.TopUp) // redemption code
+				selfRoute.GET("/topup/info", controller.GetTopupInfo)
+				selfRoute.GET("/topup/self", controller.GetUserTopups)
+				selfRoute.POST("/topup/amount", controller.RequestTopupAmount)
+				selfRoute.POST("/topup/stripe", middleware.CriticalRateLimit(), controller.RequestStripePay)
+				selfRoute.POST("/topup/epay", middleware.CriticalRateLimit(), controller.RequestEpayPay)
+				selfRoute.POST("/topup/crypto/:adapter", middleware.CriticalRateLimit(), controller.RequestCryptoPay)
 				selfRoute.GET("/available_models", controller.GetUserAvailableModels)
 			}
 
@@ -60,6 +70,8 @@ func SetApiRouter(router *gin.Engine) {
 				adminRoute.POST("/manage", controller.ManageUser)
 				adminRoute.PUT("/", controller.UpdateUser)
 				adminRoute.DELETE("/:id", controller.DeleteUser)
+				adminRoute.GET("/topup", controller.AdminListTopups)
+				adminRoute.POST("/topup/complete", controller.AdminCompleteTopup)
 			}
 		}
 		optionRoute := apiRouter.Group("/option")
