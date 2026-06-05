@@ -157,17 +157,10 @@ function Field({
 }
 
 function Logo() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="login-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#084D3E" />
-          <stop offset="60%" stopColor="#0d6b53" />
-          <stop offset="100%" stopColor="#a4e58f" />
-        </linearGradient>
-      </defs>
-      <path d="M2 14 Q5 8 8 14 T14 14 T20 14" stroke="url(#login-mark)" strokeWidth="2.4" strokeLinecap="round" fill="none" />
-      <circle cx="20" cy="14" r="2.4" fill="url(#login-mark)" />
-    </svg>
-  )
+  const { theme } = useTheme()
+  const src =
+    theme === 'dark'
+      ? 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-dark.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=2f6e56d868d5149426f1c475850b010c'
+      : 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3'
+  return <img src={src} alt="Solayer" className="h-7 w-auto" />
 }

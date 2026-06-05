@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react'
 import { useTheme } from '@/lib/theme'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 
 export function Nav() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -16,11 +15,6 @@ export function Nav() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  const cycleLang = () => {
-    const next = i18n.language?.startsWith('zh') ? 'en' : 'zh-CN'
-    i18n.changeLanguage(next)
-  }
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-[4vw] py-3.5">
@@ -32,11 +26,8 @@ export function Nav() {
           scrolled && 'bg-[color-mix(in_srgb,var(--bg)_62%,transparent)]',
         )}
       >
-        <Link to="/" className="flex items-center gap-2.5 font-display text-[1.25rem] font-bold tracking-[-0.5px]">
+        <Link to="/" className="flex items-center gap-2.5">
           <Logo />
-          <span>
-            solayer<span className="text-current-ink">.ai</span>
-          </span>
         </Link>
 
         <div className="ml-auto hidden gap-8 text-[0.92rem] text-[color:var(--muted)] md:flex">
@@ -55,15 +46,6 @@ export function Nav() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={cycleLang}
-            aria-label={t('common.language')}
-            className="flex h-9 items-center gap-1.5 rounded-lg border border-[color:var(--border)] px-2.5 text-[0.85rem] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
-          >
-            <Globe className="h-3.5 w-3.5" />
-            <span className="font-mono uppercase">{i18n.language?.startsWith('zh') ? 'zh' : 'en'}</span>
-          </button>
           <Link to="/console" className="hidden sm:inline-flex">
             <Button variant="ghost" size="sm">{t('nav.console')}</Button>
           </Link>
@@ -80,5 +62,5 @@ function Logo() {
     theme === 'dark'
       ? 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-dark.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=2f6e56d868d5149426f1c475850b010c'
       : 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3'
-  return <img src={src} alt="Solayer" width={24} height={24} />
+  return <img src={src} alt="Solayer" className="h-7 w-auto" />
 }

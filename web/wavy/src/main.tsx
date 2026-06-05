@@ -6,6 +6,7 @@ import { queryClient } from '@/lib/queryClient'
 import '@/lib/i18n'
 import '@/styles/globals.css'
 import { routeTree } from './routeTree.gen'
+import { ThemeContext, useThemeProvider } from '@/lib/theme'
 
 const router = createRouter({
   routeTree,
@@ -19,11 +20,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+function App() {
+  const themeValue = useThemeProvider()
+  return (
+    <ThemeContext.Provider value={themeValue}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ThemeContext.Provider>
+  )
+}
+
 const rootEl = document.getElementById('root')!
 createRoot(rootEl).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <App />
   </StrictMode>,
 )

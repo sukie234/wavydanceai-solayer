@@ -84,9 +84,6 @@ export function Sidebar() {
         aria-label="Back to solayer.org homepage"
       >
         <LogoMark />
-        <span className="font-display text-base font-bold tracking-[-0.5px]">
-          solayer<span className="text-current-ink">.ai</span>
-        </span>
       </Link>
 
       {/* Nav with vertical "current" accent line */}
@@ -236,7 +233,7 @@ function LogoMark() {
     theme === 'dark'
       ? 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-dark.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=2f6e56d868d5149426f1c475850b010c'
       : 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3'
-  return <img src={src} alt="Solayer" width={22} height={22} />
+  return <img src={src} alt="Solayer" className="h-7 w-auto" />
 }
 
 const ICON = { viewBox: '0 0 24 24', fill: 'currentColor', width: 14, height: 14 } as const
