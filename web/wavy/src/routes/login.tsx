@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTheme } from '@/lib/theme'
 import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
@@ -62,11 +63,11 @@ function LoginPage() {
       {/* ambient glows */}
       <div
         className="pointer-events-none absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full opacity-60 blur-[120px]"
-        style={{ background: 'radial-gradient(circle, #4ED4DC, transparent 65%)', opacity: 'var(--glow-op)' }}
+        style={{ background: 'radial-gradient(circle, #0d6b53, transparent 65%)', opacity: 'var(--glow-op)' }}
       />
       <div
         className="pointer-events-none absolute -right-32 bottom-0 h-[460px] w-[460px] rounded-full opacity-50 blur-[120px]"
-        style={{ background: 'radial-gradient(circle, #3FB3D9, transparent 65%)', opacity: 'var(--glow-op)' }}
+        style={{ background: 'radial-gradient(circle, #084D3E, transparent 65%)', opacity: 'var(--glow-op)' }}
       />
 
       <div className="relative z-10 w-full max-w-[420px]">
@@ -74,7 +75,7 @@ function LoginPage() {
           <div className="mb-4 inline-flex items-center gap-2.5">
             <Logo />
             <span className="font-display text-xl font-bold tracking-[-0.5px]">
-              wavydance<span className="text-current-ink">.ai</span>
+              solayer<span className="text-current-ink">.ai</span>
             </span>
           </div>
           <div className="kicker">{t('login.kicker')}</div>
@@ -113,7 +114,7 @@ function LoginPage() {
 
           <p className="mt-5 text-center text-xs text-[color:var(--muted)]">
             {t('login.helper')}{' '}
-            <a className="text-[color:var(--cyan)] hover:underline" href="/">
+            <a className="text-[color:var(--primary)] hover:underline" href="/">
               {t('login.backHome')}
             </a>
           </p>
@@ -149,7 +150,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
-        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2.5 text-sm text-[color:var(--text)] placeholder:text-[color:var(--muted)]/70 transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
+        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2.5 text-sm text-[color:var(--text)] placeholder:text-[color:var(--muted)]/70 transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
       />
     </label>
   )
@@ -160,9 +161,9 @@ function Logo() {
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
       <defs>
         <linearGradient id="login-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
+          <stop offset="0%" stopColor="#084D3E" />
+          <stop offset="60%" stopColor="#0d6b53" />
+          <stop offset="100%" stopColor="#a4e58f" />
         </linearGradient>
       </defs>
       <path d="M2 14 Q5 8 8 14 T14 14 T20 14" stroke="url(#login-mark)" strokeWidth="2.4" strokeLinecap="round" fill="none" />

@@ -8,21 +8,24 @@
 @layer base {
   :root {
     /* Shallow Lagoon (light) */
-    --bg: #f3fafc;
-    --bg2: #e7f5f8;
+    --bg: #ffffff;
+    --bg2: #f5f5f5;
     --surface: #ffffff;
-    --border: #c9e6ee;
-    --text: #07394a;
-    --muted: #3f7a8c;
+    --border: #eef0ef;
+    --text: #3e4040;
+    --muted: #3e4040;
     --cyan: #2e8fb0;
+    --primary: #084d3e;
+    --primary-hover: rgba(8, 77, 62, 0.9);
+    --primary-light: #084d3e;
     --mint: #2fa3b3;
     --glass: #8fd8e5;
     --coral: #f49bab;
     --live: #2bbe8c;
-    --cta-ink: #052832;
-    --current: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
-    --current-ink: linear-gradient(110deg, #2e8fb0 0%, #2fa3b3 60%, #4fb3c9 100%);
-    --shadow: 0 30px 80px rgba(6, 58, 63, 0.12);
+    --cta-ink: #0c0d0e;
+    --current: linear-gradient(110deg, #084D3E 0%, #0d6b53 55%, #a4e58f 100%);
+    --current-ink: linear-gradient(110deg, #084D3E 0%, #0d6b53 60%, #a4e58f 100%);
+    --shadow: 0 30px 80px rgba(8, 77, 62, 0.12);
     --glow-op: 0.2;
     /* Code-panel water glass — heavier in light mode so code text stays readable
        against the pale Sea Foam page background */
@@ -34,27 +37,30 @@
     );
     --glass-border: rgba(255, 255, 255, 0.10);
     --glass-edge: rgba(255, 255, 255, 0.22);
-    --glass-shadow: 0 30px 80px rgba(6, 58, 63, 0.28), 0 8px 24px rgba(6, 58, 63, 0.18),
+    --glass-shadow: 0 30px 80px rgba(8, 77, 62, 0.28), 0 8px 24px rgba(8, 77, 62, 0.18),
       inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -1px 0 rgba(0, 0, 0, 0.18),
       inset 1px 0 0 rgba(255, 255, 255, 0.04);
   }
 
   [data-theme='dark'] {
     /* Deep Lagoon (dark) */
-    --bg: #052832;
-    --bg2: #052e35;
-    --surface: #083644;
-    --border: #12485a;
+    --bg: #0c0d0e;
+    --bg2: #111213;
+    --surface: #161718;
+    --border: #252727;
     --text: #eafbfe;
     --muted: #92c5d1;
     --cyan: #3fb3d9;
+    --primary: #a4e58f;
+    --primary-hover: rgba(164, 229, 143, 0.9);
+    --primary-light: #a4e58f;
     --mint: #4ed4dc;
     --glass: #b5ecf2;
     --coral: #f49bab;
     --live: #3ed9a4;
-    --cta-ink: #052832;
-    --current: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
-    --current-ink: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
+    --cta-ink: #0c0d0e;
+    --current: linear-gradient(110deg, #084D3E 0%, #0d6b53 55%, #a4e58f 100%);
+    --current-ink: linear-gradient(110deg, #a4e58f 0%, #0d6b53 55%, #084D3E 100%);
     --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
     --glow-op: 0.16;
     /* Dark mode keeps the lighter, more translucent water-glass — ambient cyan
@@ -67,7 +73,7 @@
     );
     --glass-border: rgba(255, 255, 255, 0.15);
     --glass-edge: rgba(255, 255, 255, 0.40);
-    --glass-shadow: 0 30px 80px rgba(6, 58, 63, 0.20), 0 8px 24px rgba(6, 58, 63, 0.12),
+    --glass-shadow: 0 30px 80px rgba(8, 77, 62, 0.20), 0 8px 24px rgba(8, 77, 62, 0.12),
       inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.10),
       inset 1px 0 0 rgba(255, 255, 255, 0.06);
   }
@@ -96,6 +102,9 @@
   --color-text: var(--text);
   --color-muted: var(--muted);
   --color-cyan-jelly: var(--cyan);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
   --color-mint-jelly: var(--mint);
   --color-glass: var(--glass);
   --color-coral: var(--coral);
@@ -105,7 +114,7 @@
   --font-body: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --shadow-jelly: 0 30px 80px rgba(6, 58, 63, 0.12);
+  --shadow-jelly: 0 30px 80px rgba(8, 77, 62, 0.12);
 }
 
 /* Brand gradient as text fill — use sparingly per brand guide */
@@ -125,7 +134,7 @@
   font-family: var(--font-mono);
   font-size: 0.8rem;
   letter-spacing: 3px;
-  color: var(--cyan);
+  color: var(--primary);
   text-transform: uppercase;
   margin-bottom: 0.875rem;
 }

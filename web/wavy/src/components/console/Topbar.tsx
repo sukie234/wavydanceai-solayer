@@ -51,7 +51,7 @@ export function Topbar() {
 
       {/* Search */}
       <div className="mx-auto w-full max-w-md">
-        <div className="group relative flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 transition-colors focus-within:border-[color:var(--cyan)]">
+        <div className="group relative flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 transition-colors focus-within:border-[color:var(--primary)]">
           <Search className="h-3.5 w-3.5 text-[color:var(--muted)]" strokeWidth={2} />
           <input
             type="search"
@@ -73,7 +73,7 @@ export function Topbar() {
       <button
         type="button"
         onClick={cycleLang}
-        className="flex h-9 items-center gap-1.5 rounded-lg border border-[color:var(--border)] px-2.5 text-xs text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
+        className="flex h-9 items-center gap-1.5 rounded-lg border border-[color:var(--border)] px-2.5 text-xs text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
         aria-label="Language"
       >
         <Globe className="h-3.5 w-3.5" />
@@ -83,7 +83,7 @@ export function Topbar() {
       <button
         type="button"
         onClick={toggle}
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
         aria-label="Toggle theme"
       >
         {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -91,7 +91,7 @@ export function Topbar() {
 
       <button
         type="button"
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
         aria-label="Notifications"
       >
         <Bell className="h-4 w-4" />
@@ -148,13 +148,13 @@ function UserMenu({ user }: { user: User | null }) {
         aria-haspopup="menu"
         aria-expanded={open}
         className={cn(
-          'flex items-center gap-2.5 rounded-full border border-[color:var(--border)] bg-[color:var(--bg2)] py-0.5 pl-0.5 pr-3 transition hover:border-[color:var(--cyan)]',
-          open && 'border-[color:var(--cyan)]',
+          'flex items-center gap-2.5 rounded-full border border-[color:var(--border)] bg-[color:var(--bg2)] py-0.5 pl-0.5 pr-3 transition hover:border-[color:var(--primary)]',
+          open && 'border-[color:var(--primary)]',
         )}
       >
         <span
-          className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-[#052832]"
-          style={{ background: 'linear-gradient(135deg,#3FB3D9,#4ED4DC,#B5ECF2)' }}
+          className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-[#0c0d0e]"
+          style={{ background: 'linear-gradient(135deg,#084D3E,#0d6b53,#a4e58f)' }}
         >
           {initials}
         </span>

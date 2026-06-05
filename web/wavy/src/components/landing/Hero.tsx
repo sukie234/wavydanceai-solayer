@@ -11,17 +11,17 @@ export function Hero() {
     // load the scrolling vendor banner peeks at the bottom edge as a scroll cue.
     <header className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-gradient-to-b from-[color:var(--bg)] to-[color:var(--bg2)] px-[6vw] pb-20 pt-[140px]">
       <div
-        className="pointer-events-none absolute -left-40 -top-56 z-0 h-[680px] w-[680px] rounded-full bg-[#3FB3D9] blur-[140px]"
+        className="pointer-events-none absolute -left-40 -top-56 z-0 h-[680px] w-[680px] rounded-full bg-[#084D3E] blur-[140px]"
         style={{ opacity: 'var(--glow-op)' }}
       />
       <div
-        className="pointer-events-none absolute -right-52 -top-28 z-0 h-[680px] w-[680px] rounded-full bg-[#4ED4DC] blur-[140px]"
+        className="pointer-events-none absolute -right-52 -top-28 z-0 h-[680px] w-[680px] rounded-full bg-[#0d6b53] blur-[140px]"
         style={{ opacity: 'var(--glow-op)' }}
       />
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1180px] items-center gap-14 md:grid-cols-[1.05fr_0.95fr]">
         <div className="text-left">
-          <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">
+          <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-[color:var(--primary)]/40 bg-[color:var(--primary)]/10 px-4 py-1.5 font-mono text-[0.82rem] text-[color:var(--primary)]">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--live)]" />
             {t('hero.tag')}
           </span>

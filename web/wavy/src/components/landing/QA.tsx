@@ -17,11 +17,11 @@ export function QA() {
             <details
               key={k}
               open={i === 0}
-              className="group mb-3 overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] transition hover:border-[color:var(--cyan)]"
+              className="group mb-3 overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] transition hover:border-[color:var(--primary)]"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3.5 p-4 text-[0.95rem] font-semibold [&::-webkit-details-marker]:hidden">
                 <span>{t(`qa.${k}.q`)}</span>
-                <span className="flex-none font-mono text-[1.15rem] text-[color:var(--cyan)] transition-transform group-open:rotate-45">
+                <span className="flex-none font-mono text-[1.15rem] text-[color:var(--primary)] transition-transform group-open:rotate-45">
                   +
                 </span>
               </summary>
@@ -34,10 +34,10 @@ export function QA() {
           <h3 className="mb-2 font-display text-[1.25rem]">{t('community.title')}</h3>
           <p className="mb-5 text-[0.9rem] leading-[1.6] text-[color:var(--muted)]">{t('community.lead')}</p>
 
-          <SocRow color="#5865F2" name="Discord" sub="discord.gg/wavydance" icon={DiscordIcon} />
-          <SocRow color="#24292F" name="GitHub" sub="github.com/wavydance-ai" icon={GithubIcon} />
-          <SocRow color="#0F1419" name="X / Twitter" sub="@wavydance_ai" icon={XIcon} />
-          <SocRow color="#229ED9" name="Telegram" sub="t.me/wavydance" icon={TelegramIcon} />
+          <SocRow color="#5865F2" name="Discord" sub="discord.gg/solayer" icon={DiscordIcon} />
+          <SocRow color="#24292F" name="GitHub" sub="github.com/solayer-ai" icon={GithubIcon} />
+          <SocRow color="#0F1419" name="X / Twitter" sub="@solayer_ai" icon={XIcon} />
+          <SocRow color="#229ED9" name="Telegram" sub="t.me/solayer" icon={TelegramIcon} />
         </aside>
       </div>
     </section>
@@ -58,7 +58,7 @@ function SocRow({
   return (
     <a
       href="#"
-      className="flex items-center gap-3.5 rounded-xl border border-transparent p-3 transition hover:translate-x-1 hover:border-[color:var(--cyan)]"
+      className="flex items-center gap-3.5 rounded-xl border border-transparent p-3 transition hover:translate-x-1 hover:border-[color:var(--primary)]"
     >
       <span
         className="flex h-9 w-9 flex-none items-center justify-center rounded-xl text-white"

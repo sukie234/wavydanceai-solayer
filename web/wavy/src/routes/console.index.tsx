@@ -45,7 +45,7 @@ export default function Dashboard() {
       {/* Page header */}
       <header className="wavy-rise mb-8 flex flex-wrap items-end justify-between gap-4" style={{ animationDelay: '0ms' }}>
         <div>
-          <div className="font-mono text-xs uppercase tracking-[2.5px] text-[color:var(--cyan)]">
+          <div className="font-mono text-xs uppercase tracking-[2.5px] text-[color:var(--primary)]">
             {t('console.dash.kicker')}
           </div>
           <h1 className="mt-2 font-display text-[2rem] font-bold leading-tight tracking-[-1px]">
@@ -116,7 +116,7 @@ export default function Dashboard() {
               <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.chart.title')}</h3>
               <p className="mt-1 text-xs text-[color:var(--muted)]">{t('console.dash.chart.sub')}</p>
             </div>
-            <span className="rounded-md bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC] px-2.5 py-1 font-mono text-xs font-bold tracking-[1px] text-[#052832]">
+            <span className="rounded-md bg-gradient-to-r from-[#084D3E] to-[#0d6b53] px-2.5 py-1 font-mono text-xs font-bold tracking-[1px] text-[#0c0d0e]">
               7D
             </span>
           </header>

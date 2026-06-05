@@ -58,7 +58,7 @@ export function Showcase() {
               <header className="flex items-center gap-3">
                 <VendorIcon id={c.icon} size={26} />
                 <span className="font-display text-[1.05rem] font-bold">{c.model}</span>
-                <span className="rounded-full border border-[color:var(--cyan)]/40 px-2.5 py-0.5 font-mono text-[0.7rem] uppercase tracking-[1.5px] text-[color:var(--cyan)]">
+                <span className="rounded-full border border-[color:var(--primary)]/40 px-2.5 py-0.5 font-mono text-[0.7rem] uppercase tracking-[1.5px] text-[color:var(--primary)]">
                   {t(c.tag)}
                 </span>
                 <span className="ml-auto flex items-center gap-1.5 font-mono text-[0.78rem] text-[color:var(--live)]">
@@ -86,7 +86,7 @@ export function Showcase() {
             }}
             className={cn(
               'h-1.5 w-1.5 rounded-full bg-[color:var(--border)] transition',
-              i === idx && 'scale-125 bg-[color:var(--cyan)]',
+              i === idx && 'scale-125 bg-[color:var(--primary)]',
             )}
           />
         ))}
@@ -107,7 +107,7 @@ function CardBody({ kind, t }: { kind: string; t: (k: string) => string }) {
                 <polyline
                   points="12,80 40,58 68,66 96,38 124,46 140,20"
                   fill="none"
-                  stroke="#4ED4DC"
+                  stroke="#0d6b53"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
@@ -146,7 +146,7 @@ function CardBody({ kind, t }: { kind: string; t: (k: string) => string }) {
           <Box label={t('show.lbl.in_audio')}>
             <div className="flex flex-1 items-center justify-center">
               <svg width="170" height="60" viewBox="0 0 170 60">
-                <g fill="#3FB3D9">
+                <g fill="#084D3E">
                   {[6, 16, 26, 36, 46, 56, 66, 76, 86, 96, 106, 116, 126, 136, 146].map((x, i) => {
                     const h = [16, 32, 44, 24, 12, 36, 20, 48, 28, 16, 40, 24, 8, 32, 16][i]
                     const y = (60 - h) / 2

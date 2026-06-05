@@ -108,7 +108,7 @@ export function Pager({ p, onP, hasMore }: { p: number; onP: (next: number) => v
           type="button"
           onClick={() => onP(Math.max(0, p - 1))}
           disabled={p === 0}
-          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)] disabled:opacity-40"
+          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)] disabled:opacity-40"
         >
           ← Prev
         </button>
@@ -116,7 +116,7 @@ export function Pager({ p, onP, hasMore }: { p: number; onP: (next: number) => v
           type="button"
           onClick={() => onP(p + 1)}
           disabled={!hasMore}
-          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)] disabled:opacity-40"
+          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)] disabled:opacity-40"
         >
           Next →
         </button>

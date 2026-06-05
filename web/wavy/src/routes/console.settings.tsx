@@ -34,7 +34,7 @@ const SECTIONS: Section[] = [
   {
     id: 'auth',
     title: 'Login & registration',
-    desc: 'Control how users sign in to wavydance.ai.',
+    desc: 'Control how users sign in to solayer.org.',
     fields: [
       { key: 'PasswordLoginEnabled', kind: 'bool', label: 'Password login' },
       { key: 'PasswordRegisterEnabled', kind: 'bool', label: 'Password registration' },
@@ -83,7 +83,7 @@ const SECTIONS: Section[] = [
     fields: [
       { key: 'SMTPServer', kind: 'text', label: 'Server' },
       { key: 'SMTPPort', kind: 'number', label: 'Port' },
-      { key: 'SMTPFrom', kind: 'text', label: 'From address', placeholder: 'no-reply@wavydance.ai' },
+      { key: 'SMTPFrom', kind: 'text', label: 'From address', placeholder: 'no-reply@solayer.org' },
       { key: 'SMTPAccount', kind: 'text', label: 'Account' },
       // Token/Secret fields are intentionally NOT returned by the backend's GetOptions.
       // We render them as write-only inputs that update without showing the current value.
@@ -224,8 +224,8 @@ function FieldRow({
         placeholder={field.kind === 'text' ? field.placeholder : ''}
         onChange={(e) => setDraft(e.target.value)}
         className={cn(
-          'w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 font-mono text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20',
-          dirty && 'border-[color:var(--cyan)]/60',
+          'w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 font-mono text-sm transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20',
+          dirty && 'border-[color:var(--primary)]/60',
         )}
       />
       <Button
@@ -268,7 +268,7 @@ function Toggle({
       className={cn(
         'relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50',
         checked
-          ? 'border-transparent bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC]'
+          ? 'border-transparent bg-gradient-to-r from-[#084D3E] to-[#0d6b53]'
           : 'border-[color:var(--border)] bg-[color:var(--bg2)]',
       )}
     >
