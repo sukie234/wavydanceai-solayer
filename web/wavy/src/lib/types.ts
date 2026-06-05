@@ -75,6 +75,7 @@ export interface Channel {
   model_mapping: string | null
   priority: number | null
   config: string
+  system_prompt: string | null
 }
 
 export const LogType = {

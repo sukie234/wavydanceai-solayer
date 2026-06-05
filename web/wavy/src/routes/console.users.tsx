@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, ShieldCheck, ShieldOff, Power, PowerOff, Trash2, ArrowUp, ArrowDown } from 'lucide-react'
+import { Plus, ShieldCheck, ShieldOff, Power, PowerOff, Trash2, ArrowUp, ArrowDown, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
+import { UserDialog } from '@/components/console/UserDialog'
 import { ROLE_LABEL, usersService, type UserAction } from '@/lib/services/users'
 import { getSession, isAdmin } from '@/lib/session'
 import { Role, type User } from '@/lib/types'
@@ -29,6 +30,7 @@ function UsersPage() {
   const qc = useQueryClient()
   const [p, setP] = useState(0)
   const [showCreate, setShowCreate] = useState(false)
+  const [editUserId, setEditUserId] = useState<number | null>(null)
   const [err, setErr] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
@@ -113,7 +115,15 @@ function UsersPage() {
       header: '',
       width: '180px',
       align: 'right',
-      cell: (u) => <RowActions me={me} user={u} onManage={manage.mutate} onRemove={remove.mutate} />,
+      cell: (u) => (
+        <RowActions
+          me={me}
+          user={u}
+          onEdit={() => setEditUserId(u.id)}
+          onManage={manage.mutate}
+          onRemove={remove.mutate}
+        />
+      ),
     },
   ]
 
@@ -159,6 +169,17 @@ function UsersPage() {
           }}
         />
       )}
+
+      <UserDialog
+        open={editUserId !== null}
+        userId={editUserId}
+        me={me}
+        onClose={() => setEditUserId(null)}
+        onSaved={() => {
+          setEditUserId(null)
+          qc.invalidateQueries({ queryKey: ['users'] })
+        }}
+      />
     </div>
   )
 }
@@ -185,11 +206,13 @@ function RoleBadge({ role }: { role: number }) {
 function RowActions({
   me,
   user,
+  onEdit,
   onManage,
   onRemove,
 }: {
   me: User
   user: User
+  onEdit: () => void
   onManage: (args: { username: string; action: UserAction }) => void
   onRemove: (id: number) => void
 }) {
@@ -207,6 +230,11 @@ function RowActions({
 
   return (
     <div className="flex items-center justify-end gap-1.5">
+      {canManage && (
+        <IconBtn label="Edit" onClick={onEdit}>
+          <Pencil className="h-3.5 w-3.5" />
+        </IconBtn>
+      )}
       {canManage && user.role < Role.AdminUser && meRole >= Role.AdminUser && (
         <IconBtn label="Promote to admin" onClick={promote}>
           <ArrowUp className="h-3.5 w-3.5" />

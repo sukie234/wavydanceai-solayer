@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Trash2, Activity, Power, PowerOff } from 'lucide-react'
+import { Trash2, Activity, Power, PowerOff, Pencil, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
+import { ChannelDialog } from '@/components/console/ChannelDialog'
 import { CHANNEL_TYPE, channelsService } from '@/lib/services/channels'
 import { getSession, isAdmin } from '@/lib/session'
 import type { Channel } from '@/lib/types'
+
+type DialogState = { kind: 'create' } | { kind: 'edit'; id: number } | null
 
 export const Route = createFileRoute('/console/channels')({
   beforeLoad: async () => {
@@ -24,6 +27,7 @@ function ChannelsPage() {
   const { t } = useTranslation()
   const qc = useQueryClient()
   const [p, setP] = useState(0)
+  const [dialog, setDialog] = useState<DialogState>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['channels', p],
@@ -114,12 +118,15 @@ function ChannelsPage() {
       align: 'right',
       cell: (r) => (
         <div className="flex justify-end gap-1.5">
+          <IconBtn label="Edit" onClick={() => setDialog({ kind: 'edit', id: r.id })}>
+            <Pencil className="h-3.5 w-3.5" />
+          </IconBtn>
           <IconBtn label="Test" onClick={() => test.mutate(r.id)}>
             <Activity className="h-3.5 w-3.5" />
           </IconBtn>
           <IconBtn
             label={r.status === 1 ? 'Disable' : 'Enable'}
-            onClick={() => update.mutate({ ...r, status: r.status === 1 ? 2 : 1 })}
+            onClick={() => update.mutate({ id: r.id, status: r.status === 1 ? 2 : 1 })}
           >
             {r.status === 1 ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />}
           </IconBtn>
@@ -144,13 +151,24 @@ function ChannelsPage() {
         title={t('ch.title')}
         lead={t('ch.lead')}
         actions={
-          <Button size="sm" onClick={() => alert(t('ch.todoAdd'))}>
-            + {t('ch.addChannel')}
+          <Button size="sm" onClick={() => setDialog({ kind: 'create' })}>
+            <Plus className="h-3.5 w-3.5" />
+            {t('ch.addChannel')}
           </Button>
         }
       />
       <DataTable columns={columns} rows={data} rowKey={(r) => r.id} loading={isLoading} minRows={10} emptyHint={t('ch.empty')} />
       <Pager p={p} onP={setP} hasMore={(data?.length ?? 0) >= PAGE_SIZE} />
+
+      <ChannelDialog
+        open={dialog !== null}
+        mode={dialog ?? { kind: 'create' }}
+        onClose={() => setDialog(null)}
+        onSaved={() => {
+          setDialog(null)
+          qc.invalidateQueries({ queryKey: ['channels'] })
+        }}
+      />
     </div>
   )
 }

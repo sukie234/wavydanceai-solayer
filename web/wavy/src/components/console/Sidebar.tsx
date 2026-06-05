@@ -12,6 +12,7 @@ import {
   Receipt,
   Users,
   Settings,
+  UserCircle,
 } from 'lucide-react'
 import { authService } from '@/lib/services/auth'
 import { Role, type User } from '@/lib/types'
@@ -36,6 +37,8 @@ const OPERATIONS: NavItem[] = [
 ]
 
 const ACCOUNT: NavItem[] = [
+  // Profile is for every signed-in user — no role gate.
+  { to: '/console/profile', icon: UserCircle, i18n: 'console.nav.profile' },
   { to: '/console/users', icon: Users, i18n: 'console.nav.users', minRole: Role.AdminUser },
   { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings', minRole: Role.RootUser },
 ]

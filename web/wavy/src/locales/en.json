@@ -18,6 +18,7 @@
       "logs": "Request Logs",
       "analytics": "Analytics",
       "billing": "Billing",
+      "profile": "Profile",
       "users": "Users",
       "settings": "Settings"
     },
@@ -58,7 +59,75 @@
   },
   "common": {
     "toggleTheme": "Toggle theme",
-    "language": "Language"
+    "language": "Language",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "create": "Create"
+  },
+  "channelDialog": {
+    "kicker": "Channel",
+    "titleCreate": "Add channel",
+    "titleEdit": "Edit channel",
+    "field": {
+      "name": "Name",
+      "type": "Provider",
+      "key": "API key",
+      "keyEditPlaceholder": "Leave empty to keep current key",
+      "keyEditHint": "Only fill in to rotate the key.",
+      "baseUrl": "Base URL",
+      "models": "Models",
+      "modelsHint": "Comma-separated. Example: gpt-4o,gpt-4o-mini",
+      "group": "Group",
+      "priority": "Priority",
+      "priorityHint": "Higher routes earlier on ties.",
+      "modelMapping": "Model mapping",
+      "modelMappingHint": "JSON map of incoming → upstream names.",
+      "systemPrompt": "System prompt override"
+    },
+    "errors": { "keyRequired": "API key is required for new channels." }
+  },
+  "userDialog": {
+    "kicker": "User",
+    "title": "Edit user",
+    "role": { "user": "User", "admin": "Admin" },
+    "field": {
+      "username": "Username",
+      "usernameHint": "Username can't be changed.",
+      "displayName": "Display name",
+      "email": "Email",
+      "group": "Group",
+      "quota": "Quota",
+      "quotaHint": "Remaining balance in tokens.",
+      "role": "Role",
+      "roleHint": "Only root can promote a user to admin.",
+      "password": "New password",
+      "passwordHint": "Leave empty to keep the current password."
+    }
+  },
+  "profile": {
+    "kicker": "Account",
+    "title": "Profile",
+    "lead": "Update your display name and password.",
+    "personal": {
+      "title": "Personal info",
+      "desc": "Saved instantly. Username and email are read-only.",
+      "username": "Username",
+      "usernameHint": "Contact an admin to change it.",
+      "displayName": "Display name",
+      "email": "Email",
+      "emailHint": "Bound at registration."
+    },
+    "password": {
+      "title": "Change password",
+      "desc": "You'll stay signed in. Use at least 8 characters.",
+      "new": "New password",
+      "newHint": "Minimum 8 characters.",
+      "confirm": "Confirm password",
+      "submit": "Update password",
+      "errTooShort": "Password must be at least 8 characters.",
+      "errMismatch": "Passwords do not match."
+    }
   },
   "hero": {
     "tag": "All systems flowing · 99.99% uptime",
