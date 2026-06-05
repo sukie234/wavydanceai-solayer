@@ -1,49 +1,74 @@
-version: '3.4'
+# Local development stack for wavydance.ai.
+# Mirrors the staging/prod runtime (Postgres + Redis) so what works
+# here works in deployment. See docs/DEVELOPMENT.md for usage.
+#
+# Quick start:  cp .env.example .env  &&  make up
 
 services:
-  one-api:
-    image: "${REGISTRY:-docker.io}/justsong/one-api:latest"
-    container_name: one-api
-    restart: always
-    command: --log-dir /app/logs
+  app:
+    container_name: wavydance-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: wavydance:local
+    restart: unless-stopped
+    command: ["--log-dir", "/app/logs", "--port", "3000"]
     ports:
-      - "3000:3000"
-    volumes:
-      - ./data/oneapi:/data
-      - ./logs:/app/logs
+      - "${APP_PORT:-3000}:3000"
+    env_file:
+      - .env
     environment:
-      - SQL_DSN=oneapi:123456@tcp(db:3306)/one-api  # 修改此行，或注释掉以使用 SQLite 作为数据库
-      - REDIS_CONN_STRING=redis://redis
-      - SESSION_SECRET=random_string  # 修改为随机字符串
-      - TZ=Asia/Shanghai
-#      - NODE_TYPE=slave  # 多机部署时从节点取消注释该行
-#      - SYNC_FREQUENCY=60  # 需要定期从数据库加载数据时取消注释该行
-#      - FRONTEND_BASE_URL=https://openai.justsong.cn  # 多机部署时从节点取消注释该行
+      SQL_DSN: "postgres://wavydance:wavydance@db:5432/wavydance?sslmode=disable"
+      REDIS_CONN_STRING: "redis://redis:6379"
+      SESSION_SECRET: "${SESSION_SECRET:-local-dev-secret-do-not-use-in-prod}"
+      SESSION_COOKIE_SECURE: "false"
+      INITIAL_ROOT_PASSWORD: "${INITIAL_ROOT_PASSWORD:-change-me-locally}"
+      TZ: "${TZ:-UTC}"
+      DEBUG_SQL: "${DEBUG_SQL:-false}"
+    volumes:
+      - app_logs:/app/logs
     depends_on:
-      - redis
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' | awk -F: '{print $2}'" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  redis:
-    image: "${REGISTRY:-docker.io}/redis:latest"
-    container_name: redis
-    restart: always
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -q '\"success\":true'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   db:
-    image: "${REGISTRY:-docker.io}/mysql:8.2.0"
-    restart: always
-    container_name: mysql
-    volumes:
-      - ./data/mysql:/var/lib/mysql  # 挂载目录，持久化存储
+    container_name: wavydance-db
+    image: postgres:16-alpine
+    restart: unless-stopped
     ports:
-      - '3306:3306'
+      - "${DB_PORT:-5432}:5432"
     environment:
-      TZ: Asia/Shanghai   # 设置时区
-      MYSQL_ROOT_PASSWORD: 'OneAPI@justsong' # 设置 root 用户的密码
-      MYSQL_USER: oneapi   # 创建专用用户
-      MYSQL_PASSWORD: '123456'    # 设置专用用户密码
-      MYSQL_DATABASE: one-api   # 自动创建数据库
+      POSTGRES_USER: wavydance
+      POSTGRES_PASSWORD: wavydance
+      POSTGRES_DB: wavydance
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wavydance -d wavydance"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    container_name: wavydance-redis
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  db_data:
+  app_logs:

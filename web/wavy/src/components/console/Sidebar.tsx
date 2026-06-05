@@ -11,8 +11,10 @@ import {
   ScrollText,
   BarChart3,
   Receipt,
+  Wallet,
   Users,
   Settings,
+  UserCircle,
 } from 'lucide-react'
 import { authService } from '@/lib/services/auth'
 import { Role, type User } from '@/lib/types'
@@ -34,9 +36,12 @@ const OPERATIONS: NavItem[] = [
   { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
   { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },
   { to: '/console/billing', icon: Receipt, i18n: 'console.nav.billing' },
+  { to: '/console/topup', icon: Wallet, i18n: 'console.nav.topup' },
 ]
 
 const ACCOUNT: NavItem[] = [
+  // Profile is for every signed-in user — no role gate.
+  { to: '/console/profile', icon: UserCircle, i18n: 'console.nav.profile' },
   { to: '/console/users', icon: Users, i18n: 'console.nav.users', minRole: Role.AdminUser },
   { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings', minRole: Role.RootUser },
 ]

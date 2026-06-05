@@ -27,7 +27,13 @@ megalinter-reports/
 
 # Go test coverage
 coverage/
+coverage.txt
 *.out
+
+# Local docker compose overrides. Personal tweaks belong here — docker compose
+# loads docker-compose.override.yml automatically alongside docker-compose.yml.
+docker-compose.override.yml
+docker-compose.override.yaml
 
 # Go vendored deps (not used currently)
 vendor/
