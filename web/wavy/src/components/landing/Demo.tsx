@@ -94,7 +94,7 @@ export function Demo() {
 }
 
 const K = ({ children }: { children: React.ReactNode }) => <span className="text-[#a4e58f]">{children}</span>
-const S = ({ children }: { children: React.ReactNode }) => <span className="text-[#084D3E]">{children}</span>
+const S = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--primary-light)]">{children}</span>
 const C = ({ children }: { children: React.ReactNode }) => <span className="text-[#7FA9B5]">{children}</span>
 const F = ({ children }: { children: React.ReactNode }) => <span className="text-[#F49BAB]">{children}</span>
 
