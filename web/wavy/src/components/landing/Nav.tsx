@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 
 export function Nav() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -15,11 +14,6 @@ export function Nav() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  const cycleLang = () => {
-    const next = i18n.language?.startsWith('zh') ? 'en' : 'zh-CN'
-    i18n.changeLanguage(next)
-  }
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-[4vw] py-3.5">
@@ -31,11 +25,8 @@ export function Nav() {
           scrolled && 'bg-[color-mix(in_srgb,var(--bg)_62%,transparent)]',
         )}
       >
-        <Link to="/" className="flex items-center gap-2.5 font-display text-[1.25rem] font-bold tracking-[-0.5px]">
+        <Link to="/" className="flex items-center gap-2.5">
           <Logo />
-          <span>
-            wavydance<span className="text-current-ink">.ai</span>
-          </span>
         </Link>
 
         <div className="ml-auto hidden gap-8 text-[0.92rem] text-[color:var(--muted)] md:flex">
@@ -54,15 +45,6 @@ export function Nav() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={cycleLang}
-            aria-label={t('common.language')}
-            className="flex h-9 items-center gap-1.5 rounded-lg border border-[color:var(--border)] px-2.5 text-[0.85rem] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
-          >
-            <Globe className="h-3.5 w-3.5" />
-            <span className="font-mono uppercase">{i18n.language?.startsWith('zh') ? 'zh' : 'en'}</span>
-          </button>
           <Link to="/console" className="hidden sm:inline-flex">
             <Button variant="ghost" size="sm">{t('nav.console')}</Button>
           </Link>
@@ -75,22 +57,10 @@ export function Nav() {
 
 function Logo() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="wavy-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M2 14 Q5 8 8 14 T14 14 T20 14"
-        stroke="url(#wavy-mark)"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="20" cy="14" r="2.4" fill="url(#wavy-mark)" />
-    </svg>
+    <img
+      src="https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3"
+      alt="Solayer"
+      className="h-7 w-auto"
+    />
   )
 }

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useTheme } from '@/lib/theme'
 import { Link, useLocation } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -85,12 +86,9 @@ export function Sidebar() {
       <Link
         to="/"
         className="group flex items-center gap-2.5 px-6 py-5 transition-opacity hover:opacity-80"
-        aria-label="Back to wavydance.ai homepage"
+        aria-label="Back to solayer.org homepage"
       >
         <LogoMark />
-        <span className="font-display text-base font-bold tracking-[-0.5px]">
-          wavydance<span className="text-current-ink">.ai</span>
-        </span>
       </Link>
 
       {/* Nav with vertical "current" accent line */}
@@ -99,7 +97,7 @@ export function Sidebar() {
           @keyframes wavy-dash-v{to{background-position:0 16px}}
           .wavy-current-line{
             background: repeating-linear-gradient(180deg,
-              color-mix(in srgb, var(--cyan) 55%, transparent) 0 8px,
+              color-mix(in srgb, var(--primary) 55%, transparent) 0 8px,
               transparent 8px 16px);
             background-size: 2px 16px;
             animation: wavy-dash-v .9s linear infinite;
@@ -107,11 +105,11 @@ export function Sidebar() {
         `}</style>
         <span className="wavy-current-line pointer-events-none absolute bottom-3 left-[18px] top-2 w-[2px]" />
         <span
-          className="pointer-events-none absolute left-[14px] z-10 h-2.5 w-2.5 rounded-full bg-[color:var(--mint)] transition-[top] duration-500 ease-out"
+          className="pointer-events-none absolute left-[14px] z-10 h-2.5 w-2.5 rounded-full bg-[color:var(--primary)] transition-[top] duration-500 ease-out"
           style={{
             top: `${packetTop}px`,
             transform: 'translateY(-50%)',
-            boxShadow: '0 0 14px var(--mint), 0 0 4px var(--mint)',
+            boxShadow: '0 0 14px var(--primary), 0 0 4px var(--primary)',
           }}
         />
 
@@ -164,13 +162,13 @@ function NavRow({ item, t, pathname }: { item: NavItem; t: (k: string) => string
       <Icon
         className={cn(
           'h-4 w-4 flex-shrink-0 transition-colors',
-          active ? 'text-[color:var(--cyan)]' : 'text-[color:var(--muted)] group-hover:text-[color:var(--cyan)]',
+          active ? 'text-[color:var(--primary)]' : 'text-[color:var(--muted)] group-hover:text-[color:var(--primary)]',
         )}
         strokeWidth={1.75}
       />
       <span>{t(item.i18n)}</span>
       {active && (
-        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[color:var(--cyan)] [animation:wavy-pulse_2s_infinite]" />
+        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[color:var(--primary)] [animation:wavy-pulse_2s_infinite]" />
       )}
       <style>{`@keyframes wavy-pulse{50%{opacity:.35}}`}</style>
     </Link>
@@ -185,17 +183,17 @@ function SupportRow() {
         {t('console.section.support')}
       </div>
       <div className="flex gap-1">
-        <SocialBtn label="Discord" href="#" color="#5865F2">
+        <SocialBtn label="Discord" href="https://discord.com/invite/solayerlabs" color="#5865F2">
           <DiscordIcon />
         </SocialBtn>
-        <SocialBtn label="GitHub" href="#" color="#94A3B8">
+        <SocialBtn label="GitHub" href="https://github.com/solayer-labs" color="#94A3B8">
           <GithubIcon />
         </SocialBtn>
-        <SocialBtn label="X" href="#" color="#94A3B8">
+        <SocialBtn label="X" href="https://x.com/solayer_labs" color="#94A3B8">
           <XIcon />
         </SocialBtn>
-        <SocialBtn label="Telegram" href="#" color="#229ED9">
-          <TelegramIcon />
+        <SocialBtn label="Website" href="https://solayer.org/" color="#084d3e">
+          <GlobeIcon />
         </SocialBtn>
       </div>
     </div>
@@ -235,25 +233,12 @@ function SocialBtn({
 }
 
 function LogoMark() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="sb-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M2 14 Q5 8 8 14 T14 14 T20 14"
-        stroke="url(#sb-mark)"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="20" cy="14" r="2.4" fill="url(#sb-mark)" />
-    </svg>
-  )
+  const { theme } = useTheme()
+  const src =
+    theme === 'dark'
+      ? 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-dark.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=2f6e56d868d5149426f1c475850b010c'
+      : 'https://mintcdn.com/solayerlabsinc/ehaIHrCi02AamVTV/images/logo-light.svg?fit=max&auto=format&n=ehaIHrCi02AamVTV&q=85&s=db21e2d43a937526636dbee85dd895b3'
+  return <img src={src} alt="Solayer" className="h-7 w-auto" />
 }
 
 const ICON = { viewBox: '0 0 24 24', fill: 'currentColor', width: 14, height: 14 } as const
@@ -278,10 +263,18 @@ function XIcon() {
     </svg>
   )
 }
-function TelegramIcon() {
+function GlobeIcon() {
   return (
-    <svg {...ICON}>
-      <path d="M21.9 3.4 2.5 10.9c-1.3.5-1.3 1.3-.2 1.6l5 1.6 1.9 5.9c.2.7.1 1 .9 1 .6 0 .9-.3 1.2-.6l2.9-2.8 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.9-1.4-1.6z" />
-    </svg>
+    <span
+      className="block h-[14px] w-[14px]"
+      style={{
+        maskImage: 'url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/duotone/globe.svg")',
+        maskRepeat: 'no-repeat',
+        maskPosition: 'center center',
+        maskSize: 'contain',
+        backgroundColor: 'currentColor',
+      }}
+      aria-hidden="true"
+    />
   )
 }

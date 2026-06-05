@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-[1180px] flex-wrap justify-between gap-7">
         <div>
           <div className="font-display text-[1.05rem] font-bold">
-            wavydance<span className="text-current-ink">.ai</span>
+            solayer<span className="text-current-ink">.ai</span>
           </div>
           <div className="mt-2.5 font-mono text-[0.8rem] tracking-[2px] text-[color:var(--muted)]/60">
             ONE WAVE. EVERY MODEL.

@@ -71,7 +71,7 @@ function QuotaCard({
     <div className="relative overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-jelly)]">
       <div
         className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-40 blur-3xl"
-        style={{ background: 'radial-gradient(circle, var(--cyan), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, var(--primary), transparent 70%)' }}
       />
 
       <div className="relative">
@@ -90,7 +90,7 @@ function QuotaCard({
         {/* Progress bar */}
         <div className="mt-5 h-2 overflow-hidden rounded-full bg-[color:var(--border)]/55">
           <span
-            className="block h-full rounded-full bg-gradient-to-r from-[#3FB3D9] via-[#4ED4DC] to-[#B5ECF2] transition-[width] duration-700"
+            className="block h-full rounded-full bg-gradient-to-r from-[#084D3E] via-[#0d6b53] to-[#a4e58f] transition-[width] duration-700"
             style={{ width: `${usedPct}%` }}
           />
         </div>
@@ -145,8 +145,8 @@ function RedeemCard({ onRedeemed }: { onRedeemed: () => void }) {
       className="flex flex-col rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-jelly)]"
     >
       <div className="mb-3 flex items-center gap-2">
-        <Gift className="h-4 w-4 text-[color:var(--cyan)]" />
-        <h3 className="font-display text-base font-bold">{t('billing.redeem.title')}</h3>
+        <Gift className="h-4 w-4 text-[color:var(--primary)]" />
+        <h3 className="font-display text-base font-bold text-[color:var(--title)]">{t('billing.redeem.title')}</h3>
       </div>
       <p className="mb-4 text-xs text-[color:var(--muted)]">{t('billing.redeem.help')}</p>
 
@@ -155,7 +155,7 @@ function RedeemCard({ onRedeemed }: { onRedeemed: () => void }) {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         placeholder={t('billing.redeem.placeholder')}
-        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 font-mono text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
+        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 font-mono text-sm transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
       />
 
       {err && (
@@ -164,7 +164,7 @@ function RedeemCard({ onRedeemed }: { onRedeemed: () => void }) {
         </div>
       )}
       {okMsg && (
-        <div className="mt-3 rounded-lg border border-[color:var(--live)]/30 bg-[color:var(--live)]/10 px-3 py-2 text-xs text-[color:var(--live)]">
+        <div className="mt-3 rounded-lg border border-[color:var(--primary)]/30 bg-[color:var(--primary)]/10 px-3 py-2 text-xs text-[color:var(--primary)]">
           <Check className="mr-1 inline h-3 w-3" />
           {okMsg}
         </div>
@@ -245,10 +245,10 @@ function RedemptionsAdminSection() {
     <section className="mt-10">
       <div className="mb-4 flex items-end justify-between">
         <div>
-          <div className="font-mono text-xs uppercase tracking-[2px] text-[color:var(--cyan)]">
+          <div className="font-mono text-xs uppercase tracking-[2px] text-[color:var(--primary)]">
             {t('billing.redemption.kicker')}
           </div>
-          <h2 className="mt-1 font-display text-xl font-bold tracking-[-0.5px]">
+          <h2 className="mt-1 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">
             {t('billing.redemption.title')}
           </h2>
         </div>
@@ -295,8 +295,8 @@ function CodeCell({ value }: { value: string }) {
           setTimeout(() => setCopied(false), 1500)
         }}
         className={cn(
-          'flex h-6 w-6 flex-shrink-0 items-center justify-center rounded transition hover:text-[color:var(--cyan)]',
-          copied ? 'text-[color:var(--live)]' : 'text-[color:var(--muted)]',
+          'flex h-6 w-6 flex-shrink-0 items-center justify-center rounded transition hover:text-[color:var(--primary)]',
+          copied ? 'text-[color:var(--primary)]' : 'text-[color:var(--muted)]',
         )}
         title="Copy"
       >
@@ -341,7 +341,7 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
         className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
       >
         <div className="kicker mb-1.5">{t('billing.redemption.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">
+        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">
           {t('billing.redemption.create')}
         </h2>
 
@@ -391,7 +391,7 @@ function DialogField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
-        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
+        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
       />
     </label>
   )

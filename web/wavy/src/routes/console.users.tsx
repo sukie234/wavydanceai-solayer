@@ -193,7 +193,7 @@ function RoleBadge({ role }: { role: number }) {
     isRoot
       ? 'bg-[color:var(--coral)]/12 text-[color:var(--coral)]'
       : isAdmin
-        ? 'bg-[color:var(--cyan)]/15 text-[color:var(--cyan)]'
+        ? 'bg-[color:var(--primary)]/15 text-[color:var(--primary)]'
         : 'bg-[color:var(--border)]/40 text-[color:var(--muted)]'
   return (
     <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-xs uppercase tracking-[1px]', tone)}>
@@ -288,7 +288,7 @@ function IconBtn({
       onClick={onClick}
       className={cn(
         'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition',
-        tone === 'default' && 'hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)]',
+        tone === 'default' && 'hover:border-[color:var(--primary)] hover:text-[color:var(--primary)]',
         tone === 'warn' && 'hover:border-[#F5C26B]/70 hover:text-[#F5C26B]',
         tone === 'coral' && 'hover:border-[color:var(--coral)]/70 hover:text-[color:var(--coral)]',
       )}
@@ -327,7 +327,7 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
         className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
       >
         <div className="kicker mb-1.5">{t('users.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">{t('users.newUser')}</h2>
+        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">{t('users.newUser')}</h2>
 
         <DialogField label={t('users.col.username')} value={username} onChange={setUsername} autoFocus />
         <DialogField label="Password" type="password" value={password} onChange={setPassword} />
@@ -378,7 +378,7 @@ function DialogField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
-        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
+        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
       />
     </label>
   )
