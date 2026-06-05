@@ -178,17 +178,17 @@ function SupportRow() {
         {t('console.section.support')}
       </div>
       <div className="flex gap-1">
-        <SocialBtn label="Discord" href="#" color="#5865F2">
+        <SocialBtn label="Discord" href="https://discord.com/invite/solayerlabs" color="#5865F2">
           <DiscordIcon />
         </SocialBtn>
-        <SocialBtn label="GitHub" href="#" color="#94A3B8">
+        <SocialBtn label="GitHub" href="https://github.com/solayer-labs" color="#94A3B8">
           <GithubIcon />
         </SocialBtn>
-        <SocialBtn label="X" href="#" color="#94A3B8">
+        <SocialBtn label="X" href="https://x.com/solayer_labs" color="#94A3B8">
           <XIcon />
         </SocialBtn>
-        <SocialBtn label="Telegram" href="#" color="#229ED9">
-          <TelegramIcon />
+        <SocialBtn label="Website" href="https://solayer.org/" color="#084d3e">
+          <GlobeIcon />
         </SocialBtn>
       </div>
     </div>
@@ -258,10 +258,18 @@ function XIcon() {
     </svg>
   )
 }
-function TelegramIcon() {
+function GlobeIcon() {
   return (
-    <svg {...ICON}>
-      <path d="M21.9 3.4 2.5 10.9c-1.3.5-1.3 1.3-.2 1.6l5 1.6 1.9 5.9c.2.7.1 1 .9 1 .6 0 .9-.3 1.2-.6l2.9-2.8 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.9-1.4-1.6z" />
-    </svg>
+    <span
+      className="block h-[14px] w-[14px]"
+      style={{
+        maskImage: 'url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/duotone/globe.svg")',
+        maskRepeat: 'no-repeat',
+        maskPosition: 'center center',
+        maskSize: 'contain',
+        backgroundColor: 'currentColor',
+      }}
+      aria-hidden="true"
+    />
   )
 }
