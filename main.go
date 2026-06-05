@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 
@@ -107,8 +108,17 @@ func main() {
 	server.Use(middleware.RequestId())
 	server.Use(middleware.Language())
 	middleware.SetUpLogger(server)
-	// Initialize session store
+	// Initialize session store with hardened cookie defaults.
+	// Secure flag is opt-in via SESSION_COOKIE_SECURE=true so local HTTP dev
+	// still works; production deployments should set it (TLS in front).
 	store := cookie.NewStore([]byte(config.SessionSecret))
+	store.Options(sessions.Options{
+		Path:     "/",
+		HttpOnly: true, // block JS access — defends against XSS-driven session theft
+		SameSite: http.SameSiteLaxMode,
+		Secure:   os.Getenv("SESSION_COOKIE_SECURE") == "true",
+		MaxAge:   86400 * 7, // 1 week
+	})
 	server.Use(sessions.Sessions("session", store))
 
 	router.SetRouter(server, buildFS)

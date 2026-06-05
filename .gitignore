@@ -31,3 +31,16 @@ coverage/
 
 # Go vendored deps (not used currently)
 vendor/
+
+# Local dev artifacts — see CLAUDE.md §7 "Never commit local dev artifacts"
+# Playwright MCP output (page snapshots + console logs from smoke tests)
+.playwright-mcp/
+# Chrome DevTools MCP browser profile cache
+.cache/chrome-devtools-mcp/
+# Verification screenshots dropped at repo root by Playwright / Chrome DevTools.
+# Legitimate product assets belong under web/wavy/public/ or web/web_reference/
+# — those are NOT matched by these root-only patterns.
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp

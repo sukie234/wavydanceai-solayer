@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 280" width="560" height="280">
+  <defs>
+    <linearGradient id="jelly" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3FB3D9"/>
+      <stop offset="55%" stop-color="#4ED4DC"/>
+      <stop offset="100%" stop-color="#B5ECF2"/>
+    </linearGradient>
+    <linearGradient id="echo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3FB3D9" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#B5ECF2" stop-opacity="0.35"/>
+    </linearGradient>
+    <linearGradient id="jellyInk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2E8FB0"/>
+      <stop offset="60%" stop-color="#2FA3B3"/>
+      <stop offset="100%" stop-color="#4FB3C9"/>
+    </linearGradient>
+    <linearGradient id="echoInk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2E8FB0" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#4FB3C9" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- dark mode lockup -->
+  <rect width="560" height="140" rx="24" fill="#052832"/>
+  <g transform="translate(22,16) scale(0.9)">
+    <path d="M18 44 C 30 86, 42 86, 54 56 C 66 86, 78 86, 102 40"
+          fill="none" stroke="url(#jelly)" stroke-width="11" stroke-linecap="round"/>
+    <path d="M18 66 C 30 100, 42 100, 54 76 C 66 100, 78 100, 102 62"
+          fill="none" stroke="url(#echo)" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="102" cy="40" r="6.5" fill="#4ED4DC"/>
+  </g>
+  <text x="148" y="84" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-size="48" font-weight="700" fill="#EAFBFE" letter-spacing="-1">wavydance<tspan fill="url(#jelly)">.ai</tspan></text>
+  <text x="150" y="112" font-family="'Inter','Segoe UI',Arial,sans-serif" font-size="15" fill="#92C5D1" letter-spacing="3">ONE WAVE. EVERY MODEL.</text>
+
+  <!-- light mode lockup -->
+  <rect y="140" width="560" height="140" rx="24" fill="#F3FAFC"/>
+  <g transform="translate(22,156) scale(0.9)">
+    <path d="M18 44 C 30 86, 42 86, 54 56 C 66 86, 78 86, 102 40"
+          fill="none" stroke="url(#jellyInk)" stroke-width="11" stroke-linecap="round"/>
+    <path d="M18 66 C 30 100, 42 100, 54 76 C 66 100, 78 100, 102 62"
+          fill="none" stroke="url(#echoInk)" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="102" cy="40" r="6.5" fill="#2FA3B3"/>
+  </g>
+  <text x="148" y="224" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-size="48" font-weight="700" fill="#07394A" letter-spacing="-1">wavydance<tspan fill="url(#jellyInk)">.ai</tspan></text>
+  <text x="150" y="252" font-family="'Inter','Segoe UI',Arial,sans-serif" font-size="15" fill="#3F7A8C" letter-spacing="3">ONE WAVE. EVERY MODEL.</text>
+</svg>

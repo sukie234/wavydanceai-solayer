@@ -1,13 +1,12 @@
 #!/bin/sh
+set -e
 
-version=$(cat VERSION)
-pwd
+version=$(cat ../VERSION 2>/dev/null || cat VERSION 2>/dev/null || echo "dev")
+cd "$(dirname "$0")/wavy"
 
-while IFS= read -r theme; do
-    echo "Building theme: $theme"
-    rm -r build/$theme
-    cd "$theme"
-    npm install
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$version npm run build
-    cd ..
-done < THEMES
+if [ ! -d node_modules ]; then
+    bun install --frozen-lockfile
+fi
+
+VITE_REACT_APP_VERSION="$version" bun run build
+echo "Built wavy → web/build/wavy/"

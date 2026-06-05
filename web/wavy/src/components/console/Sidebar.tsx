@@ -1,0 +1,256 @@
+import { useLayoutEffect, useRef, useState } from 'react'
+import { Link, useLocation } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import {
+  LayoutDashboard,
+  PlugZap,
+  Boxes,
+  KeyRound,
+  ScrollText,
+  BarChart3,
+  Receipt,
+  Users,
+  Settings,
+} from 'lucide-react'
+import { cn } from '@/lib/cn'
+
+type NavItem = {
+  to: string
+  icon: typeof LayoutDashboard
+  i18n: string
+}
+
+const OPERATIONS: NavItem[] = [
+  { to: '/console', icon: LayoutDashboard, i18n: 'console.nav.overview' },
+  { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels' },
+  { to: '/console/models', icon: Boxes, i18n: 'console.nav.models' },
+  { to: '/console/tokens', icon: KeyRound, i18n: 'console.nav.tokens' },
+  { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
+  { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },
+  { to: '/console/billing', icon: Receipt, i18n: 'console.nav.billing' },
+]
+
+const ACCOUNT: NavItem[] = [
+  { to: '/console/users', icon: Users, i18n: 'console.nav.users' },
+  { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings' },
+]
+
+export function Sidebar() {
+  const { t } = useTranslation()
+  const { pathname } = useLocation()
+  const listRef = useRef<HTMLDivElement>(null)
+  const [packetTop, setPacketTop] = useState(0)
+
+  // Move the glowing "packet" on the current line to align with the active item.
+  useLayoutEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const active = list.querySelector<HTMLElement>('[data-active="true"]')
+    if (!active) return
+    const listRect = list.getBoundingClientRect()
+    const itemRect = active.getBoundingClientRect()
+    setPacketTop(itemRect.top - listRect.top + itemRect.height / 2)
+  }, [pathname])
+
+  return (
+    <aside className="sticky top-0 hidden h-screen w-[260px] flex-shrink-0 flex-col border-r border-[color:var(--border)] bg-[color:var(--surface)] md:flex">
+      {/* Brand — clicking returns to landing */}
+      <Link
+        to="/"
+        className="group flex items-center gap-2.5 px-6 py-5 transition-opacity hover:opacity-80"
+        aria-label="Back to wavydance.ai homepage"
+      >
+        <LogoMark />
+        <span className="font-display text-base font-bold tracking-[-0.5px]">
+          wavydance<span className="text-current-ink">.ai</span>
+        </span>
+      </Link>
+
+      {/* Nav with vertical "current" accent line */}
+      <div ref={listRef} className="relative flex-1 overflow-y-auto px-3 pb-4">
+        <style>{`
+          @keyframes wavy-dash-v{to{background-position:0 16px}}
+          .wavy-current-line{
+            background: repeating-linear-gradient(180deg,
+              color-mix(in srgb, var(--cyan) 55%, transparent) 0 8px,
+              transparent 8px 16px);
+            background-size: 2px 16px;
+            animation: wavy-dash-v .9s linear infinite;
+          }
+        `}</style>
+        <span className="wavy-current-line pointer-events-none absolute bottom-3 left-[18px] top-2 w-[2px]" />
+        <span
+          className="pointer-events-none absolute left-[14px] z-10 h-2.5 w-2.5 rounded-full bg-[color:var(--mint)] transition-[top] duration-500 ease-out"
+          style={{
+            top: `${packetTop}px`,
+            transform: 'translateY(-50%)',
+            boxShadow: '0 0 14px var(--mint), 0 0 4px var(--mint)',
+          }}
+        />
+
+        <SectionLabel>{t('console.section.operations')}</SectionLabel>
+        {OPERATIONS.map((item) => (
+          <NavRow key={item.to} item={item} t={t} pathname={pathname} />
+        ))}
+
+        <SectionLabel className="mt-7">{t('console.section.account')}</SectionLabel>
+        {ACCOUNT.map((item) => (
+          <NavRow key={item.to} item={item} t={t} pathname={pathname} />
+        ))}
+      </div>
+
+      <SupportRow />
+    </aside>
+  )
+}
+
+function SectionLabel({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div
+      className={cn(
+        'mb-2 ml-5 mt-3 font-mono text-[11px] font-medium uppercase tracking-[2.5px] text-[color:var(--muted)]/70',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+function NavRow({ item, t, pathname }: { item: NavItem; t: (k: string) => string; pathname: string }) {
+  const Icon = item.icon
+  const active = item.to === '/console' ? pathname === '/console' : pathname.startsWith(item.to)
+  return (
+    <Link
+      to={item.to}
+      data-active={active}
+      className={cn(
+        'group relative ml-5 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-200',
+        'text-[color:var(--muted)] hover:bg-[color:var(--bg2)] hover:text-[color:var(--text)]',
+        active && 'bg-[color:var(--bg2)] text-[color:var(--text)]',
+      )}
+    >
+      <Icon
+        className={cn(
+          'h-4 w-4 flex-shrink-0 transition-colors',
+          active ? 'text-[color:var(--cyan)]' : 'text-[color:var(--muted)] group-hover:text-[color:var(--cyan)]',
+        )}
+        strokeWidth={1.75}
+      />
+      <span>{t(item.i18n)}</span>
+      {active && (
+        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[color:var(--cyan)] [animation:wavy-pulse_2s_infinite]" />
+      )}
+      <style>{`@keyframes wavy-pulse{50%{opacity:.35}}`}</style>
+    </Link>
+  )
+}
+
+function SupportRow() {
+  const { t } = useTranslation()
+  return (
+    <div className="border-t border-[color:var(--border)] px-5 py-4">
+      <div className="mb-2.5 font-mono text-[11px] font-medium uppercase tracking-[2.5px] text-[color:var(--muted)]/70">
+        {t('console.section.support')}
+      </div>
+      <div className="flex gap-1">
+        <SocialBtn label="Discord" href="#" color="#5865F2">
+          <DiscordIcon />
+        </SocialBtn>
+        <SocialBtn label="GitHub" href="#" color="#94A3B8">
+          <GithubIcon />
+        </SocialBtn>
+        <SocialBtn label="X" href="#" color="#94A3B8">
+          <XIcon />
+        </SocialBtn>
+        <SocialBtn label="Telegram" href="#" color="#229ED9">
+          <TelegramIcon />
+        </SocialBtn>
+      </div>
+    </div>
+  )
+}
+
+function SocialBtn({
+  label,
+  href,
+  color,
+  children,
+}: {
+  label: string
+  href: string
+  color: string
+  children: React.ReactNode
+}) {
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      className="group relative flex h-9 w-9 flex-1 items-center justify-center rounded-lg border border-[color:var(--border)] text-[color:var(--muted)] transition-all hover:-translate-y-0.5"
+      style={{ ['--hover' as never]: color }}
+    >
+      <span
+        className="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        style={{ background: `linear-gradient(135deg, ${color}40, transparent)` }}
+      />
+      <span className="relative transition-colors group-hover:text-[color:var(--text)]" style={{ width: 14, height: 14 }}>
+        {children}
+      </span>
+      <span className="pointer-events-none absolute -bottom-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-2 py-1 text-[11px] text-[color:var(--muted)] opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+        {label}
+      </span>
+    </a>
+  )
+}
+
+function LogoMark() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <defs>
+        <linearGradient id="sb-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#3FB3D9" />
+          <stop offset="60%" stopColor="#4ED4DC" />
+          <stop offset="100%" stopColor="#B5ECF2" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M2 14 Q5 8 8 14 T14 14 T20 14"
+        stroke="url(#sb-mark)"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <circle cx="20" cy="14" r="2.4" fill="url(#sb-mark)" />
+    </svg>
+  )
+}
+
+const ICON = { viewBox: '0 0 24 24', fill: 'currentColor', width: 14, height: 14 } as const
+function DiscordIcon() {
+  return (
+    <svg {...ICON}>
+      <path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.4c1.8.4 2.6 1.1 3.5 1.9a13.3 13.3 0 0 0-11.4 0c.9-.8 1.9-1.5 3.5-1.9L10.6 3a19.8 19.8 0 0 0-4.9 1.4C2.6 9 1.9 13.4 2.2 17.8c2 1.5 3.9 2.4 5.8 3l1.2-2c-.6-.2-1.3-.5-1.9-1l.5-.4a14 14 0 0 0 12.4 0l.5.4c-.6.4-1.3.8-1.9 1l1.2 2c1.9-.6 3.8-1.5 5.8-3 .4-5-.7-9.4-3.5-13.4zM8.7 14.8c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z" />
+    </svg>
+  )
+}
+function GithubIcon() {
+  return (
+    <svg {...ICON}>
+      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.55v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.9 1.2 1.9 1.2 3.2 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
+    </svg>
+  )
+}
+function XIcon() {
+  return (
+    <svg {...ICON}>
+      <path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.3l7.3-8.3L1.2 2h6.5l4.4 5.9L18.9 2z" />
+    </svg>
+  )
+}
+function TelegramIcon() {
+  return (
+    <svg {...ICON}>
+      <path d="M21.9 3.4 2.5 10.9c-1.3.5-1.3 1.3-.2 1.6l5 1.6 1.9 5.9c.2.7.1 1 .9 1 .6 0 .9-.3 1.2-.6l2.9-2.8 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.9-1.4-1.6z" />
+    </svg>
+  )
+}

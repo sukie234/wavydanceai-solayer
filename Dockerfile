@@ -1,26 +1,20 @@
-FROM --platform=$BUILDPLATFORM node:16 AS builder
+# syntax=docker/dockerfile:1
+
+# ---------- Stage 1: build wavy frontend with bun ----------
+FROM --platform=$BUILDPLATFORM oven/bun:1 AS web-builder
 
 WORKDIR /web
-COPY ./VERSION .
-COPY ./web .
+COPY web/wavy/package.json web/wavy/bun.lock ./
+RUN bun install --frozen-lockfile
 
-RUN npm install --prefix /web/default & \
-    npm install --prefix /web/berry & \
-    npm install --prefix /web/air & \
-    wait
+COPY web/wavy/ ./
+COPY VERSION /VERSION
+RUN VITE_REACT_APP_VERSION=$(cat /VERSION) bun run build:only
 
-RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/default & \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/berry & \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/air & \
-    wait
+# ---------- Stage 2: compile Go binary ----------
+FROM golang:1.23-alpine AS go-builder
 
-FROM golang:alpine AS builder2
-
-RUN apk add --no-cache \
-    gcc \
-    musl-dev \
-    sqlite-dev \
-    build-base
+RUN apk add --no-cache gcc musl-dev sqlite-dev build-base
 
 ENV GO111MODULE=on \
     CGO_ENABLED=1 \
@@ -32,15 +26,19 @@ ADD go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-COPY --from=builder /web/build ./web/build
+# wavy build output → web/build/wavy/ (go:embed target in main.go)
+COPY --from=web-builder /web/dist ./web/build/wavy
 
-RUN go build -trimpath -ldflags "-s -w -X 'github.com/songquanpeng/one-api/common.Version=$(cat VERSION)' -linkmode external -extldflags '-static'" -o one-api
+RUN go build -trimpath \
+    -ldflags "-s -w -X 'github.com/songquanpeng/one-api/common.Version=$(cat VERSION)' -linkmode external -extldflags '-static'" \
+    -o one-api
 
+# ---------- Stage 3: minimal runtime ----------
 FROM alpine:latest
 
 RUN apk add --no-cache ca-certificates tzdata
 
-COPY --from=builder2 /build/one-api /
+COPY --from=go-builder /build/one-api /
 
 EXPOSE 3000
 WORKDIR /data

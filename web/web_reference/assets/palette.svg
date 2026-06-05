@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 620" width="720" height="620" font-family="'Inter','Segoe UI',Arial,sans-serif">
+  <defs>
+    <linearGradient id="jelly" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3FB3D9"/>
+      <stop offset="55%" stop-color="#4ED4DC"/>
+      <stop offset="100%" stop-color="#B5ECF2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ===== DARK MODE (Deep Lagoon) ===== -->
+  <rect width="720" height="310" rx="20" fill="#052832"/>
+  <text x="36" y="44" font-size="20" font-weight="700" fill="#EAFBFE">Jelly Sea — Dark Mode (Deep Lagoon)</text>
+
+  <g transform="translate(36,66)">
+    <rect width="118" height="84" rx="12" fill="#3FB3D9"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#EAFBFE">Jelly Azure</text>
+    <text x="0" y="123" font-size="12" fill="#92C5D1">#3FB3D9 · primary</text>
+  </g>
+  <g transform="translate(170,66)">
+    <rect width="118" height="84" rx="12" fill="#4ED4DC"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#EAFBFE">Jelly Turquoise</text>
+    <text x="0" y="123" font-size="12" fill="#92C5D1">#4ED4DC · accent</text>
+  </g>
+  <g transform="translate(304,66)">
+    <rect width="118" height="84" rx="12" fill="#B5ECF2"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#EAFBFE">Ice Glass</text>
+    <text x="0" y="123" font-size="12" fill="#92C5D1">#B5ECF2 · highlight</text>
+  </g>
+  <g transform="translate(438,66)">
+    <rect width="118" height="84" rx="12" fill="#F49BAB"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#EAFBFE">Coral Pulse</text>
+    <text x="0" y="123" font-size="12" fill="#92C5D1">#F49BAB · CTA</text>
+  </g>
+  <g transform="translate(572,66)">
+    <rect width="112" height="84" rx="12" fill="url(#jelly)"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#EAFBFE">The Current</text>
+    <text x="0" y="123" font-size="12" fill="#92C5D1">gradient</text>
+  </g>
+
+  <g transform="translate(36,200)">
+    <rect width="118" height="52" rx="12" fill="#052832" stroke="#12485A" stroke-width="1.5"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#EAFBFE">Deep Lagoon</text>
+    <text x="0" y="91" font-size="12" fill="#92C5D1">#052832 · bg</text>
+  </g>
+  <g transform="translate(170,200)">
+    <rect width="118" height="52" rx="12" fill="#083644"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#EAFBFE">Tidepool</text>
+    <text x="0" y="91" font-size="12" fill="#92C5D1">#083644 · surface</text>
+  </g>
+  <g transform="translate(304,200)">
+    <rect width="118" height="52" rx="12" fill="#12485A"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#EAFBFE">Reef</text>
+    <text x="0" y="91" font-size="12" fill="#92C5D1">#12485A · borders</text>
+  </g>
+  <g transform="translate(438,200)">
+    <rect width="118" height="52" rx="12" fill="#92C5D1"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#EAFBFE">Drift</text>
+    <text x="0" y="91" font-size="12" fill="#92C5D1">#92C5D1 · muted</text>
+  </g>
+  <g transform="translate(572,200)">
+    <rect width="112" height="52" rx="12" fill="#EAFBFE"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#EAFBFE">Sea Foam</text>
+    <text x="0" y="91" font-size="12" fill="#92C5D1">#EAFBFE · text</text>
+  </g>
+
+  <!-- ===== LIGHT MODE (Shallow Lagoon) ===== -->
+  <rect y="320" width="720" height="300" rx="20" fill="#F3FAFC" stroke="#C9E6EE" stroke-width="1.5"/>
+  <text x="36" y="362" font-size="20" font-weight="700" fill="#07394A">Jelly Sea — Light Mode (Shallow Lagoon)</text>
+
+  <g transform="translate(36,384)">
+    <rect width="118" height="84" rx="12" fill="#2E8FB0"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#07394A">Lagoon Ink</text>
+    <text x="0" y="123" font-size="12" fill="#3F7A8C">#2E8FB0 · primary</text>
+  </g>
+  <g transform="translate(170,384)">
+    <rect width="118" height="84" rx="12" fill="#2FA3B3"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#07394A">Turquoise Ink</text>
+    <text x="0" y="123" font-size="12" fill="#3F7A8C">#2FA3B3 · accent</text>
+  </g>
+  <g transform="translate(304,384)">
+    <rect width="118" height="84" rx="12" fill="#8FD8E5"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#07394A">Jelly Glass</text>
+    <text x="0" y="123" font-size="12" fill="#3F7A8C">#8FD8E5 · highlight</text>
+  </g>
+  <g transform="translate(438,384)">
+    <rect width="118" height="84" rx="12" fill="#F49BAB"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#07394A">Coral Pulse</text>
+    <text x="0" y="123" font-size="12" fill="#3F7A8C">#F49BAB · CTA</text>
+  </g>
+  <g transform="translate(572,384)">
+    <rect width="112" height="84" rx="12" fill="url(#jelly)"/>
+    <text x="0" y="106" font-size="13" font-weight="600" fill="#07394A">The Current</text>
+    <text x="0" y="123" font-size="12" fill="#3F7A8C">gradient</text>
+  </g>
+
+  <g transform="translate(36,514)">
+    <rect width="118" height="52" rx="12" fill="#F3FAFC" stroke="#C9E6EE" stroke-width="1.5"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#07394A">Sea Foam</text>
+    <text x="0" y="91" font-size="12" fill="#3F7A8C">#F3FAFC · bg</text>
+  </g>
+  <g transform="translate(170,514)">
+    <rect width="118" height="52" rx="12" fill="#E7F5F8" stroke="#C9E6EE" stroke-width="1"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#07394A">Shallows</text>
+    <text x="0" y="91" font-size="12" fill="#3F7A8C">#E7F5F8 · surface</text>
+  </g>
+  <g transform="translate(304,514)">
+    <rect width="118" height="52" rx="12" fill="#C9E6EE"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#07394A">Sea Mist</text>
+    <text x="0" y="91" font-size="12" fill="#3F7A8C">#C9E6EE · borders</text>
+  </g>
+  <g transform="translate(438,514)">
+    <rect width="118" height="52" rx="12" fill="#3F7A8C"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#07394A">Drift Ink</text>
+    <text x="0" y="91" font-size="12" fill="#3F7A8C">#3F7A8C · muted</text>
+  </g>
+  <g transform="translate(572,514)">
+    <rect width="112" height="52" rx="12" fill="#07394A"/>
+    <text x="0" y="74" font-size="13" font-weight="600" fill="#07394A">Lagoon Deep</text>
+    <text x="0" y="91" font-size="12" fill="#3F7A8C">#07394A · text</text>
+  </g>
+</svg>

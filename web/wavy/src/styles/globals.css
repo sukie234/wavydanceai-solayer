@@ -1,0 +1,131 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   Jelly Sea — design tokens (source: web_reference/brand_guide.md)
+   Light mode = Shallow Lagoon, Dark mode = Deep Lagoon
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* Shallow Lagoon (light) */
+    --bg: #f3fafc;
+    --bg2: #e7f5f8;
+    --surface: #ffffff;
+    --border: #c9e6ee;
+    --text: #07394a;
+    --muted: #3f7a8c;
+    --cyan: #2e8fb0;
+    --mint: #2fa3b3;
+    --glass: #8fd8e5;
+    --coral: #f49bab;
+    --live: #2bbe8c;
+    --cta-ink: #052832;
+    --current: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
+    --current-ink: linear-gradient(110deg, #2e8fb0 0%, #2fa3b3 60%, #4fb3c9 100%);
+    --shadow: 0 30px 80px rgba(6, 58, 63, 0.12);
+    --glow-op: 0.2;
+    /* Code-panel water glass — heavier in light mode so code text stays readable
+       against the pale Sea Foam page background */
+    --glass-bg: linear-gradient(
+      135deg,
+      rgba(8, 54, 68, 0.82) 0%,
+      rgba(6, 43, 54, 0.88) 60%,
+      rgba(5, 32, 42, 0.92) 100%
+    );
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --glass-edge: rgba(255, 255, 255, 0.22);
+    --glass-shadow: 0 30px 80px rgba(6, 58, 63, 0.28), 0 8px 24px rgba(6, 58, 63, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+      inset 1px 0 0 rgba(255, 255, 255, 0.04);
+  }
+
+  [data-theme='dark'] {
+    /* Deep Lagoon (dark) */
+    --bg: #052832;
+    --bg2: #052e35;
+    --surface: #083644;
+    --border: #12485a;
+    --text: #eafbfe;
+    --muted: #92c5d1;
+    --cyan: #3fb3d9;
+    --mint: #4ed4dc;
+    --glass: #b5ecf2;
+    --coral: #f49bab;
+    --live: #3ed9a4;
+    --cta-ink: #052832;
+    --current: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
+    --current-ink: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
+    --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    --glow-op: 0.16;
+    /* Dark mode keeps the lighter, more translucent water-glass — ambient cyan
+       glows refract beautifully through against the deep page background */
+    --glass-bg: linear-gradient(
+      135deg,
+      rgba(8, 54, 68, 0.22) 0%,
+      rgba(6, 43, 54, 0.32) 60%,
+      rgba(5, 32, 42, 0.40) 100%
+    );
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-edge: rgba(255, 255, 255, 0.40);
+    --glass-shadow: 0 30px 80px rgba(6, 58, 63, 0.20), 0 8px 24px rgba(6, 58, 63, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+      inset 1px 0 0 rgba(255, 255, 255, 0.06);
+  }
+
+  html,
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* Tailwind v4 theme bridge — exposes tokens as utilities */
+@theme {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-surface: var(--surface);
+  --color-border-base: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-cyan-jelly: var(--cyan);
+  --color-mint-jelly: var(--mint);
+  --color-glass: var(--glass);
+  --color-coral: var(--coral);
+  --color-live: var(--live);
+
+  --font-display: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
+  --font-body: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --shadow-jelly: 0 30px 80px rgba(6, 58, 63, 0.12);
+}
+
+/* Brand gradient as text fill — use sparingly per brand guide */
+@utility text-current-ink {
+  background: var(--current-ink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-current-grad {
+  background: var(--current);
+}
+
+/* Section kicker — JetBrains Mono, uppercase, +3px tracking, accent color */
+@utility kicker {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 0.875rem;
+}

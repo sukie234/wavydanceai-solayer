@@ -1,0 +1,342 @@
+{
+  "nav": {
+    "models": "Models",
+    "leaderboard": "Leaderboard",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "signIn": "Sign in",
+    "console": "Console",
+    "getStarted": "Get API Key"
+  },
+  "console": {
+    "section": { "operations": "Operations", "account": "Account", "support": "Support" },
+    "nav": {
+      "overview": "Overview",
+      "channels": "Channels",
+      "models": "Models",
+      "tokens": "API Keys",
+      "logs": "Request Logs",
+      "analytics": "Analytics",
+      "billing": "Billing",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "searchPlaceholder": "Search channels, models, requests…",
+    "allFlowing": "All systems flowing",
+    "dash": {
+      "kicker": "Last 7 days · your account",
+      "title": "Overview",
+      "lead": "Trailing 7-day usage from /api/user/dashboard. Numbers update on each visit.",
+      "openAnalytics": "Open analytics",
+      "newKey": "New API key",
+      "kpi": {
+        "requests7d": "Requests · 7d",
+        "tokens7d": "Tokens · 7d",
+        "modelsUsed": "Models used",
+        "quota7d": "Quota spent · 7d"
+      },
+      "chart": { "title": "Request volume", "sub": "Daily request count over the last 7 days." },
+      "topModels": "Top models",
+      "viewAll": "View leaderboard",
+      "activity": "Recent activity",
+      "openLog": "Open logs",
+      "noModels": "No model usage in the last 7 days.",
+      "noActivity": "No requests yet — fire one off and refresh.",
+      "act": {
+        "key": "API key created for production-app",
+        "keyMeta": "wd-•••rA8f · scope: chat, vision · by jimmy.hu",
+        "fail": "Channel \"OpenAI Premium\" failed health check",
+        "failMeta": "503 from upstream · auto-failover to OpenAI Standard",
+        "quota": "Token quota raised: 100K → 500K",
+        "quotaMeta": "user: li.wei · tier: Current",
+        "upgrade": "User upgraded to Current tier",
+        "upgradeMeta": "sam@acme.io · billing: pay-as-you-go",
+        "routing": "Priority routing enabled for Claude Opus 4.6",
+        "routingMeta": "min-latency strategy · 3 fallback rules"
+      }
+    }
+  },
+  "common": {
+    "toggleTheme": "Toggle theme",
+    "language": "Language"
+  },
+  "hero": {
+    "tag": "All systems flowing · 99.99% uptime",
+    "title": "One Wave.",
+    "title_grad": "Every Model.",
+    "sub": "The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed at the speed of the current.",
+    "ctaPrimary": "Start Free — 1M tokens",
+    "ctaSecondary": "Read the Docs",
+    "st1": "models, one API",
+    "st2": "routing overhead",
+    "st3": "uptime with failover"
+  },
+  "demo": {
+    "kicker": "One gateway, two protocols",
+    "title1": "Drop-in for chat.",
+    "title2": "One task API for media.",
+    "lead": "Chat & vision models are OpenAI-compatible — change one line and switch providers. Image & video run through a single async task API with consistent parameters, returning results via webhook or polling.",
+    "tab": { "chat": "Chat", "image": "Image", "video": "Video" }
+  },
+  "lb": {
+    "kicker": "Leaderboard",
+    "title": "What the wave is riding",
+    "lead": "Most-used models on wavydance.ai, ranked by tokens processed in the last 24 hours.",
+    "note": "Tokens = last 24h · arrow = 3-day trend",
+    "tab": { "all": "All", "llm": "LLM", "image": "Image", "video": "Video" }
+  },
+  "show": {
+    "kicker": "Showcase",
+    "title": "Every modality. One wave.",
+    "lead": "Live samples from the models behind the gateway — vision, code, audio, reasoning and Chinese, all through the same endpoint.",
+    "tag": { "vision": "Vision", "code": "Code", "audio": "Audio", "reason": "Reasoning", "zh": "Chinese" },
+    "lbl": {
+      "in_image": "Input · image",
+      "in_audio": "Input · audio",
+      "out": "Output",
+      "prompt": "Prompt",
+      "thinking": "Output · chain of thought"
+    },
+    "c1": {
+      "q": "“What happened in Q3?”",
+      "a": "Revenue dipped 8% in Q3 (the pink marker) after two quarters of growth — likely seasonal, since Q4 recovers to the strongest point on the chart. Recommend annotating the churn spike in September."
+    },
+    "c2": { "q": "“Write a rate limiter decorator in Python, token-bucket style.”" },
+    "c3": {
+      "q": "standup_recording.m4a · 00:42",
+      "a": "Transcript ready. Summary: deploy moved to Thursday; two blockers — the staging DB migration and a flaky payment test. Action items assigned to Li (migration) and Sam (test)."
+    },
+    "c4": {
+      "q": "“A tank fills in 6h via pipe A, 4h via B, drains in 12h via C. All open — when is it full?”",
+      "a": "Rates: A = 1/6, B = 1/4, C = −1/12 per hour. Net = 2/12 + 3/12 − 1/12 = 4/12 = 1/3. Full tank ÷ net rate = 1 ÷ (1/3) = 3 hours. ✓ verified by dimensional check."
+    },
+    "c5": {
+      "q": "“Turn our slogan 'One Wave. Every Model.' into a watery Chinese brand line.”",
+      "a": "「一浪直达，万模归一。」— keeps the motion of the wave and lands the product truth: every model flows into one endpoint. Eight characters, parallel, memorable."
+    }
+  },
+  "flow": {
+    "kicker": "How it works",
+    "title": "Three steps. That's it.",
+    "lead": "Pick a model, send the request, receive results — by webhook push or polling. No SDK migration, no infrastructure.",
+    "s1": { "t": "Choose a model", "d": "200+ models behind one endpoint — switch providers by changing a single string." },
+    "s2": { "t": "Send the request", "d": "OpenAI-compatible REST. Streaming, tool calls and vision included out of the box." },
+    "s3": { "t": "Receive results", "d": "Instant response for chat; webhook push or polling for long-running jobs." },
+    "chip": { "webhook": "Webhook", "poll": "Polling" }
+  },
+  "pricing": {
+    "kicker": "Pricing",
+    "title": "Pay for tokens, not seats.",
+    "surf": {
+      "per": "/ forever",
+      "f1": "1M free tokens / month",
+      "f2": "All open-weight models",
+      "f3": "Community support",
+      "cta": "Start free"
+    },
+    "current": {
+      "price": "Pay-as-you-go",
+      "badge": "MOST POPULAR",
+      "f1": "All 200+ models",
+      "f2": "Smart routing & failover",
+      "f3": "Cost analytics & budgets",
+      "f4": "Priority support",
+      "cta": "Get API key"
+    },
+    "tsunami": {
+      "price": "Custom",
+      "per": "/ enterprise",
+      "f1": "Dedicated relay nodes",
+      "f2": "SLA 99.99% & SSO",
+      "f3": "Private model hosting",
+      "cta": "Talk to us"
+    }
+  },
+  "qa": {
+    "kicker": "Q&A",
+    "title": "Questions, answered.",
+    "lead": "The things developers ask before their first request.",
+    "q1": {
+      "q": "Is wavydance.ai compatible with the OpenAI SDK?",
+      "a": "Yes — for chat and vision models the API is fully OpenAI-compatible. Point your existing SDK at our base_url and switch providers by changing the model string. Image and video go through the unified async task API instead."
+    },
+    "q2": {
+      "q": "How does billing work?",
+      "a": "Pay-as-you-go per token (or per generation for media models), aggregated into one monthly bill across all providers. No seats, no minimums. Budgets and alerts are built in."
+    },
+    "q3": {
+      "q": "What happens when a provider goes down?",
+      "a": "Latency-aware routing detects the failure and retries your request on the next-best provider automatically — same model family where possible. You see one consistent endpoint; the failover is invisible."
+    },
+    "q4": {
+      "q": "Do you store or train on my prompts?",
+      "a": "No. Requests are relayed, metered and discarded. Only usage metadata (token counts, latency, model) is retained for analytics and billing. Enterprise plans support zero-log mode."
+    },
+    "q5": {
+      "q": "How do I get results from long-running image / video jobs?",
+      "a": "Two ways: register a webhook and we push the result the moment the task succeeds, or poll GET /v1/tasks/:id at your own pace. Both return the same task object."
+    }
+  },
+  "community": {
+    "title": "Join the wave 🌊",
+    "lead": "8,000+ developers share routing recipes, cost dashboards and early model access in our community."
+  },
+  "login": {
+    "kicker": "wavydance.ai · sign in",
+    "title": "Welcome back.",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "failed": "Login failed",
+    "helper": "Lost your way?",
+    "backHome": "Back to homepage"
+  },
+  "users": {
+    "kicker": "Account",
+    "title": "Users",
+    "lead": "Manage accounts, roles and quotas.",
+    "newUser": "New user",
+    "empty": "No users yet.",
+    "col": {
+      "username": "User",
+      "role": "Role",
+      "status": "Status",
+      "group": "Group",
+      "quota": "Quota (remain / used)",
+      "requests": "Requests"
+    }
+  },
+  "settings": {
+    "kicker": "Root only",
+    "title": "Settings",
+    "lead": "System-wide configuration. Changes take effect immediately."
+  },
+  "models": {
+    "kicker": "Catalog",
+    "title": "Models",
+    "lead": "{{count}} models available across all configured channels.",
+    "searchPlaceholder": "Filter by model name or provider…",
+    "empty": "No models registered yet — add a channel to make models available.",
+    "noMatch": "No models match this filter.",
+    "col": { "model": "Model", "owner": "Provider", "created": "Registered" }
+  },
+  "analytics": {
+    "kicker": "Last 7 days",
+    "title": "Analytics",
+    "lead": "Request volume, tokens consumed and quota cost across the trailing week.",
+    "kpi": {
+      "requests": "Requests",
+      "prompt": "Prompt tokens",
+      "completion": "Completion tokens",
+      "quota": "Quota spent"
+    },
+    "chart": { "requests": "Request volume", "quota": "Quota consumption" },
+    "byModel": "Per-model breakdown",
+    "empty": "No usage data yet — make some requests and check back tomorrow.",
+    "col": {
+      "model": "Model",
+      "requests": "Requests",
+      "promptTokens": "Prompt tokens",
+      "completionTokens": "Completion tokens",
+      "quota": "Quota"
+    }
+  },
+  "billing": {
+    "kicker": "Wallet",
+    "title": "Billing",
+    "lead": "Track quota, redeem codes and manage payment.",
+    "quota": { "label": "Remaining quota", "tokens": "tokens" },
+    "metric": { "requests": "Total requests", "avg": "Avg quota / request" },
+    "redeem": {
+      "title": "Redeem code",
+      "help": "Enter a redemption code to add quota to this account.",
+      "placeholder": "wd-XXXXXXXX-XXXX-XXXX",
+      "submit": "Redeem"
+    },
+    "redemption": {
+      "kicker": "Admin",
+      "title": "Redemption codes",
+      "create": "New codes",
+      "count": "Count",
+      "empty": "No redemption codes issued yet.",
+      "col": { "name": "Name", "key": "Code", "quota": "Quota", "status": "Status" }
+    }
+  },
+  "tk": {
+    "kicker": "API Keys",
+    "title": "Your keys",
+    "lead": "Each key authenticates one client. Disable or rotate any key that may have leaked.",
+    "newKey": "New key",
+    "empty": "No API keys yet — click \"New key\" to create your first one.",
+    "deleteConfirm": "Delete key \"{{name}}\"? This cannot be undone.",
+    "col": {
+      "name": "Name",
+      "status": "Status",
+      "key": "Key",
+      "remain": "Remaining",
+      "used": "Used",
+      "created": "Created",
+      "expires": "Expires"
+    },
+    "modal": {
+      "kicker": "Create",
+      "title": "New API key",
+      "name": "Name",
+      "unlimited": "Unlimited quota",
+      "quota": "Quota (USD)",
+      "create": "Create key",
+      "cancel": "Cancel"
+    }
+  },
+  "ch": {
+    "kicker": "Admin · Channels",
+    "title": "Upstream channels",
+    "lead": "Provider endpoints behind the gateway. Test health, adjust priorities, balance the current.",
+    "addChannel": "Add channel",
+    "todoAdd": "Channel creation UI is not implemented yet — use the API or the legacy theme for now.",
+    "empty": "No channels configured.",
+    "deleteConfirm": "Delete channel \"{{name}}\"?",
+    "col": {
+      "name": "Channel",
+      "group": "Group",
+      "status": "Status",
+      "response": "Latency",
+      "balance": "Balance",
+      "used": "Used",
+      "priority": "Pri."
+    }
+  },
+  "lg": {
+    "kicker": "Logs",
+    "title": "Request logs",
+    "lead": "Every call through the gateway, with token usage and routing details.",
+    "empty": "No matching log entries.",
+    "filter": {
+      "token": "Filter by token name",
+      "model": "Filter by model",
+      "allTypes": "All types"
+    },
+    "col": {
+      "time": "Time",
+      "type": "Type",
+      "user": "User",
+      "model": "Model",
+      "token": "Token",
+      "prompt": "Prompt",
+      "completion": "Completion",
+      "latency": "Latency",
+      "quota": "Quota"
+    }
+  },
+  "footer": {
+    "product": "Product",
+    "playground": "Playground",
+    "dev": "Developers",
+    "status": "API Status",
+    "changelog": "Changelog",
+    "company": "Company",
+    "about": "About",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  }
+}

@@ -1,0 +1,342 @@
+{
+  "nav": {
+    "models": "模型",
+    "leaderboard": "排行榜",
+    "pricing": "价格",
+    "docs": "文档",
+    "signIn": "登录",
+    "console": "控制台",
+    "getStarted": "获取 API Key"
+  },
+  "console": {
+    "section": { "operations": "功能管理", "account": "账号管理", "support": "社群支持" },
+    "nav": {
+      "overview": "总览",
+      "channels": "渠道管理",
+      "models": "模型管理",
+      "tokens": "API 密钥",
+      "logs": "调用日志",
+      "analytics": "用量分析",
+      "billing": "账单",
+      "users": "用户",
+      "settings": "系统设置"
+    },
+    "searchPlaceholder": "搜索渠道、模型、请求…",
+    "allFlowing": "全系统畅流",
+    "dash": {
+      "kicker": "最近 7 天 · 当前账号",
+      "title": "总览",
+      "lead": "数据来自 /api/user/dashboard 的最近 7 天聚合，访问页面时刷新。",
+      "openAnalytics": "打开用量分析",
+      "newKey": "新建 API 密钥",
+      "kpi": {
+        "requests7d": "请求数 · 7 天",
+        "tokens7d": "Token · 7 天",
+        "modelsUsed": "使用过的模型",
+        "quota7d": "配额消耗 · 7 天"
+      },
+      "chart": { "title": "请求量", "sub": "最近 7 天每日请求数。" },
+      "topModels": "热门模型",
+      "viewAll": "查看排行榜",
+      "activity": "最近调用",
+      "openLog": "打开日志",
+      "noModels": "最近 7 天没有模型用量。",
+      "noActivity": "暂无请求 —— 调用一次再刷新即可看到。",
+      "act": {
+        "key": "为 production-app 创建了 API 密钥",
+        "keyMeta": "wd-•••rA8f · 作用域：chat, vision · 操作人 jimmy.hu",
+        "fail": "渠道「OpenAI Premium」健康检查失败",
+        "failMeta": "上游 503 · 已自动切换至 OpenAI Standard",
+        "quota": "Token 配额上调：100K → 500K",
+        "quotaMeta": "用户：li.wei · 套餐：Current",
+        "upgrade": "用户升级至 Current 套餐",
+        "upgradeMeta": "sam@acme.io · 计费：按量付费",
+        "routing": "已为 Claude Opus 4.6 启用优先路由",
+        "routingMeta": "最小延迟策略 · 3 条容灾规则"
+      }
+    }
+  },
+  "common": {
+    "toggleTheme": "切换主题",
+    "language": "语言"
+  },
+  "hero": {
+    "tag": "系统畅流 · 99.99% 在线",
+    "title": "一浪直达，",
+    "title_grad": "万模归一。",
+    "sub": "统一所有大模型 API 的中转网关。一个端点、一个密钥、一张账单 —— GPT、Claude、Gemini、DeepSeek、Qwen 等 200+ 模型，以洋流之速完成路由。",
+    "ctaPrimary": "免费开始 — 100 万 tokens",
+    "ctaSecondary": "查看文档",
+    "st1": "个模型 · 一个 API",
+    "st2": "路由开销",
+    "st3": "在线率 · 自动容灾"
+  },
+  "demo": {
+    "kicker": "一个网关，两套协议",
+    "title1": "对话即插即用，",
+    "title2": "多模态统一任务接口。",
+    "lead": "对话与视觉模型完全兼容 OpenAI 协议 —— 改一行代码即可切换厂商。图像与视频则走统一的异步任务接口，参数结构跨厂商一致，结果通过 Webhook 推送或轮询获取。",
+    "tab": { "chat": "对话", "image": "图像", "video": "视频" }
+  },
+  "lb": {
+    "kicker": "排行榜",
+    "title": "浪尖上的模型",
+    "lead": "wavydance.ai 站内调用排名，按最近 24 小时处理的 token 量排序。",
+    "note": "Token 为最近 24 小时用量 · 箭头为最近 3 天趋势",
+    "tab": { "all": "全部", "llm": "大模型", "image": "图像", "video": "视频" }
+  },
+  "show": {
+    "kicker": "效果展示",
+    "title": "多模态，一浪打通。",
+    "lead": "网关背后各模型的真实样例 —— 视觉、代码、语音、推理与中文，全部走同一个端点。",
+    "tag": { "vision": "视觉", "code": "代码", "audio": "语音", "reason": "推理", "zh": "中文" },
+    "lbl": {
+      "in_image": "输入 · 图像",
+      "in_audio": "输入 · 音频",
+      "out": "输出",
+      "prompt": "提示词",
+      "thinking": "输出 · 思维链"
+    },
+    "c1": {
+      "q": "“第三季度发生了什么？”",
+      "a": "营收在 Q3 下滑 8%（粉色标记处），此前连续两季增长 —— 大概率是季节性因素，因为 Q4 回升至全图最高点。建议在 9 月的流失峰值处加注释。"
+    },
+    "c2": { "q": "“用 Python 写一个令牌桶风格的限流装饰器。”" },
+    "c3": {
+      "q": "standup_recording.m4a · 00:42",
+      "a": "转写完成。摘要：发布改至周四；两个阻塞项 —— 预发数据库迁移和一个不稳定的支付测试。行动项已分配给 Li（迁移）和 Sam（测试）。"
+    },
+    "c4": {
+      "q": "“水池 A 管 6 小时注满，B 管 4 小时注满，C 管 12 小时放空。全开多久注满？”",
+      "a": "速率：A = 1/6，B = 1/4，C = −1/12（每小时）。净速率 = 2/12 + 3/12 − 1/12 = 4/12 = 1/3。满池 ÷ 净速率 = 1 ÷ (1/3) = 3 小时。✓ 量纲校验通过。"
+    },
+    "c5": {
+      "q": "“把我们的 slogan 'One Wave. Every Model.' 写成一句有水感的中文品牌语。”",
+      "a": "「一浪直达，万模归一。」—— 既保留 wave 的动势，又点出「所有模型汇于一个接口」的产品本质；八个字，对仗、易记、可注册。"
+    }
+  },
+  "flow": {
+    "kicker": "工作流程",
+    "title": "三步，就这么简单。",
+    "lead": "选模型、发请求、收结果 —— 支持 Webhook 推送或轮询。无需迁移 SDK，无需自建设施。",
+    "s1": { "t": "选择模型", "d": "一个端点背后 200+ 模型，改一个字符串即可切换厂商。" },
+    "s2": { "t": "发送请求", "d": "兼容 OpenAI 的 REST 接口，流式、工具调用与视觉开箱即用。" },
+    "s3": { "t": "接收结果", "d": "对话即时返回；长任务用 Webhook 推送或轮询获取。" },
+    "chip": { "webhook": "Webhook 推送", "poll": "轮询" }
+  },
+  "pricing": {
+    "kicker": "价格",
+    "title": "按 token 付费，不按席位。",
+    "surf": {
+      "per": "/ 永久",
+      "f1": "每月 100 万免费 tokens",
+      "f2": "全部开源权重模型",
+      "f3": "社区支持",
+      "cta": "免费开始"
+    },
+    "current": {
+      "price": "按量付费",
+      "badge": "最受欢迎",
+      "f1": "全部 200+ 模型",
+      "f2": "智能路由与容灾",
+      "f3": "成本分析与预算",
+      "f4": "优先支持",
+      "cta": "获取 API key"
+    },
+    "tsunami": {
+      "price": "定制",
+      "per": "/ 企业版",
+      "f1": "专属中转节点",
+      "f2": "SLA 99.99% 与 SSO",
+      "f3": "私有模型托管",
+      "cta": "联系我们"
+    }
+  },
+  "qa": {
+    "kicker": "常见问题",
+    "title": "你想问的，都在这里。",
+    "lead": "开发者发出第一个请求前最常问的问题。",
+    "q1": {
+      "q": "wavydance.ai 兼容 OpenAI SDK 吗？",
+      "a": "兼容 —— 对话与视觉模型完全遵循 OpenAI 协议，把现有 SDK 的 base_url 指向我们的端点，改 model 字符串即可切换厂商。图像和视频则走统一的异步任务接口。"
+    },
+    "q2": {
+      "q": "计费方式是怎样的？",
+      "a": "按量付费：文本按 token、媒体模型按生成次数计费，所有厂商汇总为一张月度账单。不按席位收费、没有最低消费，内置预算与告警。"
+    },
+    "q3": {
+      "q": "某个厂商挂了怎么办？",
+      "a": "延迟感知路由会自动检测故障，并把请求重试到次优厂商（尽可能同系列模型）。你看到的始终是同一个端点，容灾过程完全透明。"
+    },
+    "q4": {
+      "q": "你们会存储或用我的 prompt 训练吗？",
+      "a": "不会。请求只做转发和计量，随后即丢弃；仅保留用量元数据（token 数、延迟、模型）用于分析和账单。企业版支持零日志模式。"
+    },
+    "q5": {
+      "q": "图像 / 视频这类长任务怎么拿结果？",
+      "a": "两种方式：注册 Webhook，任务成功的瞬间我们主动推送；或按自己的节奏轮询 GET /v1/tasks/:id。两者返回完全相同的任务对象。"
+    }
+  },
+  "community": {
+    "title": "加入我们的社群 🌊",
+    "lead": "8000+ 开发者在社群里分享路由方案、成本看板和新模型的抢先体验。"
+  },
+  "login": {
+    "kicker": "wavydance.ai · 登录",
+    "title": "欢迎回来。",
+    "username": "用户名",
+    "password": "密码",
+    "signIn": "登录",
+    "failed": "登录失败",
+    "helper": "走错地方了？",
+    "backHome": "返回首页"
+  },
+  "users": {
+    "kicker": "账号管理",
+    "title": "用户",
+    "lead": "管理账户、角色和配额。",
+    "newUser": "新建用户",
+    "empty": "暂无用户。",
+    "col": {
+      "username": "用户",
+      "role": "角色",
+      "status": "状态",
+      "group": "分组",
+      "quota": "配额（剩余 / 已用）",
+      "requests": "请求数"
+    }
+  },
+  "settings": {
+    "kicker": "仅 Root",
+    "title": "系统设置",
+    "lead": "全站配置，修改即时生效。"
+  },
+  "models": {
+    "kicker": "模型目录",
+    "title": "模型",
+    "lead": "已配置渠道共暴露 {{count}} 个可用模型。",
+    "searchPlaceholder": "按模型名或厂商过滤…",
+    "empty": "尚无模型，请先添加渠道。",
+    "noMatch": "没有匹配的模型。",
+    "col": { "model": "模型", "owner": "厂商", "created": "登记时间" }
+  },
+  "analytics": {
+    "kicker": "最近 7 天",
+    "title": "用量分析",
+    "lead": "请求量、Token 用量与配额支出 —— 滚动 7 天窗口。",
+    "kpi": {
+      "requests": "请求数",
+      "prompt": "Prompt Tokens",
+      "completion": "Completion Tokens",
+      "quota": "配额消耗"
+    },
+    "chart": { "requests": "请求量", "quota": "配额支出" },
+    "byModel": "按模型细分",
+    "empty": "暂无用量数据 —— 发起一些请求后明天再来看。",
+    "col": {
+      "model": "模型",
+      "requests": "请求数",
+      "promptTokens": "Prompt Tokens",
+      "completionTokens": "Completion Tokens",
+      "quota": "配额"
+    }
+  },
+  "billing": {
+    "kicker": "钱包",
+    "title": "账单",
+    "lead": "跟踪配额、兑换密钥并管理付款。",
+    "quota": { "label": "剩余配额", "tokens": "tokens" },
+    "metric": { "requests": "总请求数", "avg": "平均每次配额" },
+    "redeem": {
+      "title": "兑换密钥",
+      "help": "输入兑换码，向当前账户充值配额。",
+      "placeholder": "wd-XXXXXXXX-XXXX-XXXX",
+      "submit": "兑换"
+    },
+    "redemption": {
+      "kicker": "管理员",
+      "title": "兑换码",
+      "create": "新建兑换码",
+      "count": "数量",
+      "empty": "尚未生成任何兑换码。",
+      "col": { "name": "名称", "key": "码值", "quota": "配额", "status": "状态" }
+    }
+  },
+  "tk": {
+    "kicker": "API 密钥",
+    "title": "你的密钥",
+    "lead": "每把密钥认证一个客户端。怀疑泄露时随时禁用或轮换。",
+    "newKey": "新建密钥",
+    "empty": "还没有密钥 —— 点击「新建密钥」创建第一把。",
+    "deleteConfirm": "删除密钥「{{name}}」？此操作不可撤销。",
+    "col": {
+      "name": "名称",
+      "status": "状态",
+      "key": "密钥",
+      "remain": "剩余额度",
+      "used": "已用",
+      "created": "创建时间",
+      "expires": "过期时间"
+    },
+    "modal": {
+      "kicker": "创建",
+      "title": "新建 API 密钥",
+      "name": "名称",
+      "unlimited": "无限额度",
+      "quota": "额度（USD）",
+      "create": "创建密钥",
+      "cancel": "取消"
+    }
+  },
+  "ch": {
+    "kicker": "管理员 · 渠道",
+    "title": "上游渠道",
+    "lead": "网关背后的厂商端点。健康自检、调整优先级、平衡浪流。",
+    "addChannel": "新增渠道",
+    "todoAdd": "新增渠道 UI 尚未实现 —— 暂时请用 API 或旧主题。",
+    "empty": "尚未配置渠道。",
+    "deleteConfirm": "删除渠道「{{name}}」？",
+    "col": {
+      "name": "渠道",
+      "group": "分组",
+      "status": "状态",
+      "response": "延迟",
+      "balance": "余额",
+      "used": "已用",
+      "priority": "优先级"
+    }
+  },
+  "lg": {
+    "kicker": "日志",
+    "title": "调用日志",
+    "lead": "经过网关的每一次调用，含 token 用量与路由细节。",
+    "empty": "没有匹配的日志。",
+    "filter": {
+      "token": "按 token 名筛选",
+      "model": "按模型筛选",
+      "allTypes": "全部类型"
+    },
+    "col": {
+      "time": "时间",
+      "type": "类型",
+      "user": "用户",
+      "model": "模型",
+      "token": "Token",
+      "prompt": "Prompt",
+      "completion": "Completion",
+      "latency": "延迟",
+      "quota": "额度"
+    }
+  },
+  "footer": {
+    "product": "产品",
+    "playground": "演练场",
+    "dev": "开发者",
+    "status": "API 状态",
+    "changelog": "更新日志",
+    "company": "公司",
+    "about": "关于",
+    "privacy": "隐私",
+    "terms": "条款"
+  }
+}

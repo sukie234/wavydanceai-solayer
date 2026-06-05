@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>wavydance.ai — One Wave. Every Model.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Jelly Sea — light mode (shallow lagoon) */
+    --bg:#F3FAFC;
+    --bg2:#E7F5F8;
+    --surface:#FFFFFF;
+    --border:#C9E6EE;
+    --text:#07394A;
+    --muted:#3F7A8C;
+    --cyan:#2E8FB0;
+    --mint:#2FA3B3;
+    --glass:#8FD8E5;
+    --coral:#F49BAB;
+    --live:#2BBE8C;
+    --current:linear-gradient(110deg,#3FB3D9 0%,#4ED4DC 55%,#B5ECF2 100%);
+    --current-ink:linear-gradient(110deg,#2E8FB0 0%,#2FA3B3 60%,#4FB3C9 100%);
+    --glow-op:.20;
+    --wave1:#3FB3D9; --wave2:#4ED4DC; --wave3:#B5ECF2;
+    --shadow:0 30px 80px rgba(6,58,63,.12);
+    --cta-ink:#052832;
+    --display:'Space Grotesk','Noto Sans SC',sans-serif;
+    --body:'Inter','Noto Sans SC',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  [data-theme="dark"]{
+    /* Jelly Sea — dark mode (deep lagoon) */
+    --bg:#052832;
+    --bg2:#052E35;
+    --surface:#083644;
+    --border:#12485A;
+    --text:#EAFBFE;
+    --muted:#92C5D1;
+    --cyan:#3FB3D9;
+    --mint:#4ED4DC;
+    --glass:#B5ECF2;
+    --coral:#F49BAB;
+    --live:#3ED9A4;
+    --current:linear-gradient(110deg,#3FB3D9 0%,#4ED4DC 55%,#B5ECF2 100%);
+    --current-ink:linear-gradient(110deg,#3FB3D9 0%,#4ED4DC 55%,#B5ECF2 100%);
+    --glow-op:.16;
+    --shadow:0 30px 80px rgba(0,0,0,.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);overflow-x:hidden;transition:background .3s,color .3s}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;width:100%;z-index:50;display:flex;justify-content:center;padding:14px 4vw;pointer-events:none}
+  .nav-inner{pointer-events:auto;display:flex;align-items:center;gap:36px;width:100%;max-width:1800px;padding:8px 2vw;border-radius:999px;border:1px solid transparent;background:transparent;
+    transition:max-width .45s cubic-bezier(.4,0,.2,1),background .35s,box-shadow .35s,border-color .35s,padding .35s}
+  nav.scrolled .nav-inner{max-width:960px;padding:8px 20px;gap:24px;
+    background:color-mix(in srgb,var(--bg) 62%,transparent);
+    backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+    border-color:color-mix(in srgb,var(--border) 70%,transparent);
+    box-shadow:0 12px 40px rgba(7,57,74,.16)}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:-.5px}
+  .logo .ai{background:var(--current-ink);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav-links{display:flex;gap:32px;font-size:.92rem;color:var(--muted);margin-left:auto}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{display:flex;gap:12px;align-items:center}
+  .chip{font-size:.85rem;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;background:transparent;font-family:var(--body)}
+  .chip:hover{color:var(--text);border-color:var(--cyan)}
+  .btn{display:inline-block;padding:11px 22px;border-radius:10px;font-weight:600;font-size:.95rem;transition:.2s}
+  .btn-primary{background:var(--current);color:var(--cta-ink)}
+  [data-theme="dark"] .btn-primary{color:#052832}
+  .btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .btn-ghost{border:1px solid var(--border);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--cyan)}
+
+  /* ---------- hero ---------- */
+  header{position:relative;min-height:100vh;display:flex;align-items:center;padding:140px 6vw 80px;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%)}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;max-width:1180px;margin:0 auto;width:100%}
+  .hero-copy{text-align:left}
+  .waves{position:absolute;inset:0;z-index:0;overflow:hidden}
+  .waves svg{position:absolute;bottom:-2px;left:0;width:200%;height:46vh;min-height:300px}
+  .w1{animation:drift 18s linear infinite}
+  .w2{animation:drift 28s linear infinite reverse}
+  .w3{animation:drift 40s linear infinite}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .glow{position:absolute;width:680px;height:680px;border-radius:50%;filter:blur(140px);opacity:var(--glow-op);pointer-events:none}
+  .glow.a{background:#3FB3D9;top:-220px;left:-160px}
+  .glow.b{background:#4ED4DC;top:-120px;right:-200px}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 40%,transparent);background:color-mix(in srgb,var(--cyan) 8%,transparent);padding:7px 16px;border-radius:999px;margin-bottom:28px;font-family:var(--mono)}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.3}}
+  h1{font-family:var(--display);font-size:clamp(2.6rem,6.2vw,4.6rem);line-height:1.06;letter-spacing:-2px;font-weight:700}
+  h1 .grad{background:var(--current-ink);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin:24px 0 0;max-width:560px;color:var(--muted);font-size:1.15rem;line-height:1.65}
+  .hero-cta{margin-top:40px;display:flex;gap:16px;flex-wrap:wrap}
+
+  /* live stats */
+  .stats{margin-top:56px;display:flex;gap:40px;flex-wrap:wrap}
+  .stat{position:relative}
+  .stat b{font-family:var(--display);font-size:1.7rem;display:flex;align-items:center;gap:8px;background:var(--current-ink);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+  .stat span{font-size:.85rem;color:var(--muted)}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 0 color-mix(in srgb,var(--live) 60%,transparent);animation:ping 2.2s infinite;flex:none}
+  @keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--live) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  .stat .val{transition:opacity .25s}
+  .stat .val.tick{opacity:.45}
+
+  /* jelly orb */
+  .orb-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .orb{position:relative;width:min(34vw,420px);aspect-ratio:1;border-radius:50%;overflow:hidden;
+    background:
+      radial-gradient(circle at 33% 26%, rgba(255,255,255,.92) 0%, rgba(255,255,255,0) 17%),
+      radial-gradient(circle at 68% 80%, rgba(78,212,220,.95) 0%, rgba(78,212,220,0) 52%),
+      radial-gradient(circle at 50% 45%, #54CBE2 0%, #3FB3D9 48%, #2387B8 100%);
+    box-shadow: inset -18px -26px 60px rgba(7,57,74,.28), inset 14px 18px 50px rgba(255,255,255,.38), 0 40px 90px rgba(46,143,176,.30);
+    animation:bob 7s ease-in-out infinite}
+  .orb-waves{position:absolute;inset:0;width:100%;height:100%}
+  .orb-shadow{width:52%;height:24px;margin-top:36px;border-radius:50%;background:radial-gradient(ellipse at center, rgba(7,57,74,.30) 0%, rgba(7,57,74,0) 70%);filter:blur(6px);animation:shade 7s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+  @keyframes shade{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.84);opacity:.55}}
+
+  /* ---------- sections ---------- */
+  section{padding:96px 6vw;position:relative}
+  .kicker{font-family:var(--mono);font-size:.8rem;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:14px}
+  h2{font-family:var(--display);font-size:clamp(1.8rem,3.6vw,2.6rem);letter-spacing:-1px;margin-bottom:14px}
+  .lead{color:var(--muted);max-width:560px;line-height:1.6}
+
+  /* models marquee with vendor icons */
+  .marquee{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:22px 0;background:var(--bg2)}
+  .track{display:flex;gap:56px;width:max-content;animation:drift 16s linear infinite;font-family:var(--display);font-weight:500;color:var(--muted);font-size:1rem;white-space:nowrap}
+  .track .m{display:inline-flex;align-items:center;gap:10px}
+  .track .m:hover{color:var(--text)}
+  .track svg{flex:none;border-radius:7px}
+
+  /* code demo */
+  .demo{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;max-width:1180px;margin:0 auto}
+  .code{background:#062B36;border:1px solid #12485A;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .code-head{display:flex;gap:7px;padding:14px 18px;border-bottom:1px solid #12485A;align-items:center}
+  .code-head i{width:11px;height:11px;border-radius:50%;display:block}
+  .code-tabs{margin-left:auto;display:flex;gap:6px}
+  .code-tab{font-family:var(--mono);font-size:.72rem;letter-spacing:1px;color:#7FA9B5;background:transparent;border:1px solid #12485A;border-radius:999px;padding:4px 14px;cursor:pointer;transition:.25s}
+  .code-tab.on{color:#052832;background:linear-gradient(110deg,#3FB3D9,#4ED4DC);border-color:transparent;font-weight:700}
+  .code pre{display:none}
+  .code pre.on{display:block}
+  .code pre{padding:22px;font-family:var(--mono);font-size:.84rem;line-height:1.75;overflow-x:auto;color:#EAFBFE}
+  .c-k{color:#B5ECF2} .c-s{color:#3FB3D9} .c-c{color:#7FA9B5} .c-f{color:#F49BAB}
+
+  /* ---------- showcase flash cards ---------- */
+  .showcase-head{max-width:1180px;margin:0 auto 56px;text-align:center}
+  .showcase-head .lead{margin:0 auto}
+  .deck{position:relative;max-width:780px;margin:0 auto;height:440px;perspective:1200px}
+  .fcard{position:absolute;inset:0;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 30px;display:flex;flex-direction:column;gap:18px;
+    opacity:0;transform:translateY(46px) scale(.88);pointer-events:none;
+    transition:transform .65s cubic-bezier(.22,.8,.3,1),opacity .55s ease;
+    box-shadow:0 35px 60px -22px rgba(7,57,74,.35)}
+  .fcard.is-active{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;z-index:3}
+  .fcard.is-next{opacity:.55;transform:translateY(22px) scale(.94);z-index:2}
+  .fcard.is-back{opacity:.25;transform:translateY(40px) scale(.89);z-index:1}
+  .fcard.is-out{opacity:0;transform:translateY(-44px) scale(1.02);z-index:4}
+  .deck-shadow{width:62%;height:26px;margin:46px auto 0;border-radius:50%;background:radial-gradient(ellipse at center, rgba(7,57,74,.30) 0%, rgba(7,57,74,0) 70%);filter:blur(7px)}
+  .fc-head{display:flex;align-items:center;gap:12px}
+  .fc-head svg{border-radius:9px;flex:none}
+  .fc-model{font-family:var(--display);font-weight:700;font-size:1.05rem}
+  .fc-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 40%,transparent);border-radius:999px;padding:3px 10px}
+  .fc-lat{margin-left:auto;display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.78rem;color:var(--live)}
+  .fc-lat .live-dot{width:7px;height:7px}
+  .fc-body{display:grid;grid-template-columns:1fr 1.25fr;gap:16px;flex:1;min-height:0}
+  .fc-box{border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;overflow:hidden;background:color-mix(in srgb,var(--bg2) 60%,transparent)}
+  .fc-box .lbl{font-family:var(--mono);font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+  .fc-box .txt{font-size:.9rem;line-height:1.55;color:var(--text)}
+  .fc-box .txt.dim{color:var(--muted)}
+  .fc-box pre{font-family:var(--mono);font-size:.76rem;line-height:1.6;color:var(--text);overflow:hidden}
+  .fc-visual{display:flex;align-items:center;justify-content:center;flex:1}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:18px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:var(--border);transition:.3s;cursor:pointer}
+  .dots i.on{background:var(--cyan);transform:scale(1.25)}
+
+  /* ---------- 3-step flow ---------- */
+  .flow{max-width:1180px;margin:56px auto 0;display:grid;grid-template-columns:1fr 64px 1fr 64px 1fr;align-items:stretch}
+  .fstep{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px 24px;transition:.4s;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+  .fstep.on{border-color:var(--cyan);transform:translateY(-6px);box-shadow:0 26px 50px -18px rgba(46,143,176,.45)}
+  .fs-num{font-family:var(--mono);font-size:.78rem;letter-spacing:2px;background:var(--current-ink);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+  .fs-title{font-family:var(--display);font-weight:700;font-size:1.12rem}
+  .fs-desc{color:var(--muted);font-size:.88rem;line-height:1.55;flex:1}
+  .fs-snippet{font-family:var(--mono);font-size:.74rem;background:#062B36;color:#B5ECF2;border-radius:10px;padding:10px 12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .fs-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .fs-chip{font-family:var(--mono);font-size:.7rem;letter-spacing:1px;color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 40%,transparent);border-radius:999px;padding:3px 10px}
+  .fconn{position:relative;display:flex;align-items:center;padding:0 8px}
+  .fconn .pipe{height:2px;width:100%;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--cyan) 55%,transparent) 0 8px,transparent 8px 16px);background-size:16px 2px;animation:dashmove .9s linear infinite}
+  @keyframes dashmove{to{background-position:16px 0}}
+  .fconn .pkt{position:absolute;left:8px;top:50%;width:10px;height:10px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint);transform:translateY(-50%);animation:pkt 2.4s ease-in-out infinite}
+  .fconn.c2 .pkt{animation-delay:1.2s}
+  @keyframes pkt{0%{left:8px;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:calc(100% - 18px);opacity:0}}
+
+  /* ---------- leaderboard ---------- */
+  .lb-tabs{display:flex;gap:10px;justify-content:center;margin:40px 0 26px;flex-wrap:wrap}
+  .lb-tab{font-family:var(--mono);font-size:.8rem;letter-spacing:1px;padding:8px 20px;border-radius:999px;border:1px solid var(--border);color:var(--muted);cursor:pointer;background:transparent;transition:.25s}
+  .lb-tab:hover{border-color:var(--cyan);color:var(--text)}
+  .lb-tab.on{background:var(--current);color:var(--cta-ink);border-color:transparent;font-weight:700}
+  [data-theme="dark"] .lb-tab.on{color:#052832}
+  .lb{max-width:880px;margin:0 auto}
+  .lb-row{display:grid;grid-template-columns:36px 250px 1fr 96px 64px;align-items:center;gap:14px;padding:12px 18px;border:1px solid var(--border);border-radius:14px;background:var(--surface);margin-bottom:10px;animation:lbin .45s ease both}
+  @keyframes lbin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .lb-rank{font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--muted)}
+  .lb-rank.top{background:var(--current-ink);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lb-name{display:flex;align-items:center;gap:10px;font-weight:600;font-size:.95rem;min-width:0}
+  .lb-name svg{flex:none;border-radius:7px}
+  .lb-name .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lb-cat{font-family:var(--mono);font-size:.62rem;letter-spacing:1px;color:var(--muted);border:1px solid var(--border);padding:2px 8px;border-radius:999px;flex:none}
+  .lb-bar{height:8px;border-radius:999px;background:color-mix(in srgb,var(--border) 55%,transparent);overflow:hidden}
+  .lb-bar i{display:block;height:100%;border-radius:999px;background:var(--current);width:0;transition:width .8s cubic-bezier(.22,.8,.3,1)}
+  .lb-tok{font-family:var(--mono);font-size:.8rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .lb-trend{font-family:var(--mono);font-size:.78rem;text-align:right;font-variant-numeric:tabular-nums}
+  .lb-trend.up{color:var(--live)}
+  .lb-trend.down{color:#E2607B}
+  .lb-note{text-align:center;color:var(--muted);font-size:.78rem;font-family:var(--mono);margin-top:18px;opacity:.8}
+
+  /* pricing */
+  .tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;max-width:1080px;margin:48px auto 0}
+  .tier{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:34px 30px;box-shadow:var(--shadow)}
+  .tier.hot{border:1.5px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--current) border-box;position:relative}
+  .tier .tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--current);color:var(--cta-ink);font-size:.72rem;font-weight:700;padding:4px 14px;border-radius:999px;letter-spacing:1px}
+  [data-theme="dark"] .tier .tag{color:#052832}
+  .tier h3{font-family:var(--display);font-size:1.1rem}
+  .price{font-family:var(--display);font-size:2rem;font-weight:700;margin:16px 0 4px}
+  .price small{font-size:.95rem;color:var(--muted);font-weight:400}
+  .tier ul{list-style:none;margin:22px 0 28px;color:var(--muted);font-size:.9rem}
+  .tier li{padding:7px 0;display:flex;gap:10px;align-items:center}
+  .tier li::before{content:'~';color:var(--mint);font-family:var(--mono);font-weight:700}
+
+  /* ---------- Q&A + community ---------- */
+  .qa-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;max-width:1180px;margin:0 auto;align-items:start}
+  .faq details{border:1px solid var(--border);border-radius:14px;background:var(--surface);margin-bottom:12px;overflow:hidden;transition:.25s}
+  .faq details:hover{border-color:var(--cyan)}
+  .faq summary{cursor:pointer;padding:16px 18px;font-weight:600;font-size:.95rem;display:flex;justify-content:space-between;align-items:center;gap:14px;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:'+';font-family:var(--mono);color:var(--cyan);font-size:1.15rem;transition:transform .3s;flex:none}
+  .faq details[open] summary::after{transform:rotate(45deg)}
+  .faq .ans{padding:0 18px 16px;color:var(--muted);font-size:.9rem;line-height:1.65}
+  .soc{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:var(--shadow);position:sticky;top:96px}
+  .soc h3{font-family:var(--display);font-size:1.25rem;margin-bottom:8px}
+  .soc .soc-lead{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:20px}
+  .soc-row{display:flex;align-items:center;gap:14px;padding:11px 12px;border-radius:12px;border:1px solid transparent;transition:.2s}
+  .soc-row:hover{border-color:var(--cyan);transform:translateX(4px)}
+  .soc-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+  .soc-ic svg{width:20px;height:20px;fill:#fff}
+  .soc-name{font-weight:600;font-size:.93rem}
+  .soc-sub{font-size:.76rem;color:var(--muted);font-family:var(--mono)}
+  .soc-arrow{margin-left:auto;color:var(--muted);font-size:1.1rem}
+
+  /* footer */
+  footer{border-top:1px solid var(--border);padding:56px 6vw 36px;color:var(--muted);font-size:.88rem;background:var(--bg2)}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:28px;max-width:1180px;margin:0 auto}
+  .foot .slogan{margin-top:10px;font-family:var(--mono);font-size:.8rem;letter-spacing:2px;color:var(--muted);opacity:.6}
+
+  @media(max-width:880px){
+    .qa-grid{grid-template-columns:1fr}
+    .soc{position:static}
+    .nav-links{display:none}
+    .demo{grid-template-columns:1fr}
+    .hero-grid{grid-template-columns:1fr;gap:48px}
+    .orb{width:min(62vw,300px)}
+    .orb-wrap{order:-1}
+    .deck{height:560px}
+    .fc-body{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr;gap:18px}
+    .fconn{display:none}
+    .lb-row{grid-template-columns:30px 1fr 84px 56px}
+    .lb-bar{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- vendor icon defs -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="ic-openai"><rect width="22" height="22" rx="6" fill="#10A37F"/><path d="M11 4.6l5.2 3v6.8l-5.2 3-5.2-3V7.6z" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="11" cy="11" r="2" fill="#fff"/></g>
+    <g id="ic-anthropic"><rect width="22" height="22" rx="6" fill="#D97757"/><path d="M7 16.5L11 5.5l4 11M8.6 13h4.8" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="ic-google"><rect width="22" height="22" rx="6" fill="#4285F4"/><path d="M11 4.5c.6 3.4 3.1 5.9 6.5 6.5-3.4.6-5.9 3.1-6.5 6.5-.6-3.4-3.1-5.9-6.5-6.5 3.4-.6 5.9-3.1 6.5-6.5z" fill="#fff"/></g>
+    <g id="ic-deepseek"><rect width="22" height="22" rx="6" fill="#4D6BFE"/><path d="M4.5 13.5c2-5 6.5-7.5 13-6-1 4.5-4.5 8-9 8-1.6 0-3-.7-4-2z" fill="#fff"/><circle cx="14.5" cy="9.8" r=".9" fill="#4D6BFE"/></g>
+    <g id="ic-qwen"><rect width="22" height="22" rx="6" fill="#615CED"/><circle cx="11" cy="11" r="5.2" fill="none" stroke="#fff" stroke-width="1.7"/><path d="M13.5 13.5L17 17" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></g>
+    <g id="ic-meta"><rect width="22" height="22" rx="6" fill="#0082FB"/><path d="M5 14.5c0-3.8 1.6-7 3.4-7 1.3 0 2 1.4 2.6 3 .6-1.6 1.3-3 2.6-3 1.8 0 3.4 3.2 3.4 7" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round"/></g>
+    <g id="ic-mistral"><rect width="22" height="22" rx="6" fill="#FF7000"/><path d="M5.5 16V7h2.4l3.1 4.6L14.1 7h2.4v9h-2.3v-5l-3.2 4.4L7.8 11v5z" fill="#fff"/></g>
+    <g id="ic-xai"><rect width="22" height="22" rx="6" fill="#0E1A20"/><path d="M6 6l10 10M16 6L6 16" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g id="ic-kimi"><rect width="22" height="22" rx="6" fill="#1C1C2E"/><path d="M7 5.5v11M7 11l6.5-5.5M7.5 11.5l6.5 5" stroke="#7BE8D8" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>
+    <g id="ic-zhipu"><rect width="22" height="22" rx="6" fill="#3859FF"/><path d="M6 6.5h10L6 15.5h10" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="ic-bfl"><rect width="22" height="22" rx="6" fill="#141414"/><text x="11" y="15.5" font-family="Arial" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">F</text></g>
+    <g id="ic-runway"><rect width="22" height="22" rx="6" fill="#00A86B"/><text x="11" y="15.5" font-family="Arial" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">R</text></g>
+    <g id="ic-kling"><rect width="22" height="22" rx="6" fill="#FF5A1F"/><text x="11" y="15.5" font-family="Arial" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">K</text></g>
+    <g id="ic-minimax"><rect width="22" height="22" rx="6" fill="#F23F5D"/><text x="11" y="15.5" font-family="Arial" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">H</text></g>
+    <g id="ic-sd"><rect width="22" height="22" rx="6" fill="#9D4EDD"/><text x="11" y="15.5" font-family="Arial" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">S</text></g>
+  </defs>
+</svg>
+
+<nav id="nav">
+  <div class="nav-inner">
+  <a class="logo" href="#">
+    <svg width="34" height="34" viewBox="0 0 120 120"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3FB3D9"/><stop offset="55%" stop-color="#4ED4DC"/><stop offset="100%" stop-color="#B5ECF2"/></linearGradient></defs><rect width="120" height="120" rx="28" fill="#083644"/><path d="M18 44 C 30 86, 42 86, 54 56 C 66 86, 78 86, 102 40" fill="none" stroke="url(#g)" stroke-width="11" stroke-linecap="round"/><path d="M18 66 C 30 100, 42 100, 54 76 C 66 100, 78 100, 102 62" fill="none" stroke="url(#g)" stroke-width="7" stroke-linecap="round" opacity=".35"/><circle cx="102" cy="40" r="6.5" fill="#4ED4DC"/></svg>
+    wavydance<span class="ai">.ai</span>
+  </a>
+  <div class="nav-links">
+    <a href="#models" data-i18n="nav_models">Models</a>
+    <a href="#pricing" data-i18n="nav_pricing">Pricing</a>
+    <a href="#" data-i18n="nav_docs">Docs</a>
+  </div>
+  <div class="nav-cta">
+    <button class="chip" id="themeToggle" title="Toggle theme">◐</button>
+    <button class="chip" id="langToggle" title="切换语言">中</button>
+    <a class="btn btn-primary" href="#" data-i18n="nav_key">Get API Key</a>
+  </div>
+  </div>
+</nav>
+
+<header>
+  <div class="glow a"></div>
+  <div class="glow b"></div>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="pill"><span class="dot"></span><span data-i18n="pill">All systems flowing · 99.99% uptime</span></div>
+      <h1 data-i18n-html="h1">One Wave.<br><span class="grad">Every Model.</span></h1>
+      <p class="sub" data-i18n="sub">The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed at the speed of the current.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#" data-i18n="cta1">Start Free — 1M tokens</a>
+        <a class="btn btn-ghost" href="#" data-i18n="cta2">Read the Docs</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b><span class="live-dot"></span><span class="val" id="statModels">0</span></b><span data-i18n="st1">models, one API</span></div>
+        <div class="stat"><b><span class="live-dot"></span><span class="val" id="statLat">38ms</span></b><span data-i18n="st2">routing overhead</span></div>
+        <div class="stat"><b><span class="live-dot"></span><span class="val">99.99%</span></b><span data-i18n="st3">uptime with failover</span></div>
+      </div>
+    </div>
+    <div class="orb-wrap">
+      <div class="orb">
+        <svg class="orb-waves" viewBox="0 0 420 420" preserveAspectRatio="none">
+          <path d="M0 150 C 70 118, 140 182, 210 150 C 280 118, 350 182, 420 150 V420 H0 Z" fill="rgba(255,255,255,.10)"/>
+          <path d="M0 222 C 70 190, 140 254, 210 222 C 280 190, 350 254, 420 222 V420 H0 Z" fill="rgba(181,236,242,.20)"/>
+          <path d="M0 300 C 70 268, 140 332, 210 300 C 280 268, 350 332, 420 300 V420 H0 Z" fill="rgba(78,212,220,.34)"/>
+        </svg>
+      </div>
+      <div class="orb-shadow"></div>
+    </div>
+  </div>
+  <div class="waves">
+    <svg class="w3" viewBox="0 0 2880 320" preserveAspectRatio="none"><path d="M0 160 C 240 60, 480 60, 720 160 C 960 260, 1200 260, 1440 160 C 1680 60, 1920 60, 2160 160 C 2400 260, 2640 260, 2880 160 V320 H0 Z" fill="var(--wave3,#B5ECF2)" opacity=".30"/></svg>
+    <svg class="w2" viewBox="0 0 2880 320" preserveAspectRatio="none"><path d="M0 200 C 240 110, 480 110, 720 200 C 960 290, 1200 290, 1440 200 C 1680 110, 1920 110, 2160 200 C 2400 290, 2640 290, 2880 200 V320 H0 Z" fill="var(--wave2,#4ED4DC)" opacity=".28"/></svg>
+    <svg class="w1" viewBox="0 0 2880 320" preserveAspectRatio="none"><path d="M0 240 C 240 160, 480 160, 720 240 C 960 320, 1200 320, 1440 240 C 1680 160, 1920 160, 2160 240 C 2400 320, 2640 320, 2880 240 V320 H0 Z" fill="var(--wave1,#3FB3D9)" opacity=".32"/></svg>
+  </div>
+</header>
+
+<div class="marquee" id="models">
+  <div class="track" id="marqueeTrack">
+    <span class="m"><svg width="22" height="22"><use href="#ic-openai"/></svg>GPT-5.2</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-anthropic"/></svg>Claude Opus 4.6</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-google"/></svg>Gemini 3 Pro</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-deepseek"/></svg>DeepSeek-V4</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-qwen"/></svg>Qwen3-Max</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-meta"/></svg>Llama 4</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-mistral"/></svg>Mistral Large</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-xai"/></svg>Grok 4</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-kimi"/></svg>Kimi K2</span>
+    <span class="m"><svg width="22" height="22"><use href="#ic-zhipu"/></svg>GLM-5</span>
+  </div>
+</div>
+
+<section>
+  <div class="demo">
+    <div>
+      <div class="kicker" data-i18n="demo_k">One gateway, two protocols</div>
+      <h2 data-i18n-html="demo_h">Drop-in for chat.<br>One task API for media.</h2>
+      <p class="lead" data-i18n="demo_p">Chat & vision models are OpenAI-compatible — change one line and switch providers. Image & video run through a single async task API with consistent parameters, returning results via webhook or polling.</p>
+    </div>
+    <div class="code">
+      <div class="code-head"><i style="background:#F49BAB"></i><i style="background:#F5C26B"></i><i style="background:#4ED4DC"></i>
+        <div class="code-tabs" id="codeTabs">
+          <button class="code-tab on" data-i18n="ct_chat">Chat</button>
+          <button class="code-tab" data-i18n="ct_img">Image</button>
+          <button class="code-tab" data-i18n="ct_vid">Video</button>
+        </div>
+      </div>
+      <pre class="on"><span class="c-k">from</span> openai <span class="c-k">import</span> OpenAI
+
+client = <span class="c-f">OpenAI</span>(
+    base_url=<span class="c-s">"https://api.wavydance.ai/v1"</span>,
+    api_key=<span class="c-s">"wd-••••••••••••"</span>,
+)
+
+resp = client.chat.completions.<span class="c-f">create</span>(
+    model=<span class="c-s">"claude-opus-4-6"</span>,  <span class="c-c"># or gpt-5.2, deepseek-v4…</span>
+    messages=[{<span class="c-s">"role"</span>: <span class="c-s">"user"</span>,
+               <span class="c-s">"content"</span>: <span class="c-s">"Hello, wave!"</span>}],
+)  <span class="c-c"># ← OpenAI-compatible: change one line</span></pre>
+      <pre><span class="c-c"># unified async task API — same shape for every vendor</span>
+<span class="c-f">POST</span> /v1/tasks
+{
+  <span class="c-s">"model"</span>: <span class="c-s">"flux-1.1-pro"</span>,   <span class="c-c"># or gpt-image-2, sd-3.5…</span>
+  <span class="c-s">"task"</span>: <span class="c-s">"image.generate"</span>,
+  <span class="c-s">"input"</span>: { <span class="c-s">"prompt"</span>: <span class="c-s">"a jelly sea at noon"</span>,
+             <span class="c-s">"size"</span>: <span class="c-s">"1024x1024"</span>, <span class="c-s">"n"</span>: 2 },
+  <span class="c-s">"webhook"</span>: <span class="c-s">"https://your.app/hooks/wavy"</span>
+}
+<span class="c-c">→</span> { <span class="c-s">"task_id"</span>: <span class="c-s">"t_8f3k"</span>, <span class="c-s">"status"</span>: <span class="c-s">"queued"</span> }</pre>
+      <pre><span class="c-c"># video = same task API, different input schema</span>
+<span class="c-f">POST</span> /v1/tasks
+{
+  <span class="c-s">"model"</span>: <span class="c-s">"veo-3.1"</span>,        <span class="c-c"># or sora-2, kling-2.5…</span>
+  <span class="c-s">"task"</span>: <span class="c-s">"video.generate"</span>,
+  <span class="c-s">"input"</span>: { <span class="c-s">"prompt"</span>: <span class="c-s">"waves rolling in jelly sea"</span>,
+             <span class="c-s">"duration"</span>: 8, <span class="c-s">"ratio"</span>: <span class="c-s">"16:9"</span> },
+  <span class="c-s">"webhook"</span>: <span class="c-s">"https://your.app/hooks/wavy"</span>
+}
+<span class="c-f">GET</span> /v1/tasks/t_8f3k   <span class="c-c"># …or poll until "succeeded"</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEADERBOARD ============ -->
+<section id="leaderboard">
+  <div class="showcase-head">
+    <div class="kicker" data-i18n="lb_k">Leaderboard</div>
+    <h2 data-i18n="lb_h">What the wave is riding</h2>
+    <p class="lead" data-i18n="lb_p">Most-used models on wavydance.ai, ranked by tokens processed in the last 24 hours.</p>
+  </div>
+  <div class="lb-tabs" id="lbTabs"></div>
+  <div class="lb" id="lbList"></div>
+  <p class="lb-note" data-i18n="lb_note">Tokens = last 24h · arrow = 3-day trend</p>
+</section>
+
+<!-- ============ SHOWCASE FLASH CARDS ============ -->
+<section id="showcase" style="background:var(--bg2)">
+  <div class="showcase-head">
+    <div class="kicker" data-i18n="show_k">Showcase</div>
+    <h2 data-i18n="show_h">Every modality. One wave.</h2>
+    <p class="lead" data-i18n="show_p">Live samples from the models behind the gateway — vision, code, audio, reasoning and Chinese, all through the same endpoint.</p>
+  </div>
+
+  <div class="deck" id="deck">
+    <!-- card 1: vision -->
+    <div class="fcard">
+      <div class="fc-head">
+        <svg width="26" height="26" viewBox="0 0 22 22"><use href="#ic-openai"/></svg>
+        <span class="fc-model">GPT-5.2</span><span class="fc-tag" data-i18n="tag_vision">Vision</span>
+        <span class="fc-lat"><span class="live-dot"></span>412ms</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_in">Input · image</span>
+          <div class="fc-visual">
+            <svg width="150" height="100" viewBox="0 0 150 100"><rect width="150" height="100" rx="10" fill="#062B36"/><polyline points="12,80 40,58 68,66 96,38 124,46 140,20" fill="none" stroke="#4ED4DC" stroke-width="3" stroke-linecap="round"/><circle cx="96" cy="38" r="4" fill="#F49BAB"/></svg>
+          </div>
+          <span class="txt dim" data-i18n="c1_q">“What happened in Q3?”</span>
+        </div>
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_out">Output</span>
+          <p class="txt" data-i18n="c1_a">Revenue dipped 8% in Q3 (the pink marker) after two quarters of growth — likely seasonal, since Q4 recovers to the strongest point on the chart. Recommend annotating the churn spike in September.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- card 2: code -->
+    <div class="fcard">
+      <div class="fc-head">
+        <svg width="26" height="26" viewBox="0 0 22 22"><use href="#ic-anthropic"/></svg>
+        <span class="fc-model">Claude Opus 4.6</span><span class="fc-tag" data-i18n="tag_code">Code</span>
+        <span class="fc-lat"><span class="live-dot"></span>388ms</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_prompt">Prompt</span>
+          <p class="txt dim" data-i18n="c2_q">“Write a rate limiter decorator in Python, token-bucket style.”</p>
+        </div>
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_out">Output</span>
+          <pre>def rate_limit(rps: float):
+    bucket = TokenBucket(rps)
+    def deco(fn):
+        @wraps(fn)
+        async def wrap(*a, **kw):
+            await bucket.acquire()
+            return await fn(*a, **kw)
+        return wrap
+    return deco</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- card 3: audio -->
+    <div class="fcard">
+      <div class="fc-head">
+        <svg width="26" height="26" viewBox="0 0 22 22"><use href="#ic-google"/></svg>
+        <span class="fc-model">Gemini 3 Pro</span><span class="fc-tag" data-i18n="tag_audio">Audio</span>
+        <span class="fc-lat"><span class="live-dot"></span>356ms</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_in_audio">Input · audio</span>
+          <div class="fc-visual">
+            <svg width="170" height="60" viewBox="0 0 170 60">
+              <g fill="#3FB3D9"><rect x="6" y="22" width="5" height="16" rx="2.5"/><rect x="16" y="14" width="5" height="32" rx="2.5"/><rect x="26" y="8" width="5" height="44" rx="2.5"/><rect x="36" y="18" width="5" height="24" rx="2.5"/><rect x="46" y="24" width="5" height="12" rx="2.5"/><rect x="56" y="12" width="5" height="36" rx="2.5"/><rect x="66" y="20" width="5" height="20" rx="2.5"/><rect x="76" y="6" width="5" height="48" rx="2.5"/><rect x="86" y="16" width="5" height="28" rx="2.5"/><rect x="96" y="22" width="5" height="16" rx="2.5"/><rect x="106" y="10" width="5" height="40" rx="2.5"/><rect x="116" y="18" width="5" height="24" rx="2.5"/><rect x="126" y="26" width="5" height="8" rx="2.5"/><rect x="136" y="14" width="5" height="32" rx="2.5"/><rect x="146" y="22" width="5" height="16" rx="2.5"/></g>
+            </svg>
+          </div>
+          <span class="txt dim" data-i18n="c3_q">standup_recording.m4a · 00:42</span>
+        </div>
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_out">Output</span>
+          <p class="txt" data-i18n="c3_a">Transcript ready. Summary: deploy moved to Thursday; two blockers — the staging DB migration and a flaky payment test. Action items assigned to Li (migration) and Sam (test).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- card 4: reasoning -->
+    <div class="fcard">
+      <div class="fc-head">
+        <svg width="26" height="26" viewBox="0 0 22 22"><use href="#ic-deepseek"/></svg>
+        <span class="fc-model">DeepSeek-V4</span><span class="fc-tag" data-i18n="tag_reason">Reasoning</span>
+        <span class="fc-lat"><span class="live-dot"></span>1.2s</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_prompt">Prompt</span>
+          <p class="txt dim" data-i18n="c4_q">“A tank fills in 6h via pipe A, 4h via B, drains in 12h via C. All open — when is it full?”</p>
+        </div>
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_thinking">Output · chain of thought</span>
+          <p class="txt" data-i18n="c4_a">Rates: A = 1/6, B = 1/4, C = −1/12 per hour. Net = 2/12 + 3/12 − 1/12 = 4/12 = 1/3. Full tank ÷ net rate = 1 ÷ (1/3) = 3 hours. ✓ verified by dimensional check.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- card 5: chinese -->
+    <div class="fcard">
+      <div class="fc-head">
+        <svg width="26" height="26" viewBox="0 0 22 22"><use href="#ic-qwen"/></svg>
+        <span class="fc-model">Qwen3-Max</span><span class="fc-tag" data-i18n="tag_zh">中文</span>
+        <span class="fc-lat"><span class="live-dot"></span>298ms</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_prompt">Prompt</span>
+          <p class="txt dim" data-i18n="c5_q">“把我们的 slogan 'One Wave. Every Model.' 写成一句有水感的中文品牌语。”</p>
+        </div>
+        <div class="fc-box">
+          <span class="lbl" data-i18n="lbl_out">Output</span>
+          <p class="txt" data-i18n="c5_a">「一浪直达，万模归一。」—— 既保留 wave 的动势，又点出"所有模型汇于一个接口"的产品本质；八个字，对仗、易记、可注册。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="deck-shadow"></div>
+  <div class="dots" id="deckDots"></div>
+</section>
+
+<!-- ============ 3-STEP FLOW ============ -->
+<section id="flow">
+  <div class="showcase-head">
+    <div class="kicker" data-i18n="flow_k">How it works</div>
+    <h2 data-i18n="flow_h">Three steps. That's it.</h2>
+    <p class="lead" data-i18n="flow_p">Pick a model, send the request, receive results — by webhook push or polling. No SDK migration, no infrastructure.</p>
+  </div>
+  <div class="flow">
+    <div class="fstep" id="fs0">
+      <span class="fs-num">STEP 01</span>
+      <span class="fs-title" data-i18n="flow_s1">Choose a model</span>
+      <p class="fs-desc" data-i18n="flow_s1d">200+ models behind one endpoint — switch providers by changing a single string.</p>
+      <div class="fs-snippet">model: "claude-opus-4-6"</div>
+    </div>
+    <div class="fconn c1"><div class="pipe"></div><div class="pkt"></div></div>
+    <div class="fstep" id="fs1">
+      <span class="fs-num">STEP 02</span>
+      <span class="fs-title" data-i18n="flow_s2">Send the request</span>
+      <p class="fs-desc" data-i18n="flow_s2d">OpenAI-compatible REST. Streaming, tool calls and vision included out of the box.</p>
+      <div class="fs-snippet">POST /v1/chat/completions</div>
+    </div>
+    <div class="fconn c2"><div class="pipe"></div><div class="pkt"></div></div>
+    <div class="fstep" id="fs2">
+      <span class="fs-num">STEP 03</span>
+      <span class="fs-title" data-i18n="flow_s3">Receive results</span>
+      <p class="fs-desc" data-i18n="flow_s3d">Instant response for chat; webhook push or polling for long-running jobs.</p>
+      <div class="fs-chips">
+        <span class="fs-chip" data-i18n="flow_wh">Webhook</span>
+        <span class="fs-chip" data-i18n="flow_poll">Polling</span>
+        <span class="fs-chip">SSE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div style="max-width:1080px;margin:0 auto;text-align:center">
+    <div class="kicker" data-i18n="pr_k">Pricing</div>
+    <h2 data-i18n="pr_h">Pay for tokens, not seats.</h2>
+    <div class="tiers" style="text-align:left">
+      <div class="tier">
+        <h3>Surf</h3>
+        <div class="price">$0 <small data-i18n="pr1_per">/ forever</small></div>
+        <ul>
+          <li data-i18n="pr1_f1">1M free tokens / month</li>
+          <li data-i18n="pr1_f2">All open-weight models</li>
+          <li data-i18n="pr1_f3">Community support</li>
+        </ul>
+        <a class="btn btn-ghost" href="#" data-i18n="pr1_cta">Start free</a>
+      </div>
+      <div class="tier hot">
+        <span class="tag" data-i18n="pr2_tag">MOST POPULAR</span>
+        <h3>Current</h3>
+        <div class="price" style="font-size:1.5rem" data-i18n="pr2_price">Pay-as-you-go</div>
+        <ul>
+          <li data-i18n="pr2_f1">All 200+ models</li>
+          <li data-i18n="pr2_f2">Smart routing &amp; failover</li>
+          <li data-i18n="pr2_f3">Cost analytics &amp; budgets</li>
+          <li data-i18n="pr2_f4">Priority support</li>
+        </ul>
+        <a class="btn btn-primary" href="#" data-i18n="pr2_cta">Get API key</a>
+      </div>
+      <div class="tier">
+        <h3>Tsunami</h3>
+        <div class="price" data-i18n="pr3_price">Custom <small data-i18n="pr3_per">/ enterprise</small></div>
+        <ul>
+          <li data-i18n="pr3_f1">Dedicated relay nodes</li>
+          <li data-i18n="pr3_f2">SLA 99.99% &amp; SSO</li>
+          <li data-i18n="pr3_f3">Private model hosting</li>
+        </ul>
+        <a class="btn btn-ghost" href="#" data-i18n="pr3_cta">Talk to us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Q&A + COMMUNITY ============ -->
+<section id="qa" style="background:var(--bg2)">
+  <div class="qa-grid">
+    <div class="faq">
+      <div class="kicker" data-i18n="qa_k">Q&amp;A</div>
+      <h2 data-i18n="qa_h">Questions, answered.</h2>
+      <p class="lead" style="margin-bottom:28px" data-i18n="qa_p">The things developers ask before their first request.</p>
+      <details open>
+        <summary data-i18n="q1">Is wavydance.ai compatible with the OpenAI SDK?</summary>
+        <p class="ans" data-i18n="a1">Yes — for chat and vision models the API is fully OpenAI-compatible. Point your existing SDK at our base_url and switch providers by changing the model string. Image and video go through the unified async task API instead.</p>
+      </details>
+      <details>
+        <summary data-i18n="q2">How does billing work?</summary>
+        <p class="ans" data-i18n="a2">Pay-as-you-go per token (or per generation for media models), aggregated into one monthly bill across all providers. No seats, no minimums. Budgets and alerts are built in.</p>
+      </details>
+      <details>
+        <summary data-i18n="q3">What happens when a provider goes down?</summary>
+        <p class="ans" data-i18n="a3">Latency-aware routing detects the failure and retries your request on the next-best provider automatically — same model family where possible. You see one consistent endpoint; the failover is invisible.</p>
+      </details>
+      <details>
+        <summary data-i18n="q4">Do you store or train on my prompts?</summary>
+        <p class="ans" data-i18n="a4">No. Requests are relayed, metered and discarded. Only usage metadata (token counts, latency, model) is retained for analytics and billing. Enterprise plans support zero-log mode.</p>
+      </details>
+      <details>
+        <summary data-i18n="q5">How do I get results from long-running image / video jobs?</summary>
+        <p class="ans" data-i18n="a5">Two ways: register a webhook and we push the result the moment the task succeeds, or poll GET /v1/tasks/:id at your own pace. Both return the same task object.</p>
+      </details>
+    </div>
+    <div class="soc">
+      <h3 data-i18n="comm_h">Join the wave 🌊</h3>
+      <p class="soc-lead" data-i18n="comm_p">8,000+ developers share routing recipes, cost dashboards and early model access in our community.</p>
+      <a class="soc-row" href="#">
+        <span class="soc-ic" style="background:#5865F2"><svg viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.2.4c1.8.4 2.6 1.1 3.5 1.9a13.3 13.3 0 0 0-11.4 0c.9-.8 1.9-1.5 3.5-1.9L10.6 3a19.8 19.8 0 0 0-4.9 1.4C2.6 9 1.9 13.4 2.2 17.8c2 1.5 3.9 2.4 5.8 3l1.2-2c-.6-.2-1.3-.5-1.9-1l.5-.4a14 14 0 0 0 12.4 0l.5.4c-.6.4-1.3.8-1.9 1l1.2 2c1.9-.6 3.8-1.5 5.8-3 .4-5-.7-9.4-3.5-13.4zM8.7 14.8c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg></span>
+        <span><span class="soc-name">Discord</span><br><span class="soc-sub">discord.gg/wavydance</span></span>
+        <span class="soc-arrow">›</span>
+      </a>
+      <a class="soc-row" href="#">
+        <span class="soc-ic" style="background:#24292F"><svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.25.8-.55v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.9 1.2 1.9 1.2 3.2 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></span>
+        <span><span class="soc-name">GitHub</span><br><span class="soc-sub">github.com/wavydance-ai</span></span>
+        <span class="soc-arrow">›</span>
+      </a>
+      <a class="soc-row" href="#">
+        <span class="soc-ic" style="background:#0F1419"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.3l7.3-8.3L1.2 2h6.5l4.4 5.9L18.9 2zm-1.1 18h1.7L7.1 3.9H5.3L17.8 20z"/></svg></span>
+        <span><span class="soc-name">X / Twitter</span><br><span class="soc-sub">@wavydance_ai</span></span>
+        <span class="soc-arrow">›</span>
+      </a>
+      <a class="soc-row" href="#">
+        <span class="soc-ic" style="background:#229ED9"><svg viewBox="0 0 24 24"><path d="M21.9 3.4 2.5 10.9c-1.3.5-1.3 1.3-.2 1.6l5 1.6 1.9 5.9c.2.7.1 1 .9 1 .6 0 .9-.3 1.2-.6l2.9-2.8 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.9-1.4-1.6z"/></svg></span>
+        <span><span class="soc-name">Telegram</span><br><span class="soc-sub">t.me/wavydance</span></span>
+        <span class="soc-arrow">›</span>
+      </a>
+      <a class="soc-row" href="#">
+        <span class="soc-ic" style="background:#07C160"><svg viewBox="0 0 24 24"><path d="M8.7 4C4.9 4 2 6.6 2 9.8c0 1.8 1 3.4 2.5 4.5l-.6 2 2.2-1.1c.8.2 1.6.4 2.6.4h.4A6.4 6.4 0 0 1 9 13.6C9 10.5 12 8 15.7 8h.3C15.3 5.7 12.3 4 8.7 4zm-2 2.9c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9zm4.4 0c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9zM15.8 9C12.6 9 10 11.2 10 13.8s2.6 4.8 5.8 4.8c.7 0 1.4-.1 2.1-.3l1.9 1-.5-1.7c1.3-.9 2.2-2.3 2.2-3.8 0-2.6-2.6-4.8-5.7-4.8zm-1.9 2.4c.4 0 .8.3.8.8s-.3.8-.8.8-.8-.3-.8-.8.4-.8.8-.8zm3.8 0c.4 0 .8.3.8.8s-.3.8-.8.8-.8-.3-.8-.8.4-.8.8-.8z"/></svg></span>
+        <span><span class="soc-name" data-i18n="comm_wc">WeChat Group</span><br><span class="soc-sub">wavydance-cn</span></span>
+        <span class="soc-arrow">›</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div>
+      <div class="logo" style="font-size:1.05rem">wavydance<span class="ai">.ai</span></div>
+      <div class="slogan">ONE WAVE. EVERY MODEL.</div>
+    </div>
+    <div><span data-i18n="ft_product">Product</span><br><br><a href="#" data-i18n="nav_models">Models</a><br><a href="#" data-i18n="nav_pricing">Pricing</a><br><a href="#" data-i18n="ft_playground">Playground</a></div>
+    <div><span data-i18n="ft_dev">Developers</span><br><br><a href="#" data-i18n="nav_docs">Docs</a><br><a href="#" data-i18n="ft_status">API Status</a><br><a href="#" data-i18n="ft_changelog">Changelog</a></div>
+    <div><span data-i18n="ft_company">Company</span><br><br><a href="#" data-i18n="ft_about">About</a><br><a href="#" data-i18n="ft_privacy">Privacy</a><br><a href="#" data-i18n="ft_terms">Terms</a></div>
+  </div>
+</footer>
+
+<script>
+  /* ---------------- theme ---------------- */
+  const root = document.documentElement;
+  const savedTheme = sessionStorage.getItem('wd-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) root.setAttribute('data-theme','dark');
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const dark = root.getAttribute('data-theme') === 'dark';
+    if (dark) { root.removeAttribute('data-theme'); sessionStorage.setItem('wd-theme','light'); }
+    else { root.setAttribute('data-theme','dark'); sessionStorage.setItem('wd-theme','dark'); }
+  });
+
+  /* ---------------- frosted pill nav on scroll ---------------- */
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 60);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------------- i18n ---------------- */
+  const I18N = {
+    en: {
+      nav_showcase:'Showcase', nav_models:'Models', nav_pricing:'Pricing', nav_docs:'Docs', nav_status:'Status', nav_key:'Get API Key',
+      pill:'All systems flowing · 99.99% uptime',
+      h1:'One Wave.<br><span class="grad">Every Model.</span>',
+      sub:'The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed at the speed of the current.',
+      cta1:'Start Free — 1M tokens', cta2:'Read the Docs',
+      st1:'models, one API', st2:'routing overhead', st3:'uptime with failover',
+      demo_k:'One gateway, two protocols', demo_h:'Drop-in for chat.<br>One task API for media.',
+      demo_p:'Chat & vision models are OpenAI-compatible — change one line and switch providers. Image & video run through a single async task API with consistent parameters, returning results via webhook or polling.',
+      ct_chat:'Chat', ct_img:'Image', ct_vid:'Video',
+      show_k:'Showcase', show_h:'Every modality. One wave.',
+      show_p:'Live samples from the models behind the gateway — vision, code, audio, reasoning and Chinese, all through the same endpoint.',
+      tag_vision:'Vision', tag_code:'Code', tag_audio:'Audio', tag_reason:'Reasoning', tag_zh:'Chinese',
+      lbl_in:'Input · image', lbl_in_audio:'Input · audio', lbl_out:'Output', lbl_prompt:'Prompt', lbl_thinking:'Output · chain of thought',
+      c1_q:'“What happened in Q3?”',
+      c1_a:'Revenue dipped 8% in Q3 (the pink marker) after two quarters of growth — likely seasonal, since Q4 recovers to the strongest point on the chart. Recommend annotating the churn spike in September.',
+      c2_q:'“Write a rate limiter decorator in Python, token-bucket style.”',
+      c3_q:'standup_recording.m4a · 00:42',
+      c3_a:'Transcript ready. Summary: deploy moved to Thursday; two blockers — the staging DB migration and a flaky payment test. Action items assigned to Li (migration) and Sam (test).',
+      c4_q:'“A tank fills in 6h via pipe A, 4h via B, drains in 12h via C. All open — when is it full?”',
+      c4_a:'Rates: A = 1/6, B = 1/4, C = −1/12 per hour. Net = 2/12 + 3/12 − 1/12 = 4/12 = 1/3. Full tank ÷ net rate = 1 ÷ (1/3) = 3 hours. ✓ verified by dimensional check.',
+      c5_q:'“Turn our slogan \'One Wave. Every Model.\' into a watery Chinese brand line.”',
+      c5_a:'「一浪直达，万模归一。」— keeps the motion of the wave and lands the product truth: every model flows into one endpoint. Eight characters, parallel, memorable.',
+      pr_k:'Pricing', pr_h:'Pay for tokens, not seats.',
+      pr1_per:'/ forever', pr1_f1:'1M free tokens / month', pr1_f2:'All open-weight models', pr1_f3:'Community support', pr1_cta:'Start free',
+      pr2_tag:'MOST POPULAR', pr2_price:'Pay-as-you-go', pr2_f1:'All 200+ models', pr2_f2:'Smart routing & failover', pr2_f3:'Cost analytics & budgets', pr2_f4:'Priority support', pr2_cta:'Get API key',
+      pr3_price:'Custom', pr3_per:'/ enterprise', pr3_f1:'Dedicated relay nodes', pr3_f2:'SLA 99.99% & SSO', pr3_f3:'Private model hosting', pr3_cta:'Talk to us',
+      ft_product:'Product', ft_playground:'Playground', ft_dev:'Developers', ft_status:'API Status', ft_changelog:'Changelog', ft_company:'Company', ft_about:'About', ft_privacy:'Privacy', ft_terms:'Terms',
+      nav_rank:'Leaderboard',
+      flow_k:'How it works', flow_h:"Three steps. That's it.",
+      flow_p:'Pick a model, send the request, receive results — by webhook push or polling. No SDK migration, no infrastructure.',
+      flow_s1:'Choose a model', flow_s1d:'200+ models behind one endpoint — switch providers by changing a single string.',
+      flow_s2:'Send the request', flow_s2d:'OpenAI-compatible REST. Streaming, tool calls and vision included out of the box.',
+      flow_s3:'Receive results', flow_s3d:'Instant response for chat; webhook push or polling for long-running jobs.',
+      flow_wh:'Webhook', flow_poll:'Polling',
+      lb_k:'Leaderboard', lb_h:'What the wave is riding',
+      lb_p:'Most-used models on wavydance.ai, ranked by tokens processed in the last 24 hours.',
+      lb_all:'All', lb_llm:'LLM', lb_img:'Image', lb_vid:'Video',
+      lb_note:'Tokens = last 24h · arrow = 3-day trend',
+      qa_k:'Q&A', qa_h:'Questions, answered.',
+      qa_p:'The things developers ask before their first request.',
+      q1:'Is wavydance.ai compatible with the OpenAI SDK?',
+      a1:'Yes — for chat and vision models the API is fully OpenAI-compatible. Point your existing SDK at our base_url and switch providers by changing the model string. Image and video go through the unified async task API instead.',
+      q2:'How does billing work?',
+      a2:'Pay-as-you-go per token (or per generation for media models), aggregated into one monthly bill across all providers. No seats, no minimums. Budgets and alerts are built in.',
+      q3:'What happens when a provider goes down?',
+      a3:'Latency-aware routing detects the failure and retries your request on the next-best provider automatically — same model family where possible. You see one consistent endpoint; the failover is invisible.',
+      q4:'Do you store or train on my prompts?',
+      a4:'No. Requests are relayed, metered and discarded. Only usage metadata (token counts, latency, model) is retained for analytics and billing. Enterprise plans support zero-log mode.',
+      q5:'How do I get results from long-running image / video jobs?',
+      a5:'Two ways: register a webhook and we push the result the moment the task succeeds, or poll GET /v1/tasks/:id at your own pace. Both return the same task object.',
+      comm_h:'Join the wave 🌊',
+      comm_p:'8,000+ developers share routing recipes, cost dashboards and early model access in our community.',
+      comm_wc:'WeChat Group',
+    },
+    zh: {
+      nav_showcase:'效果展示', nav_models:'模型', nav_pricing:'价格', nav_docs:'文档', nav_status:'状态', nav_key:'获取 API Key',
+      pill:'系统畅流 · 99.99% 在线',
+      h1:'一浪直达，<br><span class="grad">万模归一。</span>',
+      sub:'统一所有大模型 API 的中转网关。一个端点、一个密钥、一张账单 —— GPT、Claude、Gemini、DeepSeek、Qwen 等 200+ 模型，以洋流之速完成路由。',
+      cta1:'免费开始 — 100 万 tokens', cta2:'查看文档',
+      st1:'个模型 · 一个 API', st2:'路由开销', st3:'在线率 · 自动容灾',
+      demo_k:'一个网关，两套协议', demo_h:'对话即插即用，<br>多模态统一任务接口。',
+      demo_p:'对话与视觉模型完全兼容 OpenAI 协议 —— 改一行代码即可切换厂商。图像与视频则走统一的异步任务接口，参数结构跨厂商一致，结果通过 Webhook 推送或轮询获取。',
+      ct_chat:'对话', ct_img:'图像', ct_vid:'视频',
+      show_k:'效果展示', show_h:'多模态，一浪打通。',
+      show_p:'网关背后各模型的真实样例 —— 视觉、代码、语音、推理与中文，全部走同一个端点。',
+      tag_vision:'视觉', tag_code:'代码', tag_audio:'语音', tag_reason:'推理', tag_zh:'中文',
+      lbl_in:'输入 · 图像', lbl_in_audio:'输入 · 音频', lbl_out:'输出', lbl_prompt:'提示词', lbl_thinking:'输出 · 思维链',
+      c1_q:'“第三季度发生了什么？”',
+      c1_a:'营收在 Q3 下滑 8%（粉色标记处），此前连续两季增长 —— 大概率是季节性因素，因为 Q4 回升至全图最高点。建议在 9 月的流失峰值处加注释。',
+      c2_q:'“用 Python 写一个令牌桶风格的限流装饰器。”',
+      c3_q:'standup_recording.m4a · 00:42',
+      c3_a:'转写完成。摘要：发布改至周四；两个阻塞项 —— 预发数据库迁移和一个不稳定的支付测试。行动项已分配给 Li（迁移）和 Sam（测试）。',
+      c4_q:'“水池 A 管 6 小时注满，B 管 4 小时注满，C 管 12 小时放空。全开多久注满？”',
+      c4_a:'速率：A = 1/6，B = 1/4，C = −1/12（每小时）。净速率 = 2/12 + 3/12 − 1/12 = 4/12 = 1/3。满池 ÷ 净速率 = 1 ÷ (1/3) = 3 小时。✓ 量纲校验通过。',
+      c5_q:'“把我们的 slogan ‘One Wave. Every Model.’ 写成一句有水感的中文品牌语。”',
+      c5_a:'「一浪直达，万模归一。」—— 既保留 wave 的动势，又点出“所有模型汇于一个接口”的产品本质；八个字，对仗、易记、可注册。',
+      pr_k:'价格', pr_h:'按 token 付费，不按席位。',
+      pr1_per:'/ 永久', pr1_f1:'每月 100 万免费 tokens', pr1_f2:'全部开源权重模型', pr1_f3:'社区支持', pr1_cta:'免费开始',
+      pr2_tag:'最受欢迎', pr2_price:'按量付费', pr2_f1:'全部 200+ 模型', pr2_f2:'智能路由与容灾', pr2_f3:'成本分析与预算', pr2_f4:'优先支持', pr2_cta:'获取 API key',
+      pr3_price:'定制', pr3_per:'/ 企业版', pr3_f1:'专属中转节点', pr3_f2:'SLA 99.99% 与 SSO', pr3_f3:'私有模型托管', pr3_cta:'联系我们',
+      ft_product:'产品', ft_playground:'演练场', ft_dev:'开发者', ft_status:'API 状态', ft_changelog:'更新日志', ft_company:'公司', ft_about:'关于', ft_privacy:'隐私', ft_terms:'条款',
+      nav_rank:'排行榜',
+      flow_k:'工作流程', flow_h:'三步，就这么简单。',
+      flow_p:'选模型、发请求、收结果 —— 支持 Webhook 推送或轮询。无需迁移 SDK，无需自建设施。',
+      flow_s1:'选择模型', flow_s1d:'一个端点背后 200+ 模型，改一个字符串即可切换厂商。',
+      flow_s2:'发送请求', flow_s2d:'兼容 OpenAI 的 REST 接口，流式、工具调用与视觉开箱即用。',
+      flow_s3:'接收结果', flow_s3d:'对话即时返回；长任务用 Webhook 推送或轮询获取。',
+      flow_wh:'Webhook 推送', flow_poll:'轮询',
+      lb_k:'排行榜', lb_h:'浪尖上的模型',
+      lb_p:'wavydance.ai 站内调用排名，按最近 24 小时处理的 token 量排序。',
+      lb_all:'全部', lb_llm:'大模型', lb_img:'图像', lb_vid:'视频',
+      lb_note:'Token 为最近 24 小时用量 · 箭头为最近 3 天趋势',
+      qa_k:'常见问题', qa_h:'你想问的，都在这里。',
+      qa_p:'开发者发出第一个请求前最常问的问题。',
+      q1:'wavydance.ai 兼容 OpenAI SDK 吗？',
+      a1:'兼容 —— 对话与视觉模型完全遵循 OpenAI 协议，把现有 SDK 的 base_url 指向我们的端点，改 model 字符串即可切换厂商。图像和视频则走统一的异步任务接口。',
+      q2:'计费方式是怎样的？',
+      a2:'按量付费：文本按 token、媒体模型按生成次数计费，所有厂商汇总为一张月度账单。不按席位收费、没有最低消费，内置预算与告警。',
+      q3:'某个厂商挂了怎么办？',
+      a3:'延迟感知路由会自动检测故障，并把请求重试到次优厂商（尽可能同系列模型）。你看到的始终是同一个端点，容灾过程完全透明。',
+      q4:'你们会存储或用我的 prompt 训练吗？',
+      a4:'不会。请求只做转发和计量，随后即丢弃；仅保留用量元数据（token 数、延迟、模型）用于分析和账单。企业版支持零日志模式。',
+      q5:'图像 / 视频这类长任务怎么拿结果？',
+      a5:'两种方式：注册 Webhook，任务成功的瞬间我们主动推送；或按自己的节奏轮询 GET /v1/tasks/:id。两者返回完全相同的任务对象。',
+      comm_h:'加入我们的社群 🌊',
+      comm_p:'8000+ 开发者在社群里分享路由方案、成本看板和新模型的抢先体验。',
+      comm_wc:'微信群',
+    }
+  };
+  let lang = sessionStorage.getItem('wd-lang') || 'en';
+  const langBtn = document.getElementById('langToggle');
+  function applyLang() {
+    const dict = I18N[lang];
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (dict[k] !== undefined) el.textContent = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const k = el.getAttribute('data-i18n-html');
+      if (dict[k] !== undefined) el.innerHTML = dict[k];
+    });
+    langBtn.textContent = lang === 'en' ? '中' : 'EN';
+    langBtn.title = lang === 'en' ? '切换到中文' : 'Switch to English';
+  }
+  langBtn.addEventListener('click', () => {
+    lang = lang === 'en' ? 'zh' : 'en';
+    sessionStorage.setItem('wd-lang', lang);
+    applyLang();
+    renderLB();
+  });
+  applyLang();
+
+  /* ---------------- leaderboard ---------------- */
+  const LB_DATA = [
+    { name:'Claude Opus 4.6', cat:'llm', icon:'ic-anthropic', tok:184.2, trend:+12 },
+    { name:'GPT-5.2',         cat:'llm', icon:'ic-openai',    tok:171.8, trend:+8  },
+    { name:'DeepSeek-V4',     cat:'llm', icon:'ic-deepseek',  tok:96.4,  trend:+21 },
+    { name:'Gemini 3 Pro',    cat:'llm', icon:'ic-google',    tok:88.1,  trend:-3  },
+    { name:'Qwen3-Max',       cat:'llm', icon:'ic-qwen',      tok:64.0,  trend:+5  },
+    { name:'Kimi K2',         cat:'llm', icon:'ic-kimi',      tok:41.7,  trend:-6  },
+    { name:'Llama 4',         cat:'llm', icon:'ic-meta',      tok:38.2,  trend:+2  },
+    { name:'GPT-Image-2',     cat:'image', icon:'ic-openai',  tok:22.4,  trend:+15 },
+    { name:'FLUX 1.1 Pro',    cat:'image', icon:'ic-bfl',     tok:18.9,  trend:+9  },
+    { name:'Gemini Image',    cat:'image', icon:'ic-google',  tok:14.6,  trend:-2  },
+    { name:'SD 3.5 Large',    cat:'image', icon:'ic-sd',      tok:11.2,  trend:+4  },
+    { name:'Qwen-Image',      cat:'image', icon:'ic-qwen',    tok:8.7,   trend:+7  },
+    { name:'Veo 3.1',         cat:'video', icon:'ic-google',  tok:31.5,  trend:+18 },
+    { name:'Sora 2',          cat:'video', icon:'ic-openai',  tok:27.3,  trend:+11 },
+    { name:'Kling 2.5',       cat:'video', icon:'ic-kling',   tok:19.8,  trend:+24 },
+    { name:'Runway Gen-4',    cat:'video', icon:'ic-runway',  tok:12.1,  trend:-5  },
+    { name:'Hailuo 02',       cat:'video', icon:'ic-minimax', tok:9.4,   trend:+3  },
+  ];
+  const LB_TABS = [
+    { id:'all',   key:'lb_all' },
+    { id:'llm',   key:'lb_llm' },
+    { id:'image', key:'lb_img' },
+    { id:'video', key:'lb_vid' },
+  ];
+  const CAT_KEY = { llm:'lb_llm', image:'lb_img', video:'lb_vid' };
+  let lbTab = 'all';
+  const lbTabsBox = document.getElementById('lbTabs');
+  const lbList = document.getElementById('lbList');
+  LB_TABS.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'lb-tab'; b.dataset.tab = t.id;
+    b.addEventListener('click', () => { lbTab = t.id; renderLB(); });
+    lbTabsBox.appendChild(b);
+  });
+  function renderLB() {
+    const dict = I18N[lang];
+    Array.from(lbTabsBox.children).forEach((b, i) => {
+      b.textContent = dict[LB_TABS[i].key];
+      b.classList.toggle('on', LB_TABS[i].id === lbTab);
+    });
+    const rows = LB_DATA
+      .filter(d => lbTab === 'all' || d.cat === lbTab)
+      .sort((a, b) => b.tok - a.tok)
+      .slice(0, 8);
+    const max = rows[0].tok;
+    lbList.innerHTML = rows.map((d, i) => `
+      <div class="lb-row" style="animation-delay:${i * 55}ms">
+        <span class="lb-rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
+        <span class="lb-name">
+          <svg width="24" height="24" viewBox="0 0 22 22"><use href="#${d.icon}"/></svg>
+          <span class="nm">${d.name}</span>
+          ${lbTab === 'all' ? `<span class="lb-cat">${dict[CAT_KEY[d.cat]]}</span>` : ''}
+        </span>
+        <span class="lb-bar"><i data-w="${(d.tok / max * 100).toFixed(1)}"></i></span>
+        <span class="lb-tok">${d.tok.toFixed(1)}B</span>
+        <span class="lb-trend ${d.trend >= 0 ? 'up' : 'down'}">${d.trend >= 0 ? '▲' : '▼'} ${Math.abs(d.trend)}%</span>
+      </div>`).join('');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      lbList.querySelectorAll('.lb-bar i').forEach(el => { el.style.width = el.dataset.w + '%'; });
+    }));
+  }
+  renderLB();
+
+  /* ---------------- code demo tabs ---------------- */
+  const codeTabs = Array.from(document.querySelectorAll('#codeTabs .code-tab'));
+  const codePanes = Array.from(document.querySelectorAll('.code pre'));
+  codeTabs.forEach((t, i) => t.addEventListener('click', () => {
+    codeTabs.forEach((x, j) => x.classList.toggle('on', j === i));
+    codePanes.forEach((p, j) => p.classList.toggle('on', j === i));
+  }));
+
+  /* ---------------- flow step highlight ---------------- */
+  const fsteps = [0, 1, 2].map(i => document.getElementById('fs' + i));
+  let fsi = 0;
+  setInterval(() => {
+    fsteps.forEach((s, i) => s.classList.toggle('on', i === fsi));
+    fsi = (fsi + 1) % 3;
+  }, 1600);
+
+  /* ---------------- live stats ---------------- */
+  // models count-up
+  const elModels = document.getElementById('statModels');
+  let mc = 0; const mcTarget = 200;
+  const countUp = setInterval(() => {
+    mc += Math.ceil((mcTarget - mc) / 12) || 1;
+    if (mc >= mcTarget) { mc = mcTarget; clearInterval(countUp); elModels.textContent = '200+'; }
+    else elModels.textContent = mc;
+  }, 40);
+  // latency jitter
+  const elLat = document.getElementById('statLat');
+  setInterval(() => {
+    elLat.classList.add('tick');
+    setTimeout(() => {
+      elLat.textContent = (32 + Math.floor(Math.random() * 13)) + 'ms';
+      elLat.classList.remove('tick');
+    }, 220);
+  }, 2600);
+
+  /* ---------------- showcase flash cards ---------------- */
+  const deck = document.getElementById('deck');
+  const cards = Array.from(deck.querySelectorAll('.fcard'));
+  const dotsBox = document.getElementById('deckDots');
+  cards.forEach((_, i) => {
+    const d = document.createElement('i');
+    d.addEventListener('click', () => { idx = i; layout(); restart(); });
+    dotsBox.appendChild(d);
+  });
+  const dots = Array.from(dotsBox.children);
+  let idx = 0, timer = null;
+  function layout(leaving = -1) {
+    cards.forEach((c, i) => {
+      c.classList.remove('is-active','is-next','is-back','is-out');
+      const rel = (i - idx + cards.length) % cards.length;
+      if (i === leaving) c.classList.add('is-out');
+      else if (rel === 0) c.classList.add('is-active');
+      else if (rel === 1) c.classList.add('is-next');
+      else if (rel === 2) c.classList.add('is-back');
+    });
+    dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+  }
+  function next() {
+    const leaving = idx;
+    idx = (idx + 1) % cards.length;
+    layout(leaving);
+  }
+  function restart() { clearInterval(timer); timer = setInterval(next, 3000); }
+  deck.addEventListener('mouseenter', () => clearInterval(timer));
+  deck.addEventListener('mouseleave', restart);
+  layout(); restart();
+</script>
+
+</body>
+</html>

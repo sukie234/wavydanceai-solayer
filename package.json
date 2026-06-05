@@ -1,6 +1,12 @@
 {
   "private": true,
-  "description": "Dev dependencies for CI workflows (commitlint)",
+  "description": "Dev dependencies for CI workflows (commitlint) + convenience scripts that proxy to web/wavy",
+  "scripts": {
+    "dev": "cd web/wavy && bun run dev",
+    "build": "cd web/wavy && bun run build",
+    "typecheck": "cd web/wavy && bun run typecheck",
+    "lint": "cd web/wavy && bun run lint"
+  },
   "devDependencies": {
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3"

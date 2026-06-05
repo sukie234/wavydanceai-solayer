@@ -116,11 +116,9 @@ var RelayTimeout = env.Int("RELAY_TIMEOUT", 0) // unit is second
 
 var GeminiSafetySetting = env.String("GEMINI_SAFETY_SETTING", "BLOCK_NONE")
 
-var Theme = env.String("THEME", "default")
+var Theme = env.String("THEME", "wavy")
 var ValidThemes = map[string]bool{
-	"default": true,
-	"berry":   true,
-	"air":     true,
+	"wavy": true,
 }
 
 // All duration's unit is seconds
@@ -153,6 +151,11 @@ var MetricFailChanSize = env.Int("METRIC_FAIL_CHAN_SIZE", 128)
 var InitialRootToken = os.Getenv("INITIAL_ROOT_TOKEN")
 
 var InitialRootAccessToken = os.Getenv("INITIAL_ROOT_ACCESS_TOKEN")
+
+// InitialRootPassword overrides the seeded root account password on the very
+// first run (when the users table is empty). Always set this in any deployment
+// reachable from outside localhost — the fallback "123456" is publicly known.
+var InitialRootPassword = os.Getenv("INITIAL_ROOT_PASSWORD")
 
 var GeminiVersion = env.String("GEMINI_VERSION", "v1")
 

@@ -69,6 +69,26 @@ For multi-step tasks, state a brief plan with verification at each step.
 - Write meaningful commit messages explaining why, not what.
 - Never force-push to shared branches.
 
+### Never commit local dev artifacts
+
+The following artifacts are produced by tooling during local development /
+verification and **must not be committed**. They live in `.gitignore`; if you
+see one staged, unstage it instead of editing the ignore rules.
+
+- **Playwright / browser screenshots** generated during smoke tests:
+  - PNG / JPEG / WebP files at the repo root (e.g. `console-light.png`,
+    `demo-glass.png`, `*-fullpage.jpeg`)
+  - The `.playwright-mcp/` directory (page snapshots + console logs from
+    the Playwright MCP server)
+- **Chrome DevTools MCP** profile / cache (`.cache/chrome-devtools-mcp/` etc.)
+- Anything in `/tmp/` referenced by absolute path in scripts — never copy
+  these into the repo.
+
+Verification screenshots are for the assistant to confirm a change locally;
+attach them to the PR description or paste into chat instead of checking
+them into source control. Legitimate product assets belong in
+`web/wavy/public/` or `web/web_reference/assets/`, not the repo root.
+
 ## 8. PR Expectations
 
 - Fill out the PR template completely.
@@ -81,3 +101,23 @@ For multi-step tasks, state a brief plan with verification at each step.
 <!-- - Describe your directory structure conventions here -->
 - Co-locate related files.
 - Avoid deep nesting.
+
+## 10. Secrets and credentials
+
+**Never deploy with default credentials.** The backend seeds a root
+account (`root` / `123456`) on first boot when the users table is empty.
+This is documented publicly across every One-API fork and is therefore
+treated as a known credential.
+
+- Always set `INITIAL_ROOT_PASSWORD` before the first boot of any
+  deployment reachable from outside localhost. Optionally also set
+  `INITIAL_ROOT_TOKEN` and `INITIAL_ROOT_ACCESS_TOKEN`.
+- If you forgot and the default account exists, sign in and change the
+  password immediately via the user settings before adding any
+  channels or tokens.
+- Set `SESSION_COOKIE_SECURE=true` in production so the session cookie
+  is only sent over TLS.
+- `SESSION_SECRET` must be a random 32+ byte string per deployment.
+  Never reuse across environments.
+- Don't commit `.env` files. The repo's `.gitignore` already blocks
+  `.env*` (except `.env.example`).

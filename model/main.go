@@ -25,8 +25,17 @@ func CreateRootAccountIfNeed() error {
 	var user User
 	//if user.Status != util.UserStatusEnabled {
 	if err := DB.First(&user).Error; err != nil {
-		logger.SysLog("no user exists, creating a root user for you: username is root, password is 123456")
-		hashedPassword, err := common.Password2Hash("123456")
+		// Use the operator-supplied password when present; fall back to the
+		// well-known default ONLY for first-boot convenience on localhost.
+		// Anything else is a serious risk — log loudly when the fallback hits.
+		password := config.InitialRootPassword
+		if password == "" {
+			password = "123456"
+			logger.SysLog("no user exists, creating a root user for you: username is root, password is 123456 — CHANGE IT IMMEDIATELY or set INITIAL_ROOT_PASSWORD before first boot")
+		} else {
+			logger.SysLog("no user exists, creating root user from INITIAL_ROOT_PASSWORD")
+		}
+		hashedPassword, err := common.Password2Hash(password)
 		if err != nil {
 			return err
 		}
