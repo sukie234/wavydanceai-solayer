@@ -171,36 +171,32 @@ new-api 已经有完整的"套餐 + 自动续期"，当前仓库**完全没有**
 3. **Custom OAuth Provider** — 让运营自助接 SSO，避免每次加一个 OAuth 都改代码
 4. **OIDC / Discord** — 视实际用户群再补
 
-### 3.3 多 provider OIDC 设计（架构补充，2026-06-06）
+### 3.3 多 provider OIDC 设计 — **已评估，推迟（2026-06-06）**
 
-§3.1 表里的 "OIDC"、"Custom OAuth Provider"、"OAuth 统一入口" 三行**不是三个独立能力，是一套架构的三层**。直接抄 new-api 会落入它的坑 —— new-api 的 OIDC 仍然是 singleton（同时只能跑一个 IdP）。
+> **结论**：过度设计，不推进。当前 Google 登录已足够。等真有客户提出"一个部署需要多个 IdP 同时启用"再做。
 
-**目标架构**：把这三项合并为一套**多 provider OIDC 注册表**，模式照搬 P0 加密支付的 adapter 基座（`service/payment/crypto/registry.go`）：
+**为什么之前考虑做**：理论上让一个部署同时跑 Google / Okta / Auth0 / 自建 Keycloak 等多个 OIDC 提供方，admin 在管理后台加任意条目，无需改代码。
 
-```go
-// setting/system_setting/oidc.go
-type OIDCProvider struct {
-    Name         string  // "google" / "okta" / "auth0"，路由 :provider 用
-    DisplayName  string  // "Sign in with Google"，前端按钮文案
-    WellKnown    string
-    ClientId     string
-    ClientSecret string
-    Enabled      bool
-    Icon         string
-}
-type OIDCSettings struct {
-    Providers []OIDCProvider `json:"providers"`
-}
+**为什么不做了**：本项目是**白标 SaaS** —— 每个客户 = 独立部署实例（见 `docs/P0_TOPUP_EXECUTION_PLAN.md` 业务上下文）。**一个部署只服务一个客户、只需要一个 IdP**：
 
-// 路由：/api/oauth/oidc/:provider 按 Name 分发
-// 前端：/api/status 暴露 enabled providers，循环渲染按钮
-```
+- 客户 A → 部署里配 Google 即可
+- 客户 B → 部署里配 Okta 即可
+- 客户 C → 部署里配自建 Keycloak 即可
 
-**白标 SaaS 含义**：每个客户可能要不同 OIDC IdP（A 客户用 Google，B 用 Okta，C 用自建 Keycloak）。**多 provider 是真实需求**，singleton 不够用。
+现有 singleton OIDC handler (`controller/auth/oidc.go` + `OidcEnabled` / `OidcClientId` / `OidcWellKnown` 这些 flat config) **已经能配任意 OIDC IdP**，admin 填一个 well-known URL 就行。多 provider 注册表解决的问题（一个部署同时多 IdP）不是当前业务模型的真实需求。
 
-**Custom OAuth Provider** (`controller/custom_oauth.go` + `model/custom_oauth_provider.go`) 是这套设计的**运营态扩展** —— 让 admin 在管理后台直接加 provider，无需写代码 / 改镜像 / 出 PR。三件事是一个 phase。
+**之前对"白标 = 多 provider 真实需求"的推断错了** —— 白标 = 一客一部署 = 一个 IdP，不是多 IdP。
 
-**目前状态**：PR #15 临时做了一个硬编码 Google handler (`controller/auth/google.go` + 已在 #15 后续 commit 迁到 `setting/auth_setting/google_setting.go`)。这是过渡产物，最终会被这个注册表替代 —— 完成后 Google handler 删除，"Sign in with Google" 走 generic OIDC + provider name = "google"。
+**留作参考**：试验性实现见 branch `feat/p1-oidc-registry` + 已关闭的 PR #25。如果未来业务模型变成"一个部署多租户公开 SaaS"（任何人都能注册、想用 Google / Apple / Microsoft 任选），再启用这个分支或重做。
+
+**§3.1 表里相关行的真实优先级修正**：
+- "OIDC" → ✅ 已有 singleton handler，**不缺**
+- "Custom OAuth Provider" → 同上，singleton OIDC 已覆盖该需求 90%，没必要单独做
+- "OAuth 统一入口 (`/api/oauth/:provider`)" → 这是重构期望、不是新能力。重构本身可以做（清洁度+1），但不是 P1 紧急
+
+**Google handler 的处理**（仍然该做，但小路径）：现在 `controller/auth/google.go` + `setting/auth_setting/google_setting.go` 是 PR #15 加的硬编码 Google handler，本质是 singleton OIDC 的重复实现（端点写死）。可以**简化方案**：给 singleton OIDC 配置加 `DisplayName` + `Icon` 字段，admin 配置 Google 的 well-known URL + DisplayName="Sign in with Google" + Icon="google.svg"。前端 `/api/status` 读出来渲染。这样 Google handler 可以删，**~200 行的简单 PR**，无需注册表抽象。
+
+> **教训**：在引入注册表 / 插件式抽象之前，先确认有 ≥2 个真实并发场景。否则就是 single-use 之上的抽象，违反 CLAUDE.md §2。
 
 ---
 
