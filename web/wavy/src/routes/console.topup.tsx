@@ -48,8 +48,6 @@ function TopupPage() {
 
   return (
     <PageShell>
-      <SolayerCardBanner />
-
       <RechargeCard
         info={info}
         onSuccess={() => qc.invalidateQueries({ queryKey: ['my-topups'] })}
@@ -59,46 +57,6 @@ function TopupPage() {
 
       {admin && <AdminTopupsSection />}
     </PageShell>
-  )
-}
-
-function SolayerCardBanner() {
-  return (
-    <div className="relative mb-6 overflow-hidden rounded-2xl border border-[color:var(--primary)]/30 bg-gradient-to-r from-[#084d3e]/10 via-[#0d6b53]/8 to-[#a4e58f]/10 p-5 shadow-[var(--shadow-jelly)]">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* Text */}
-        <div className="flex-1">
-          <div className="mb-1 font-mono text-[11px] uppercase tracking-[2px] text-[color:var(--primary)]">
-            Solayer Card Exclusive
-          </div>
-          <h3 className="font-display text-lg font-bold tracking-[-0.4px] text-[color:var(--title)]">
-            Pay with Solayer Card &amp; get{' '}
-            <span className="text-[color:var(--primary)]">15% cashback</span>
-          </h3>
-          <p className="mt-1 text-xs text-[color:var(--muted)]">
-            Use your Solayer Visa card at checkout to earn 15% back on every AI model purchase — paid in Emerald Points redeemable for $LAYER rewards.
-          </p>
-          <a
-            href="https://app.solayer.org/card"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--primary)]/40 bg-[color:var(--primary)]/10 px-3 py-1.5 text-xs font-semibold text-[color:var(--primary)] transition hover:bg-[color:var(--primary)]/20"
-          >
-            Get Solayer Card
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
-
-        {/* Card image */}
-        <div className="flex-shrink-0 sm:w-44">
-          <img
-            src="https://mintcdn.com/solayerlabsinc/JVJagf8rOz8f5sCD/images/solayer-pay/solayer-pay-physical.png"
-            alt="Solayer Pay Card"
-            className="w-full drop-shadow-xl"
-          />
-        </div>
-      </div>
-    </div>
   )
 }
 

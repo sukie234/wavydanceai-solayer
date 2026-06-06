@@ -15,13 +15,13 @@ export function StatCard({ kicker, value, delta, spark, unit, style }: Props) {
   const up = delta >= 0
   return (
     <div
-      className="group relative overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-[var(--shadow-jelly)] transition-all hover:border-[color:var(--primary)]/50 hover:-translate-y-0.5"
+      className="group relative overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-[var(--shadow-jelly)] transition-all hover:border-[color:var(--cyan)]/50 hover:-translate-y-0.5"
       style={style}
     >
       {/* Corner glow */}
       <div
         className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-40 blur-3xl transition-opacity group-hover:opacity-60"
-        style={{ background: 'radial-gradient(circle, var(--primary), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, var(--cyan), transparent 70%)' }}
       />
 
       <div className="relative">
@@ -35,7 +35,7 @@ export function StatCard({ kicker, value, delta, spark, unit, style }: Props) {
             {unit && <span className="text-sm font-medium text-[color:var(--muted)]">{unit}</span>}
           </div>
           <div className="opacity-90">
-            <Sparkline values={spark} stroke="var(--primary)" fill="var(--primary)" />
+            <Sparkline values={spark} stroke="var(--cyan)" fill="var(--cyan)" />
           </div>
         </div>
 
@@ -43,7 +43,7 @@ export function StatCard({ kicker, value, delta, spark, unit, style }: Props) {
           <span
             className={cn(
               'inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-xs font-medium tabular-nums',
-              up ? 'bg-[color:var(--primary)]/12 text-[color:var(--primary)]' : 'bg-[#E2607B]/12 text-[#E2607B]',
+              up ? 'bg-[color:var(--live)]/12 text-[color:var(--live)]' : 'bg-[#E2607B]/12 text-[#E2607B]',
             )}
           >
             {up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}

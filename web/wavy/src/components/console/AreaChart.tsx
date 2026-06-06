@@ -47,14 +47,14 @@ export function AreaChart({ data, height = 240, width = 720 }: Props) {
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full" preserveAspectRatio="none">
       <defs>
         <linearGradient id={`grad-${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#084D3E" stopOpacity="0.45" />
-          <stop offset="60%" stopColor="#0d6b53" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#a4e58f" stopOpacity="0" />
+          <stop offset="0%" stopColor="#3FB3D9" stopOpacity="0.45" />
+          <stop offset="60%" stopColor="#4ED4DC" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#B5ECF2" stopOpacity="0" />
         </linearGradient>
         <linearGradient id={`line-${id}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#084D3E" />
-          <stop offset="60%" stopColor="#0d6b53" />
-          <stop offset="100%" stopColor="#a4e58f" />
+          <stop offset="0%" stopColor="#3FB3D9" />
+          <stop offset="60%" stopColor="#4ED4DC" />
+          <stop offset="100%" stopColor="#B5ECF2" />
         </linearGradient>
       </defs>
 
@@ -90,9 +90,9 @@ export function AreaChart({ data, height = 240, width = 720 }: Props) {
       {/* Data points + bottom labels */}
       {pts.map(([x, y], i) => (
         <g key={i}>
-          <circle cx={x} cy={y} r={i === pts.length - 1 ? 5 : 3} fill="#0d6b53" stroke="var(--surface)" strokeWidth="2" />
+          <circle cx={x} cy={y} r={i === pts.length - 1 ? 5 : 3} fill="#4ED4DC" stroke="var(--surface)" strokeWidth="2" />
           {i === pts.length - 1 && (
-            <circle cx={x} cy={y} r="9" fill="none" stroke="#0d6b53" strokeOpacity="0.4" strokeWidth="1.5">
+            <circle cx={x} cy={y} r="9" fill="none" stroke="#4ED4DC" strokeOpacity="0.4" strokeWidth="1.5">
               <animate attributeName="r" values="5;12;5" dur="2s" repeatCount="indefinite" />
               <animate attributeName="stroke-opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite" />
             </circle>

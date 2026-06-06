@@ -40,7 +40,7 @@ export function TopModelsPanel({ data, loading }: Props) {
   return (
     <div className="flex h-full flex-col rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
       <header className="mb-5 flex items-baseline justify-between">
-        <h3 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{t('console.dash.topModels')}</h3>
+        <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.topModels')}</h3>
         <span className="font-mono text-xs tracking-[1.5px] text-[color:var(--muted)] uppercase">7d</span>
       </header>
 
@@ -61,7 +61,7 @@ export function TopModelsPanel({ data, loading }: Props) {
                 <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{m.name}</div>
                 <div className="mt-1 h-1 overflow-hidden rounded-full bg-[color:var(--border)]/60">
                   <span
-                    className="block h-full rounded-full bg-gradient-to-r from-[#084D3E] via-[#0d6b53] to-[#a4e58f]"
+                    className="block h-full rounded-full bg-gradient-to-r from-[#3FB3D9] via-[#4ED4DC] to-[#B5ECF2]"
                     style={{ width: `${(m.quota / max) * 100}%`, transition: 'width 700ms cubic-bezier(.22,.8,.3,1)' }}
                   />
                 </div>

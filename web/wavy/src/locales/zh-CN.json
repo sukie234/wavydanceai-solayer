@@ -151,7 +151,7 @@
   "lb": {
     "kicker": "排行榜",
     "title": "浪尖上的模型",
-    "lead": "solayer.org 站内调用排名，按最近 24 小时处理的 token 量排序。",
+    "lead": "wavydance.ai 站内调用排名，按最近 24 小时处理的 token 量排序。",
     "note": "Token 为最近 24 小时用量 · 箭头为最近 3 天趋势",
     "tab": { "all": "全部", "llm": "大模型", "image": "图像", "video": "视频" }
   },
@@ -227,7 +227,7 @@
     "title": "你想问的，都在这里。",
     "lead": "开发者发出第一个请求前最常问的问题。",
     "q1": {
-      "q": "solayer.org 兼容 OpenAI SDK 吗？",
+      "q": "wavydance.ai 兼容 OpenAI SDK 吗？",
       "a": "兼容 —— 对话与视觉模型完全遵循 OpenAI 协议，把现有 SDK 的 base_url 指向我们的端点，改 model 字符串即可切换厂商。图像和视频则走统一的异步任务接口。"
     },
     "q2": {
@@ -252,7 +252,7 @@
     "lead": "8000+ 开发者在社群里分享路由方案、成本看板和新模型的抢先体验。"
   },
   "login": {
-    "kicker": "solayer.org · 登录",
+    "kicker": "wavydance.ai · 登录",
     "title": "欢迎回来。",
     "username": "用户名",
     "password": "密码",
