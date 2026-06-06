@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/helper"
@@ -27,9 +28,9 @@ type Topup struct {
 	UserId          int    `json:"user_id" gorm:"index"`
 	TradeNo         string `json:"trade_no" gorm:"type:varchar(64);uniqueIndex"`
 	GatewayTradeNo  string `json:"gateway_trade_no" gorm:"type:varchar(128);index"`
-	Gateway         string `json:"gateway" gorm:"type:varchar(32);index"`     // "stripe","epay","crypto:nowpayments"
-	PayMethod       string `json:"pay_method" gorm:"type:varchar(32)"`        // "alipay","wxpay","card","USDT-TRC20"
-	Money           int64  `json:"money" gorm:"bigint"`                       // expected amount in cents
+	Gateway         string `json:"gateway" gorm:"type:varchar(32);index"` // "stripe","epay","crypto:nowpayments"
+	PayMethod       string `json:"pay_method" gorm:"type:varchar(32)"`    // "alipay","wxpay","card","USDT-TRC20"
+	Money           int64  `json:"money" gorm:"bigint"`                   // expected amount in cents
 	Currency        string `json:"currency" gorm:"type:varchar(8);default:'CNY'"`
 	Quota           int64  `json:"quota" gorm:"bigint"`
 	Status          string `json:"status" gorm:"type:varchar(16);default:'pending';index"`
@@ -103,7 +104,9 @@ func CompleteTopup(ctx context.Context, tradeNo string, gatewayTradeNo string, p
 
 	err = DB.Transaction(func(tx *gorm.DB) error {
 		var t Topup
-		if err := tx.Set("gorm:query_option", "FOR UPDATE").
+		// SELECT ... FOR UPDATE — required for concurrent-webhook idempotency.
+		// gorm v2 ignores tx.Set("gorm:query_option", ...) silently; use Clauses.
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where("trade_no = ?", tradeNo).First(&t).Error; err != nil {
 			return err
 		}
@@ -162,7 +165,7 @@ func FailTopup(tradeNo string, payload string) error {
 	}
 	return DB.Transaction(func(tx *gorm.DB) error {
 		var t Topup
-		if err := tx.Set("gorm:query_option", "FOR UPDATE").
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where("trade_no = ?", tradeNo).First(&t).Error; err != nil {
 			return err
 		}

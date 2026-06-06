@@ -39,7 +39,7 @@ curl -X PUT $BASE/api/option/ \
 curl -X PUT $BASE/api/option/ \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"key":"PaymentReturnURL","value":"http://localhost:3000/topup/result"}'
+  -d '{"key":"PaymentReturnURL","value":"http://localhost:3000/topup-result"}'
 ```
 
 ---
@@ -377,7 +377,7 @@ curl -X PUT http://localhost:3000/api/option/ -H "Authorization: Bearer $ROOT" \
 curl -X PUT http://localhost:3000/api/option/ -H "Authorization: Bearer $ROOT" \
   -H "Content-Type: application/json" -d '{"key":"StripeEnabled","value":"true"}'
 curl -X PUT http://localhost:3000/api/option/ -H "Authorization: Bearer $ROOT" \
-  -H "Content-Type: application/json" -d '{"key":"PaymentReturnURL","value":"http://localhost:3000/topup/result"}'
+  -H "Content-Type: application/json" -d '{"key":"PaymentReturnURL","value":"http://localhost:3000/topup-result"}'
 
 # 4. 下单
 USER=sk-user-token

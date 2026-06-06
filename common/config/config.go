@@ -188,7 +188,8 @@ var EpayEnabled = false
 var PaymentCallbackBaseURL = ""
 
 // PaymentReturnURL is where the user is redirected after completing payment.
-// Typically a frontend route like https://app.example.com/topup/result.
+// Typically a frontend route like https://app.example.com/topup-result
+// (matches the route registered in web/wavy/src/routes/topup-result.tsx).
 var PaymentReturnURL = ""
 
 // CryptoAdaptersEnabled is the whitelist of crypto adapter Name()s currently
