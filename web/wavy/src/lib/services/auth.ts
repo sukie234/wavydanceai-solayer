@@ -1,9 +1,22 @@
 import { api, unwrap } from '@/lib/api'
 import type { ApiResponse, User } from '@/lib/types'
 
+/** Discriminant returned when the user has TOTP enabled — caller must then
+ *  call `twofaService.verifyLogin(code)` to finish authentication. */
+export interface TwoFAChallenge {
+  two_fa_required: true
+}
+
+export function isTwoFAChallenge(r: User | TwoFAChallenge): r is TwoFAChallenge {
+  return (r as TwoFAChallenge).two_fa_required === true
+}
+
 export const authService = {
-  async login(username: string, password: string): Promise<User> {
-    const res = await api.post<ApiResponse<User>>('/user/login', { username, password })
+  async login(username: string, password: string): Promise<User | TwoFAChallenge> {
+    const res = await api.post<ApiResponse<User | TwoFAChallenge>>('/user/login', {
+      username,
+      password,
+    })
     return unwrap(res)
   },
 

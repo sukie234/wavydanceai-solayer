@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { authService } from '@/lib/services/auth'
 import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
+import { OAuthButtons } from '@/components/auth/OAuthButtons'
 
 export const Route = createFileRoute('/register')({
   beforeLoad: async () => {
@@ -20,23 +21,30 @@ function RegisterPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
+  const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
+  const emailValid = email === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const mismatch = confirm.length > 0 && password !== confirm
   const tooShort = password.length > 0 && password.length < 8
-  const canSubmit = username.length >= 3 && password.length >= 8 && !mismatch && !loading
+  const canSubmit =
+    username.length >= 3 && password.length >= 8 && emailValid && !mismatch && !loading
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setErr(null)
-    if (mismatch || tooShort) return
+    if (mismatch || tooShort || !emailValid) return
     setLoading(true)
     try {
-      await authService.register({ username, password })
+      await authService.register({
+        username,
+        password,
+        ...(email ? { email } : {}),
+      })
       // Backend creates the account but doesn't log us in. Hop through the
       // login endpoint so the session cookie lands without forcing the user
       // to retype credentials.
@@ -77,12 +85,23 @@ function RegisterPage() {
           onSubmit={onSubmit}
           className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-[var(--shadow-jelly)]"
         >
+          <OAuthButtons mode="register" />
+
+          <Field
+            label={t('register.email')}
+            type="email"
+            value={email}
+            onChange={setEmail}
+            autoComplete="email"
+            autoFocus
+            hint={!emailValid ? t('register.emailInvalid') : t('register.emailHint')}
+            tone={!emailValid ? 'warn' : 'muted'}
+          />
           <Field
             label={t('register.username')}
             value={username}
             onChange={setUsername}
             autoComplete="username"
-            autoFocus
           />
           <Field
             label={t('register.password')}

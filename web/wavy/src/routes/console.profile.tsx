@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { Field, DialogError } from '@/components/console/Dialog'
 import { authService } from '@/lib/services/auth'
+import { twofaService, type TwoFASetupArtifact } from '@/lib/services/twofa'
 import { clearSessionCache } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 
@@ -43,6 +44,7 @@ function ProfilePage() {
             }}
           />
           <ChangePasswordCard username={user.username} />
+          <TwoFactorCard />
         </div>
       )}
     </div>
@@ -206,6 +208,185 @@ function ChangePasswordCard({ username }: { username: string }) {
           </Button>
         </div>
       </form>
+    </section>
+  )
+}
+
+// ---------- 2FA section ----------
+
+function TwoFactorCard() {
+  const { t } = useTranslation()
+  const qc = useQueryClient()
+  const { data: status, isLoading } = useQuery({
+    queryKey: ['2fa-status'],
+    queryFn: () => twofaService.status(),
+    staleTime: 10_000,
+  })
+  const [setup, setSetup] = useState<TwoFASetupArtifact | null>(null)
+  const [enableCode, setEnableCode] = useState('')
+  const [disableCode, setDisableCode] = useState('')
+  const [err, setErr] = useState<string | null>(null)
+  const [showDisable, setShowDisable] = useState(false)
+  const [showRegen, setShowRegen] = useState(false)
+  const [regenCode, setRegenCode] = useState('')
+  const [regenResult, setRegenResult] = useState<string[] | null>(null)
+
+  const startSetup = useMutation({
+    mutationFn: () => twofaService.setup(),
+    onSuccess: (a) => {
+      setSetup(a)
+      setErr(null)
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : 'failed'),
+  })
+
+  const enable = useMutation({
+    mutationFn: () => twofaService.enable(enableCode.trim()),
+    onSuccess: () => {
+      setSetup(null)
+      setEnableCode('')
+      qc.invalidateQueries({ queryKey: ['2fa-status'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : 'failed'),
+  })
+
+  const disable = useMutation({
+    mutationFn: () => twofaService.disable(disableCode.trim()),
+    onSuccess: () => {
+      setShowDisable(false)
+      setDisableCode('')
+      qc.invalidateQueries({ queryKey: ['2fa-status'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : 'failed'),
+  })
+
+  const regen = useMutation({
+    mutationFn: () => twofaService.regenerateBackupCodes(regenCode.trim()),
+    onSuccess: (codes) => {
+      setRegenResult(codes)
+      setRegenCode('')
+      qc.invalidateQueries({ queryKey: ['2fa-status'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : 'failed'),
+  })
+
+  if (isLoading || !status) return null
+
+  return (
+    <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]">
+      <div className="mb-2 flex items-center gap-2">
+        <ShieldCheck className="h-4 w-4 text-[color:var(--cyan)]" />
+        <h2 className="font-display text-lg font-bold tracking-[-0.5px]">{t('profile.twofa.title')}</h2>
+      </div>
+      <p className="mb-5 text-sm text-[color:var(--muted)]">{t('profile.twofa.desc')}</p>
+
+      {/* Idle state ------------------------------------------------------ */}
+      {!status.enabled && !setup && (
+        <Button size="sm" onClick={() => startSetup.mutate()} disabled={startSetup.isPending}>
+          {t('profile.twofa.enable')}
+        </Button>
+      )}
+
+      {/* Setup state ----------------------------------------------------- */}
+      {!status.enabled && setup && (
+        <div className="space-y-4">
+          <p className="text-xs text-[color:var(--muted)]">{t('profile.twofa.scanHint')}</p>
+          <div className="flex items-start gap-5">
+            <img
+              src={`data:image/png;base64,${setup.qr_png_b64}`}
+              alt="2FA QR"
+              className="h-40 w-40 rounded-lg border border-[color:var(--border)] bg-white p-2"
+            />
+            <div className="min-w-0 flex-1 text-xs">
+              <div className="mb-1 font-mono uppercase tracking-[1.5px] text-[color:var(--muted)]">
+                {t('profile.twofa.secretLabel')}
+              </div>
+              <code className="block break-all rounded-md border border-[color:var(--border)] bg-[color:var(--bg2)] px-2 py-1.5 font-mono text-[11px]">
+                {setup.secret}
+              </code>
+              <p className="mt-3 font-mono uppercase tracking-[1.5px] text-[color:var(--muted)]">
+                {t('profile.twofa.backupLabel')}
+              </p>
+              <p className="mt-1 text-[color:var(--coral)]">{t('profile.twofa.backupHint')}</p>
+              <ul className="mt-2 grid grid-cols-2 gap-1 font-mono text-[11px] tabular-nums">
+                {setup.backup_codes.map((c) => (
+                  <li key={c} className="rounded bg-[color:var(--bg2)] px-2 py-1">{c}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <Field label={t('profile.twofa.confirmCode')} value={enableCode} onChange={setEnableCode} />
+          <div className="flex gap-2">
+            <Button size="sm" onClick={() => enable.mutate()} disabled={enableCode.trim().length < 6 || enable.isPending}>
+              {t('profile.twofa.confirmEnable')}
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setSetup(null)}>
+              {t('common.cancel')}
+            </Button>
+          </div>
+          {err && <DialogError message={err} />}
+        </div>
+      )}
+
+      {/* Enabled state --------------------------------------------------- */}
+      {status.enabled && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 rounded-lg border border-[color:var(--live)]/30 bg-[color:var(--live)]/10 px-3 py-2 text-xs text-[color:var(--live)]">
+            <Check className="h-3.5 w-3.5" />
+            {t('profile.twofa.enabled', { count: status.backup_codes_remaining })}
+          </div>
+          {!showDisable && !showRegen && (
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setShowRegen(true)}>
+                {t('profile.twofa.regenerate')}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowDisable(true)}>
+                {t('profile.twofa.disable')}
+              </Button>
+            </div>
+          )}
+          {showDisable && (
+            <div className="space-y-3 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] p-4">
+              <p className="text-xs text-[color:var(--muted)]">{t('profile.twofa.disableHint')}</p>
+              <Field label={t('profile.twofa.confirmCode')} value={disableCode} onChange={setDisableCode} />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => disable.mutate()} disabled={disableCode.trim().length < 6 || disable.isPending}>
+                  {t('profile.twofa.confirmDisable')}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => { setShowDisable(false); setErr(null) }}>
+                  {t('common.cancel')}
+                </Button>
+              </div>
+              {err && <DialogError message={err} />}
+            </div>
+          )}
+          {showRegen && (
+            <div className="space-y-3 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] p-4">
+              <p className="text-xs text-[color:var(--muted)]">{t('profile.twofa.regenerateHint')}</p>
+              <Field label={t('profile.twofa.confirmCode')} value={regenCode} onChange={setRegenCode} />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => regen.mutate()} disabled={regenCode.trim().length < 6 || regen.isPending}>
+                  {t('profile.twofa.regenerate')}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => { setShowRegen(false); setRegenResult(null); setErr(null) }}>
+                  {t('common.cancel')}
+                </Button>
+              </div>
+              {regenResult && (
+                <>
+                  <p className="text-[color:var(--coral)] text-xs">{t('profile.twofa.backupHint')}</p>
+                  <ul className="grid grid-cols-2 gap-1 font-mono text-[11px] tabular-nums">
+                    {regenResult.map((c) => (
+                      <li key={c} className="rounded bg-[color:var(--bg2)] px-2 py-1">{c}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {err && <DialogError message={err} />}
+            </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }

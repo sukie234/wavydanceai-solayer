@@ -3,9 +3,11 @@ import { createFileRoute, Link, redirect, useNavigate, useSearch } from '@tansta
 import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { authService } from '@/lib/services/auth'
+import { authService, isTwoFAChallenge } from '@/lib/services/auth'
+import { twofaService } from '@/lib/services/twofa'
 import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
+import { OAuthButtons } from '@/components/auth/OAuthButtons'
 
 type LoginSearch = { next?: string }
 
@@ -40,13 +42,26 @@ function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  // Set once the backend told us the account has TOTP. Form switches to a
+  // code input until cleared.
+  const [twoFAPending, setTwoFAPending] = useState(false)
+  const [code, setCode] = useState('')
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setErr(null)
     setLoading(true)
     try {
-      await authService.login(username, password)
+      if (twoFAPending) {
+        await twofaService.verifyLogin(code.trim())
+      } else {
+        const r = await authService.login(username, password)
+        if (isTwoFAChallenge(r)) {
+          setTwoFAPending(true)
+          setLoading(false)
+          return
+        }
+      }
       clearSessionCache()
       // `next` already validated by validateSearch above.
       navigate({ to: safeNext(next) as '/console' })
@@ -85,20 +100,37 @@ function LoginPage() {
           onSubmit={onSubmit}
           className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-[var(--shadow-jelly)]"
         >
-          <Field
-            label={t('login.username')}
-            value={username}
-            onChange={setUsername}
-            autoComplete="username"
-            autoFocus
-          />
-          <Field
-            label={t('login.password')}
-            type="password"
-            value={password}
-            onChange={setPassword}
-            autoComplete="current-password"
-          />
+          {!twoFAPending && <OAuthButtons mode="login" />}
+
+          {twoFAPending ? (
+            <>
+              <p className="mb-4 text-xs text-[color:var(--muted)]">{t('login.twoFAHint')}</p>
+              <Field
+                label={t('login.twoFACode')}
+                value={code}
+                onChange={setCode}
+                autoComplete="one-time-code"
+                autoFocus
+              />
+            </>
+          ) : (
+            <>
+              <Field
+                label={t('login.username')}
+                value={username}
+                onChange={setUsername}
+                autoComplete="username"
+                autoFocus
+              />
+              <Field
+                label={t('login.password')}
+                type="password"
+                value={password}
+                onChange={setPassword}
+                autoComplete="current-password"
+              />
+            </>
+          )}
 
           {err && (
             <div className="mt-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-sm text-[color:var(--coral)]">
@@ -106,9 +138,16 @@ function LoginPage() {
             </div>
           )}
 
-          <Button type="submit" className="mt-6 w-full" disabled={loading || !username || !password}>
+          <Button
+            type="submit"
+            className="mt-6 w-full"
+            disabled={
+              loading ||
+              (twoFAPending ? code.trim().length < 6 : !username || !password)
+            }
+          >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            {t('login.signIn')}
+            {twoFAPending ? t('login.verifyCode') : t('login.signIn')}
           </Button>
 
           <p className="mt-5 text-center text-xs text-[color:var(--muted)]">

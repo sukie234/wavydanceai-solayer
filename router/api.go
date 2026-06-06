@@ -24,6 +24,7 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.POST("/user/reset", middleware.CriticalRateLimit(), controller.ResetPassword)
 		apiRouter.GET("/oauth/github", middleware.CriticalRateLimit(), auth.GitHubOAuth)
 		apiRouter.GET("/oauth/oidc", middleware.CriticalRateLimit(), auth.OidcAuth)
+		apiRouter.GET("/oauth/google", middleware.CriticalRateLimit(), auth.GoogleAuth)
 		apiRouter.GET("/oauth/lark", middleware.CriticalRateLimit(), auth.LarkOAuth)
 		apiRouter.GET("/oauth/state", middleware.CriticalRateLimit(), auth.GenerateOAuthCode)
 		apiRouter.GET("/oauth/wechat", middleware.CriticalRateLimit(), auth.WeChatAuth)
@@ -39,6 +40,7 @@ func SetApiRouter(router *gin.Engine) {
 		{
 			userRoute.POST("/register", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.Register)
 			userRoute.POST("/login", middleware.CriticalRateLimit(), controller.Login)
+			userRoute.POST("/login/2fa", middleware.CriticalRateLimit(), controller.Verify2FALogin)
 			userRoute.GET("/logout", controller.Logout)
 
 			selfRoute := userRoute.Group("/")
@@ -50,6 +52,11 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.DELETE("/self", controller.DeleteSelf)
 				selfRoute.GET("/token", controller.GenerateAccessToken)
 				selfRoute.GET("/aff", controller.GetAffCode)
+				selfRoute.GET("/2fa/status", controller.Get2FAStatus)
+				selfRoute.POST("/2fa/setup", middleware.CriticalRateLimit(), controller.Setup2FA)
+				selfRoute.POST("/2fa/enable", middleware.CriticalRateLimit(), controller.Enable2FA)
+				selfRoute.POST("/2fa/disable", middleware.CriticalRateLimit(), controller.Disable2FA)
+				selfRoute.POST("/2fa/backup-codes", middleware.CriticalRateLimit(), controller.RegenerateBackupCodes)
 				selfRoute.POST("/topup", controller.TopUp) // redemption code
 				selfRoute.GET("/topup/info", controller.GetTopupInfo)
 				selfRoute.GET("/topup/self", controller.GetUserTopups)

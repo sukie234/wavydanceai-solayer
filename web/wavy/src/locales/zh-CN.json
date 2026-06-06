@@ -64,7 +64,14 @@
     "cancel": "取消",
     "save": "保存",
     "saved": "已保存",
-    "create": "创建"
+    "create": "创建",
+    "or": "或"
+  },
+  "oauth": {
+    "workingTitle": "正在登录…",
+    "workingBody": "正在完成 {{provider}} 授权，请稍候。",
+    "failedTitle": "登录失败",
+    "backToLogin": "返回登录"
   },
   "channelDialog": {
     "kicker": "渠道",
@@ -128,6 +135,23 @@
       "submit": "更新密码",
       "errTooShort": "密码至少 8 位。",
       "errMismatch": "两次输入的密码不一致。"
+    },
+    "twofa": {
+      "title": "两步验证",
+      "desc": "在登录时额外输入一次性验证码（1Password、Google Authenticator、Authy 等均可）。",
+      "enable": "开启两步验证",
+      "disable": "关闭两步验证",
+      "regenerate": "重新生成备份码",
+      "scanHint": "用 Authenticator 扫码，或手动复制密钥。",
+      "secretLabel": "密钥",
+      "backupLabel": "备份码",
+      "backupHint": "请立刻保存——只显示这一次。当无法访问 Authenticator 时可代替验证码使用。",
+      "confirmCode": "App 中的当前验证码",
+      "confirmEnable": "确认开启",
+      "confirmDisable": "确认关闭",
+      "disableHint": "请输入当前验证码或备份码以确认。",
+      "regenerateHint": "生成新的备份码后，旧的备份码将立即失效。",
+      "enabled": "已开启 · 剩余 {{count}} 个备份码"
     }
   },
   "hero": {
@@ -261,11 +285,21 @@
     "helper": "走错地方了？",
     "backHome": "返回首页",
     "noAccount": "还没有账号？",
-    "signUp": "注册"
+    "signUp": "注册",
+    "oauth": {
+      "google": "使用 Google 登录",
+      "github": "使用 GitHub 登录"
+    },
+    "twoFAHint": "请输入 Authenticator 中的 6 位验证码，或使用备份码。",
+    "twoFACode": "验证码",
+    "verifyCode": "验证"
   },
   "register": {
     "kicker": "wavydance.ai · 注册",
     "title": "创建账号",
+    "email": "邮箱",
+    "emailHint": "用于找回密码。",
+    "emailInvalid": "请输入有效的邮箱地址。",
     "username": "用户名",
     "password": "密码",
     "confirmPassword": "确认密码",
@@ -275,7 +309,11 @@
     "createAccount": "创建账号",
     "haveAccount": "已经有账号？",
     "signIn": "登录",
-    "failed": "注册失败"
+    "failed": "注册失败",
+    "oauth": {
+      "google": "使用 Google 注册",
+      "github": "使用 GitHub 注册"
+    }
   },
   "users": {
     "kicker": "账号管理",

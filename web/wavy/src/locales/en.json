@@ -64,7 +64,14 @@
     "cancel": "Cancel",
     "save": "Save",
     "saved": "Saved",
-    "create": "Create"
+    "create": "Create",
+    "or": "or"
+  },
+  "oauth": {
+    "workingTitle": "Signing you in…",
+    "workingBody": "Finishing the {{provider}} handshake. Hold tight.",
+    "failedTitle": "Sign-in failed",
+    "backToLogin": "Back to sign in"
   },
   "channelDialog": {
     "kicker": "Channel",
@@ -128,6 +135,23 @@
       "submit": "Update password",
       "errTooShort": "Password must be at least 8 characters.",
       "errMismatch": "Passwords do not match."
+    },
+    "twofa": {
+      "title": "Two-factor authentication",
+      "desc": "Protect your account with a time-based code from an authenticator app (1Password, Google Authenticator, Authy…).",
+      "enable": "Enable 2FA",
+      "disable": "Disable 2FA",
+      "regenerate": "Regenerate backup codes",
+      "scanHint": "Scan the QR with your authenticator app, or paste the secret manually.",
+      "secretLabel": "Secret",
+      "backupLabel": "Backup codes",
+      "backupHint": "Save these now — they're shown only once. Each works in place of a code when you can't reach your app.",
+      "confirmCode": "Code from your app",
+      "confirmEnable": "Confirm and enable",
+      "confirmDisable": "Confirm and disable",
+      "disableHint": "Enter a current code (or a backup code) to confirm.",
+      "regenerateHint": "Generating new backup codes invalidates the old ones immediately.",
+      "enabled": "2FA is on · {{count}} backup codes left"
     }
   },
   "hero": {
@@ -261,11 +285,21 @@
     "helper": "Lost your way?",
     "backHome": "Back to homepage",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "oauth": {
+      "google": "Continue with Google",
+      "github": "Continue with GitHub"
+    },
+    "twoFAHint": "Enter the 6-digit code from your authenticator app, or a backup code.",
+    "twoFACode": "Verification code",
+    "verifyCode": "Verify"
   },
   "register": {
     "kicker": "wavydance.ai · sign up",
     "title": "Create your account",
+    "email": "Email",
+    "emailHint": "We'll use this for password recovery.",
+    "emailInvalid": "Enter a valid email address.",
     "username": "Username",
     "password": "Password",
     "confirmPassword": "Confirm password",
@@ -275,7 +309,11 @@
     "createAccount": "Create account",
     "haveAccount": "Already have an account?",
     "signIn": "Sign in",
-    "failed": "Registration failed"
+    "failed": "Registration failed",
+    "oauth": {
+      "google": "Sign up with Google",
+      "github": "Sign up with GitHub"
+    }
   },
   "users": {
     "kicker": "Account",

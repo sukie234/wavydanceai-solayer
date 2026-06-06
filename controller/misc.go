@@ -11,6 +11,7 @@ import (
 	"github.com/songquanpeng/one-api/common/i18n"
 	"github.com/songquanpeng/one-api/common/message"
 	"github.com/songquanpeng/one-api/model"
+	"github.com/songquanpeng/one-api/setting/auth_setting"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,6 +45,8 @@ func GetStatus(c *gin.Context) {
 			"oidc_authorization_endpoint": config.OidcAuthorizationEndpoint,
 			"oidc_token_endpoint":         config.OidcTokenEndpoint,
 			"oidc_userinfo_endpoint":      config.OidcUserinfoEndpoint,
+			"google_oauth":                auth_setting.GetGoogleSetting().Enabled,
+			"google_client_id":            auth_setting.GetGoogleSetting().ClientId,
 		},
 	})
 	return
