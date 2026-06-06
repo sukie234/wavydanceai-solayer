@@ -1,13 +1,13 @@
 # Code Owners
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 #
-# Each line is a file pattern followed by one or more owners.
-# Order matters — later patterns override earlier ones.
+# This file is meaningful only together with the `main-protection` ruleset's
+# `require_code_owner_review` rule. Without that rule on, GitHub will not
+# enforce CODEOWNERS approvals.
 #
-# Examples:
-# * @default-team
-# *.js @frontend-team
-# /docs/ @tech-writers
-# /src/api/ @backend-team
-# /infra/ @devops-team
-# SECURITY.md @security-team
+# Order matters — later patterns override earlier ones. Keep specific
+# overrides BELOW the catch-all if any are added.
+
+# Catch-all: every file change requires @JimmyHu213's approval before
+# merging into a protected branch.
+*  @JimmyHu213
