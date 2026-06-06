@@ -8,3 +8,4 @@ dist
 *.tsbuildinfo
 .tanstack
 src/routeTree.gen.ts
+coverage

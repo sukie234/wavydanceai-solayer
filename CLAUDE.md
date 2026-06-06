@@ -55,6 +55,16 @@ For multi-step tasks, state a brief plan with verification at each step.
 <!-- - Key dependencies: -->
 <!-- - Directory structure conventions: -->
 
+### Frontend tests (`web/wavy/`)
+
+Vitest + jsdom + React Testing Library. Tests are co-located as
+`*.test.ts(x)` next to source. See `web/wavy/TESTING.md` for patterns,
+provider helpers, and the rules agents should follow when adding tests.
+
+- Run: `cd web/wavy && bun run test` (or `test:watch` / `test:coverage`)
+- When you add a component / util / service, add a test in the same PR.
+- Don't pre-install router/MSW helpers — add them only when first needed.
+
 ## 6. Coding Standards
 
 - Follow existing patterns in the codebase.
