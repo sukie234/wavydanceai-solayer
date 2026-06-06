@@ -166,10 +166,41 @@ new-api 已经有完整的"套餐 + 自动续期"，当前仓库**完全没有**
 
 ### 3.2 MVP P1 推荐顺序
 
-1. **2FA (TOTP) + 备份码** — 最低成本提升账户安全，纯后端 + 标准库即可
+1. **2FA (TOTP) + 备份码** — 最低成本提升账户安全，纯后端 + 标准库即可 — ✅ 已完成 PR #16
 2. **Passkey / WebAuthn** — 现代化体验，依赖 `go-webauthn/webauthn`
 3. **Custom OAuth Provider** — 让运营自助接 SSO，避免每次加一个 OAuth 都改代码
 4. **OIDC / Discord** — 视实际用户群再补
+
+### 3.3 多 provider OIDC 设计（架构补充，2026-06-06）
+
+§3.1 表里的 "OIDC"、"Custom OAuth Provider"、"OAuth 统一入口" 三行**不是三个独立能力，是一套架构的三层**。直接抄 new-api 会落入它的坑 —— new-api 的 OIDC 仍然是 singleton（同时只能跑一个 IdP）。
+
+**目标架构**：把这三项合并为一套**多 provider OIDC 注册表**，模式照搬 P0 加密支付的 adapter 基座（`service/payment/crypto/registry.go`）：
+
+```go
+// setting/system_setting/oidc.go
+type OIDCProvider struct {
+    Name         string  // "google" / "okta" / "auth0"，路由 :provider 用
+    DisplayName  string  // "Sign in with Google"，前端按钮文案
+    WellKnown    string
+    ClientId     string
+    ClientSecret string
+    Enabled      bool
+    Icon         string
+}
+type OIDCSettings struct {
+    Providers []OIDCProvider `json:"providers"`
+}
+
+// 路由：/api/oauth/oidc/:provider 按 Name 分发
+// 前端：/api/status 暴露 enabled providers，循环渲染按钮
+```
+
+**白标 SaaS 含义**：每个客户可能要不同 OIDC IdP（A 客户用 Google，B 用 Okta，C 用自建 Keycloak）。**多 provider 是真实需求**，singleton 不够用。
+
+**Custom OAuth Provider** (`controller/custom_oauth.go` + `model/custom_oauth_provider.go`) 是这套设计的**运营态扩展** —— 让 admin 在管理后台直接加 provider，无需写代码 / 改镜像 / 出 PR。三件事是一个 phase。
+
+**目前状态**：PR #15 临时做了一个硬编码 Google handler (`controller/auth/google.go` + 已在 #15 后续 commit 迁到 `setting/auth_setting/google_setting.go`)。这是过渡产物，最终会被这个注册表替代 —— 完成后 Google handler 删除，"Sign in with Google" 走 generic OIDC + provider name = "google"。
 
 ---
 
@@ -249,23 +280,89 @@ new-api 的卖点之一：**任意 LLM 互转 OpenAI / Claude / Gemini 兼容格
 
 ---
 
+## 9. 配置层架构迁移 (`setting/`)（2026-06-06 新增）
+
+> 这一节记录的不是"再抄一个模块"，而是抄 **new-api 的配置组织方式**本身。
+> 已经启动，PR #20 是起点，pilot 模块是 checkin。
+
+### 9.1 为什么
+
+当前 `common/config/config.go` 是 **101 个全局 var**，`model/option.go` 是 **62 个 switch case** 手工列每个 key。每加一个配置项要改 4 处（声明 var、InitOptionMap 默认值、updateOptionMap switch、调用方读 var）。new-api 重构成了"一个模块一个 struct + `init()` 注册到全局 registry"，配合反射做自动序列化 —— 加新模块 = 1 个文件，零中央样板。
+
+### 9.2 基础设施（已完成）
+
+| PR | 内容 | 状态 |
+|---|---|---|
+| #20 | `setting/config/` registry 基建（ConfigManager + Register / LoadFromDB / SaveToDB / ExportAllConfigs，基于 reflect + json tag）+ 集成进 `model/option.go` 的 load / update 路径 + pilot 模块 `setting/operation_setting/checkin_setting.go` | ✅ merged |
+| #15 | 借势把 Google OAuth 迁到 `setting/auth_setting/google_setting.go`（这是过渡命名，见 §3.3）| ✅ merged |
+
+**新旧两套并存规则**：legacy key 用 bare 名称（`PaymentEnabled`），新模块用 dotted（`payment_setting.enabled`）。`.` 不是 Go 标识符合法字符，两套命名空间天然隔离。
+
+### 9.3 `_old.go` 兼容 shim 模式（关键技术）
+
+new-api 不做 DB key 数据迁移 —— 它把**老的扁平 var 单独抽到 `payment_setting_old.go` / `system_setting_old.go`**，跟新 struct **共存**。文件头明确写"如需增加新的参数、变量等，请在新文件中添加"。
+
+含义：迁移有生产数据的模块（payment / quota）**不需要 SQL migration**，只需要：
+
+1. 新增 `setting/<group>/<module>_setting.go`（struct + register + Get accessor）
+2. 把 `common/config/config.go` 里的老 var **搬到** `setting/<group>/<module>_setting_old.go`
+3. 调用方逐步从老 var 改成 `setting.GetXxx()`
+4. 老 var 还在、DB key 还是老名字 → 零数据迁移
+5. 觉得安全了再删 `_old.go`
+
+这是之前内部讨论里"phase 8/9 高风险，需要 data migration"判断的**修正答案**。
+
+### 9.4 命名 / 目录约定（对齐 new-api）
+
+| 维度 | 约定 |
+|---|---|
+| Struct 名 | `OIDCSettings`（复数 `s`，匹配 new-api） |
+| Singleton 名 | `defaultOIDCSettings` |
+| Register key | `"oidc"`（**不带** `_setting` 后缀） |
+| Getter | `GetOIDCSettings()` |
+| 子包 | 按域分：`system_setting/`（OAuth / 安全 / 主题 / 法务） / `operation_setting/`（增长 / 支付 / 签到 / quota） / `model_setting/`（per-vendor LLM 调优） / `ratio_setting/`（计费比率） / `billing_setting/`（阶梯计费） |
+
+**已知偏差待修**：PR #15 建的 `setting/auth_setting/google_setting.go` 命名（`auth_setting` 子包 + `GoogleSetting` 单数 + register key `"google_setting"`）跟 new-api 不一致。应在多 provider OIDC 注册表落地时一起改 —— `setting/auth_setting/` 整体改名 / 合并到 `setting/system_setting/`，否则未来 cherry-pick new-api 的 `system_setting/{oidc,discord,passkey}.go` 会跟我们的目录撞。
+
+### 9.5 迁移 phase 候选（按依赖 + 风险排序）
+
+每个 phase = 一个独立 PR，~ 1 小时工作量。**严禁一口气全做** —— 中间留几天观察生产稳定性。
+
+| Phase | 子包 / 文件 | 包含 keys | 风险 / 备注 |
+|---|---|---|---|
+| 1 | `system_setting/github.go` | GitHubOAuthEnabled / GitHubClientId / GitHubClientSecret | 低 |
+| 2 | `system_setting/oidc.go` + 多 provider 注册表（见 §3.3） | OidcEnabled / OidcClientId / OidcClientSecret / OidcWellKnown / Oidc*Endpoint | 中（同时替换 §3.3 的 Google handler） |
+| 3 | `system_setting/lark.go` | LarkClientId / LarkClientSecret | 低 |
+| 4 | `system_setting/wechat.go` | WeChatAuthEnabled / WeChatServerAddress / WeChatServerToken / WeChatAccountQRCodeImageURL | 低 |
+| 5 | `system_setting/password.go` | PasswordLoginEnabled / PasswordRegisterEnabled / RegisterEnabled / EmailVerificationEnabled / EmailDomainRestrictionEnabled / EmailDomainWhitelist | 中（动 register / login 核心路径） |
+| 6 | `system_setting/turnstile.go` | TurnstileCheckEnabled / TurnstileSiteKey / TurnstileSecretKey | 低 |
+| 7 | `system_setting/smtp.go` + `smtp_old.go` shim | SMTPServer / SMTPPort / SMTPAccount / SMTPFrom / SMTPToken | 中（影响所有邮件发送，必须留 `_old.go`） |
+| 8 | `operation_setting/payment_setting.go` + `payment_setting_old.go` shim | PaymentEnabled / StripeEnabled / EpayEnabled / PaymentCallbackBaseURL / PaymentReturnURL / CryptoAdaptersEnabled | **高**（已上生产，必须留 `_old.go`） |
+| 9 | `operation_setting/quota_setting.go` + `quota_setting_old.go` shim | QuotaForNewUser / QuotaForInviter / QuotaForInvitee / QuotaRemindThreshold / PreConsumedQuota / QuotaPerUnit | 中（计费路径） |
+| 10 | `system_setting/branding.go` + `branding_old.go` shim | SystemName / Logo / Footer / Theme / HomePageContent / About / Notice / TopUpLink / ChatLink / ServerAddress / MessagePusherAddress / MessagePusherToken / ChannelDisableThreshold / Automatic*Channel / ApproximateToken / DisplayIn* / RetryTimes | 中（量大但都是显示层 / 渠道开关） |
+
+**节奏**：先 1-4（纯 OAuth provider，pattern 验证过、无生产数据）→ 6 → 5 → 7 → 10 → 9 → 8 最后。每个之间观察 3-7 天。
+
+---
+
 ## 附：架构差异
 
 - **目录分层**：new-api 有清晰的 `controller / service / model / router` 四层；当前仓库业务逻辑大量塞在 controller 里。
 - **路由组织**：new-api 路由按业务域分组（subscription / topup / passkey / 2fa / oauth 统一入口），可读性更好。
-- **配置模型**：new-api 大量功能通过 `option` 表动态开关（payment_compliance、channel_affinity_cache、waffo-pancake catalog 等），运营可热调；当前仓库以 env 为主。
+- **配置模型**：new-api 大量功能通过 `option` 表动态开关（payment_compliance、channel_affinity_cache、waffo-pancake catalog 等），运营可热调；当前仓库以 env 为主。**已启动迁移，见 §9**。
 
 ---
 
 ## 行动建议（落地顺序）
 
-1. **本周内**：拍板 P0 支付渠道（建议 Stripe 国际 + E-Pay 国内二选一起步）→ 起一个独立 phase（参考 `/gsd:plan-phase`）
-2. **P0 开发**：按 §1.3 清单做"单通道闭环"，验收按 §1.4
-3. **P0 上线 + 观察 1–2 周**：流水对账、回调成功率、幂等是否生效
-4. **P1 启动**：先 2FA，再 Passkey，再 Custom OAuth
-5. **P2 起规划**：根据业务诉求（订阅 / 多模态 / 签到分销）排期
+1. ~~**本周内**：拍板 P0 支付渠道~~ — ✅ 完成（PR #11 三通道）
+2. ~~**P0 开发**：按 §1.3 清单做"单通道闭环"，验收按 §1.4~~ — ✅ 完成
+3. **P0 上线 + 观察 1–2 周**：流水对账、回调成功率、幂等是否生效 — 进行中
+4. **P1 启动**：先 2FA（✅ PR #16），再 Passkey，再 Custom OAuth / 多 provider OIDC（§3.3）
+5. **配置层迁移**：按 §9.5 节奏，从 phase 1 开始
+6. **P2 起规划**：根据业务诉求（订阅 / 多模态 / 签到分销）排期
 
 ---
 
 > 文档维护：每完成一个模块迁移，在对应表里把 ❌ 改成 ✅ 并标注 commit / PR。
-> 最后更新：2026-06-05
+> 最后更新：2026-06-06
