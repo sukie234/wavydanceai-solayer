@@ -24,6 +24,7 @@ export interface User {
   group: string
   aff_code: string
   inviter_id: number
+  passkeys?: import('@/lib/services/passkey').PasskeyView[]
 }
 
 export const Role = {

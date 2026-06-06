@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/console/PageHeader'
 import { Field, DialogError } from '@/components/console/Dialog'
 import { authService } from '@/lib/services/auth'
 import { twofaService, type TwoFASetupArtifact } from '@/lib/services/twofa'
+import { PasskeyCard } from '@/components/passkey/PasskeyCard'
 import { clearSessionCache } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 
@@ -45,6 +46,7 @@ function ProfilePage() {
           />
           <ChangePasswordCard username={user.username} />
           <TwoFactorCard />
+          <PasskeyCard />
         </div>
       )}
     </div>

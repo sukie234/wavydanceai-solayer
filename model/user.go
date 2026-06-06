@@ -193,6 +193,9 @@ func (user *User) Delete() error {
 	if user.Id == 0 {
 		return errors.New("id 为空！")
 	}
+	if err := hardDeletePasskeysOnUserDelete(user.Id); err != nil {
+		return err
+	}
 	blacklist.BanUser(user.Id)
 	user.Username = fmt.Sprintf("deleted_%s", random.GetUUID())
 	user.Status = UserStatusDeleted

@@ -12,7 +12,7 @@ COPY VERSION /VERSION
 RUN VITE_REACT_APP_VERSION=$(cat /VERSION) bun run build:only
 
 # ---------- Stage 2: compile Go binary ----------
-FROM golang:1.23-alpine AS go-builder
+FROM golang:1.25-alpine AS go-builder
 
 RUN apk add --no-cache gcc musl-dev sqlite-dev build-base
 

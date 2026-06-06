@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogActions, DialogError, Field, Select } from './Dialog'
-import { usersService } from '@/lib/services/users'
+import { usersService, adminPasskeyService } from '@/lib/services/users'
 import { groupsService } from '@/lib/services/groups'
 import { ApiError } from '@/lib/api'
 import { Role, type User } from '@/lib/types'
@@ -43,6 +44,7 @@ const empty = (): FormState => ({
  */
 export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
   const { t } = useTranslation()
+  const qc = useQueryClient()
   const [form, setForm] = useState<FormState>(empty)
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -202,6 +204,58 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
           </Button>
         </DialogActions>
       </form>
+
+      {target && (
+        <div className="mt-5 border-t border-[color:var(--border)] pt-5">
+          <div className="mb-2.5 flex items-center justify-between">
+            <span className="font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">
+              Passkeys
+            </span>
+            {target.passkeys && target.passkeys.length > 0 && (
+              <button
+                type="button"
+                className="font-mono text-xs text-[color:var(--coral)] transition hover:opacity-70"
+                onClick={async () => {
+                  if (window.confirm(`Clear all ${target.passkeys!.length} passkeys for ${target.username}?`)) {
+                    await adminPasskeyService.clear(target.id)
+                    qc.invalidateQueries({ queryKey: ['user', userId] })
+                  }
+                }}
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+          {target.passkeys && target.passkeys.length > 0 ? (
+            <ul className="space-y-1.5">
+              {target.passkeys.map((k) => (
+                <li
+                  key={k.id}
+                  className="flex items-center justify-between rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2"
+                >
+                  <span className="truncate text-sm">{k.name || 'Unnamed Passkey'}</span>
+                  <button
+                    type="button"
+                    aria-label="Delete passkey"
+                    title="Delete passkey"
+                    className="ml-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-[color:var(--muted)] transition hover:text-[color:var(--coral)]"
+                    onClick={async () => {
+                      if (window.confirm(`Delete "${k.name || 'Unnamed Passkey'}"?`)) {
+                        await adminPasskeyService.deleteOne(target.id, k.id)
+                        qc.invalidateQueries({ queryKey: ['user', userId] })
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-[color:var(--muted)]">No passkeys registered.</p>
+          )}
+        </div>
+      )}
     </Dialog>
   )
 }

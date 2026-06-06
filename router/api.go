@@ -41,6 +41,10 @@ func SetApiRouter(router *gin.Engine) {
 			userRoute.POST("/register", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.Register)
 			userRoute.POST("/login", middleware.CriticalRateLimit(), controller.Login)
 			userRoute.POST("/login/2fa", middleware.CriticalRateLimit(), controller.Verify2FALogin)
+			userRoute.POST("/login/passkey/begin", middleware.CriticalRateLimit(), controller.BeginPasskeyLogin)
+			userRoute.POST("/login/passkey/finish", middleware.CriticalRateLimit(), controller.FinishPasskeyLogin)
+			userRoute.POST("/login/2fa/passkey/begin", middleware.CriticalRateLimit(), controller.BeginPasskeySecondFactor)
+			userRoute.POST("/login/2fa/passkey/finish", middleware.CriticalRateLimit(), controller.FinishPasskeySecondFactor)
 			userRoute.GET("/logout", controller.Logout)
 
 			selfRoute := userRoute.Group("/")
@@ -57,6 +61,11 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.POST("/2fa/enable", middleware.CriticalRateLimit(), controller.Enable2FA)
 				selfRoute.POST("/2fa/disable", middleware.CriticalRateLimit(), controller.Disable2FA)
 				selfRoute.POST("/2fa/backup-codes", middleware.CriticalRateLimit(), controller.RegenerateBackupCodes)
+				selfRoute.GET("/passkey/credentials", controller.ListMyPasskeys)
+				selfRoute.POST("/passkey/credentials/register/begin", middleware.CriticalRateLimit(), controller.BeginRegisterPasskey)
+				selfRoute.POST("/passkey/credentials/register/finish", middleware.CriticalRateLimit(), controller.FinishRegisterPasskey)
+				selfRoute.PATCH("/passkey/credentials/:id", controller.RenameMyPasskey)
+				selfRoute.DELETE("/passkey/credentials/:id", controller.DeleteMyPasskey)
 				selfRoute.POST("/topup", controller.TopUp) // redemption code
 				selfRoute.GET("/topup/info", controller.GetTopupInfo)
 				selfRoute.GET("/topup/self", controller.GetUserTopups)
@@ -81,6 +90,8 @@ func SetApiRouter(router *gin.Engine) {
 				adminRoute.DELETE("/:id", controller.DeleteUser)
 				adminRoute.GET("/topup", controller.AdminListTopups)
 				adminRoute.POST("/topup/complete", controller.AdminCompleteTopup)
+				adminRoute.DELETE("/:id/passkeys/:credId", controller.AdminDeleteUserPasskey)
+				adminRoute.DELETE("/:id/passkeys", controller.AdminClearUserPasskeys)
 			}
 		}
 		optionRoute := apiRouter.Group("/option")

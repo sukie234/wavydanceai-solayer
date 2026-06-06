@@ -292,7 +292,12 @@
     },
     "twoFAHint": "Enter the 6-digit code from your authenticator app, or a backup code.",
     "twoFACode": "Verification code",
-    "verifyCode": "Verify"
+    "verifyCode": "Verify",
+    "signInWithPasskey": "Sign in with Passkey",
+    "usePasskey": "Use Passkey",
+    "useTotp": "Use authenticator app code",
+    "chooseFactor": "Choose a second factor",
+    "usernameRequired": "Username is required"
   },
   "register": {
     "kicker": "wavydance.ai · sign up",

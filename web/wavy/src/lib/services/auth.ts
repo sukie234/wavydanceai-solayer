@@ -5,6 +5,10 @@ import type { ApiResponse, User } from '@/lib/types'
  *  call `twofaService.verifyLogin(code)` to finish authentication. */
 export interface TwoFAChallenge {
   two_fa_required: true
+  /** New in P1 — present when backend supports method choice. May be absent
+   *  on older deployments, in which case fall back to "totp". */
+  two_factor_required?: true
+  methods?: Array<'totp' | 'passkey'>
 }
 
 export function isTwoFAChallenge(r: User | TwoFAChallenge): r is TwoFAChallenge {

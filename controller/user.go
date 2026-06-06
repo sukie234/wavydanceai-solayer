@@ -61,19 +61,31 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	if user.TwoFAEnabled {
+	hasPasskey := model.HasPasskey(user.Id)
+	if user.TwoFAEnabled || hasPasskey {
 		// Password is good but we still need a second factor. Park the user
 		// id on the session and ask the frontend to finish the dance via
-		// /api/user/login/2fa.
+		// /api/user/login/2fa or /api/user/login/2fa/passkey/*.
 		session := sessions.Default(c)
 		session.Set(sessionKeyPending2FAUserId, user.Id)
 		if err := session.Save(); err != nil {
 			c.JSON(http.StatusOK, gin.H{"success": false, "message": err.Error()})
 			return
 		}
+		methods := make([]string, 0, 2)
+		if user.TwoFAEnabled {
+			methods = append(methods, "totp")
+		}
+		if hasPasskey {
+			methods = append(methods, "passkey")
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
-			"data":    gin.H{"two_fa_required": true},
+			"data": gin.H{
+				"two_fa_required":     true, // deprecated, kept for one release
+				"two_factor_required": true,
+				"methods":             methods,
+			},
 		})
 		return
 	}
@@ -267,10 +279,32 @@ func GetUser(c *gin.Context) {
 		})
 		return
 	}
+	passkeys, _ := model.ListPasskeysByUserId(user.Id)
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    user,
+		"data": gin.H{
+			"id":             user.Id,
+			"username":       user.Username,
+			"display_name":   user.DisplayName,
+			"role":           user.Role,
+			"status":         user.Status,
+			"email":          user.Email,
+			"github_id":      user.GitHubId,
+			"wechat_id":      user.WeChatId,
+			"lark_id":        user.LarkId,
+			"oidc_id":        user.OidcId,
+			"google_id":      user.GoogleId,
+			"two_fa_enabled": user.TwoFAEnabled,
+			"access_token":   user.AccessToken,
+			"quota":          user.Quota,
+			"used_quota":     user.UsedQuota,
+			"request_count":  user.RequestCount,
+			"group":          user.Group,
+			"aff_code":       user.AffCode,
+			"inviter_id":     user.InviterId,
+			"passkeys":       toPasskeyViews(passkeys),
+		},
 	})
 	return
 }

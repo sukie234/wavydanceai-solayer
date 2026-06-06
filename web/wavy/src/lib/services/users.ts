@@ -44,3 +44,14 @@ export const ROLE_LABEL: Record<number, string> = {
   10: 'admin',
   100: 'root',
 }
+
+export const adminPasskeyService = {
+  async deleteOne(userId: number, credId: number): Promise<void> {
+    const res = await api.delete<ApiResponse>(`/user/${userId}/passkeys/${credId}`)
+    unwrap(res)
+  },
+  async clear(userId: number): Promise<void> {
+    const res = await api.delete<ApiResponse>(`/user/${userId}/passkeys`)
+    unwrap(res)
+  },
+}

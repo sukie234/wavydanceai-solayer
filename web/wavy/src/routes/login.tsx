@@ -8,6 +8,8 @@ import { twofaService } from '@/lib/services/twofa'
 import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
+import { passkeyService } from '@/lib/services/passkey'
+import { isWebAuthnSupported } from '@/components/passkey/passkey-ceremonies'
 
 type LoginSearch = { next?: string }
 
@@ -42,10 +44,16 @@ function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
-  // Set once the backend told us the account has TOTP. Form switches to a
-  // code input until cleared.
-  const [twoFAPending, setTwoFAPending] = useState(false)
+  // Set once the backend told us the account has 2FA. Null = no 2FA pending.
+  // When set, `.methods` lists the available second factors.
+  const [twoFAPending, setTwoFAPending] = useState<null | { methods: Array<'totp' | 'passkey'> }>(null)
   const [code, setCode] = useState('')
+
+  function afterLogin() {
+    clearSessionCache()
+    // `next` already validated by validateSearch above.
+    navigate({ to: safeNext(next) as '/console' })
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -57,20 +65,38 @@ function LoginPage() {
       } else {
         const r = await authService.login(username, password)
         if (isTwoFAChallenge(r)) {
-          setTwoFAPending(true)
+          const methods = r.methods && r.methods.length > 0 ? r.methods : (['totp'] as const)
+          if (methods.length === 1 && methods[0] === 'passkey' && isWebAuthnSupported()) {
+            await passkeyService.loginSecondFactor()
+            afterLogin()
+            return
+          }
+          setTwoFAPending({ methods: [...methods] as Array<'totp' | 'passkey'> })
           setLoading(false)
           return
         }
       }
-      clearSessionCache()
-      // `next` already validated by validateSearch above.
-      navigate({ to: safeNext(next) as '/console' })
+      afterLogin()
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : t('login.failed'))
     } finally {
       setLoading(false)
     }
   }
+
+  // Method chooser: user has both passkey and TOTP available as second factors.
+  const showChooser = twoFAPending !== null && twoFAPending.methods.length > 1
+  // Show TOTP input: only TOTP is the active method.
+  const showTotp =
+    twoFAPending !== null &&
+    !showChooser &&
+    twoFAPending.methods.includes('totp')
+  // Show passkey-only prompt: only passkey is the active method.
+  const showPasskeyOnly =
+    twoFAPending !== null &&
+    !showChooser &&
+    twoFAPending.methods.length === 1 &&
+    twoFAPending.methods[0] === 'passkey'
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-[color:var(--bg)] to-[color:var(--bg2)] px-6">
@@ -102,7 +128,62 @@ function LoginPage() {
         >
           {!twoFAPending && <OAuthButtons mode="login" />}
 
-          {twoFAPending ? (
+          {showChooser ? (
+            <div className="flex flex-col gap-3">
+              <p className="mb-1 text-xs text-[color:var(--muted)]">{t('login.chooseFactor')}</p>
+              <Button
+                type="button"
+                className="w-full"
+                onClick={async () => {
+                  setErr(null)
+                  setLoading(true)
+                  try {
+                    await passkeyService.loginSecondFactor()
+                    afterLogin()
+                  } catch (e) {
+                    setErr(e instanceof ApiError ? e.message : t('login.failed'))
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+                disabled={loading}
+              >
+                {t('login.usePasskey')}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setTwoFAPending({ methods: ['totp'] })}
+                disabled={loading}
+              >
+                {t('login.useTotp')}
+              </Button>
+            </div>
+          ) : showPasskeyOnly ? (
+            <div className="flex flex-col gap-3">
+              <Button
+                type="button"
+                className="w-full"
+                onClick={async () => {
+                  setErr(null)
+                  setLoading(true)
+                  try {
+                    await passkeyService.loginSecondFactor()
+                    afterLogin()
+                  } catch (e) {
+                    setErr(e instanceof ApiError ? e.message : t('login.failed'))
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {t('login.usePasskey')}
+              </Button>
+            </div>
+          ) : showTotp ? (
             <>
               <p className="mb-4 text-xs text-[color:var(--muted)]">{t('login.twoFAHint')}</p>
               <Field
@@ -138,17 +219,46 @@ function LoginPage() {
             </div>
           )}
 
-          <Button
-            type="submit"
-            className="mt-6 w-full"
-            disabled={
-              loading ||
-              (twoFAPending ? code.trim().length < 6 : !username || !password)
-            }
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            {twoFAPending ? t('login.verifyCode') : t('login.signIn')}
-          </Button>
+          {/* Submit button — hidden when the chooser is shown (chooser has its own buttons) */}
+          {!showChooser && (
+            <Button
+              type="submit"
+              className="mt-6 w-full"
+              disabled={
+                loading ||
+                (showTotp ? code.trim().length < 6 : showPasskeyOnly ? false : !username || !password)
+              }
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {showTotp || showPasskeyOnly ? t('login.verifyCode') : t('login.signIn')}
+            </Button>
+          )}
+
+          {/* Passwordless passkey button — shown on the initial login form only */}
+          {isWebAuthnSupported() && !twoFAPending && (
+            <button
+              type="button"
+              className="mt-3 w-full text-center text-sm text-[color:var(--cyan)] hover:underline"
+              onClick={async () => {
+                if (!username.trim()) {
+                  setErr(t('login.usernameRequired'))
+                  return
+                }
+                setErr(null)
+                setLoading(true)
+                try {
+                  await passkeyService.loginPasswordless(username.trim())
+                  afterLogin()
+                } catch (e) {
+                  setErr(e instanceof ApiError ? e.message : t('login.failed'))
+                } finally {
+                  setLoading(false)
+                }
+              }}
+            >
+              {t('login.signInWithPasskey')}
+            </button>
+          )}
 
           <p className="mt-5 text-center text-xs text-[color:var(--muted)]">
             {t('login.noAccount')}{' '}

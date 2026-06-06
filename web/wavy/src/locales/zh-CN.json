@@ -292,7 +292,12 @@
     },
     "twoFAHint": "请输入 Authenticator 中的 6 位验证码，或使用备份码。",
     "twoFACode": "验证码",
-    "verifyCode": "验证"
+    "verifyCode": "验证",
+    "signInWithPasskey": "使用 Passkey 登录",
+    "usePasskey": "使用 Passkey",
+    "useTotp": "使用验证器代码",
+    "chooseFactor": "选择二次验证方式",
+    "usernameRequired": "请输入用户名"
   },
   "register": {
     "kicker": "wavydance.ai · 注册",
