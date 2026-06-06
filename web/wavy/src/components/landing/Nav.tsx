@@ -48,9 +48,9 @@ export function Nav() {
           <a href="#pricing" className="hover:text-[color:var(--text)]">
             {t('nav.pricing')}
           </a>
-          <a href="#qa" className="hover:text-[color:var(--text)]">
+          <Link to="/docs" className="hover:text-[color:var(--text)]">
             {t('nav.docs')}
-          </a>
+          </Link>
         </div>
 
         <div className="flex items-center gap-2.5">

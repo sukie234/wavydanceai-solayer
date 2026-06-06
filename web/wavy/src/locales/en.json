@@ -532,5 +532,121 @@
     "about": "About",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "docs": {
+    "topbar": { "kicker": "Docs" },
+    "sidebar": {
+      "searchPlaceholder": "Search models…",
+      "overview": "Get started",
+      "chat": "Chat models",
+      "image": "Image models",
+      "video": "Video models"
+    },
+    "toc": { "title": "On this page" },
+    "index": {
+      "kicker": "wavydance.ai · docs",
+      "title1": "One Wave.",
+      "title2": "Every API.",
+      "lead": "200+ models behind a single OpenAI-compatible endpoint. Pick a model, send a request, ship a feature. These docs cover the chat schema, the unified async-task API for image and video, and per-model parameter cheat sheets.",
+      "modality": { "chat": "Chat", "image": "Image", "video": "Video" },
+      "quickstart": { "kicker": "30-second quickstart", "title": "Three steps to your first response" },
+      "step1": { "t": "Get a key", "d": "Sign up and copy your sk-key from the console." },
+      "step2": { "t": "Point your SDK", "d": "Use https://api.wavydance.ai/v1 as base_url. Done." },
+      "step3": { "t": "Pick a model", "d": "Change the model string — same SDK, every provider." },
+      "tip": {
+        "kicker": "Tip",
+        "title": "Try it before you write a line of code.",
+        "body": "The console playground bills against your own quota and uses the exact relay path your SDK will hit in production. Use it to verify model behavior, copy the equivalent SDK snippet, and ship.",
+        "cta": "Open the playground"
+      }
+    },
+    "spec": {
+      "badge": "Live",
+      "intro": "{{model}} from {{family}} routed through the wavydance.ai gateway. OpenAI-compatible chat completions with streaming, multimodal input, tool calling and adjustable reasoning effort — change the model string in any OpenAI SDK and you're done.",
+      "tryInPlayground": "Try in playground",
+      "openapiSpec": "OpenAPI spec",
+      "toc": {
+        "overview": "Overview",
+        "features": "Features",
+        "tools": "Tools & tool_choice",
+        "parameters": "Request parameters",
+        "examples": "Code examples",
+        "responses": "Response & status codes"
+      },
+      "features": {
+        "multimodal": { "t": "Multimodal input", "d": "Text, vision and audio in the same messages array. Pass image_url or input_audio content items inline." },
+        "reasoning": { "t": "Reasoning control", "d": "Tune cost vs. quality with reasoning_effort — low, medium, high, xhigh — without swapping models." },
+        "tools": { "t": "Tools & web search", "d": "Function calling and built-in web search via the tools array. Mutually exclusive with each other." },
+        "unified": { "t": "Unified endpoint", "d": "Same /v1/chat/completions surface across every provider. One SDK, one bill, zero migration." }
+      },
+      "tools": {
+        "title": "Tools & tool_choice",
+        "sub": "Section",
+        "lead": "The model can either browse the web or call your functions in a single turn — never both. Pick the behavior that fits your job.",
+        "webSearch": {
+          "tag": "type: web_search",
+          "title": "Web search",
+          "body": "Lets the model fetch live results before answering. Useful for time-sensitive questions, citations and grounding."
+        },
+        "fn": {
+          "tag": "type: function",
+          "title": "Function calling",
+          "body": "Declare functions the model can invoke. Returned as tool_calls with JSON arguments — you execute and feed the result back."
+        }
+      },
+      "params": {
+        "title": "Request parameters",
+        "sub": "Schema"
+      },
+      "examples": {
+        "title": "Code examples",
+        "sub": "Quickstart"
+      },
+      "responses": {
+        "title": "Responses",
+        "sub": "Status codes"
+      },
+      "status": {
+        "200": "Success — single object or streamed events",
+        "400": "Bad request — schema or model id",
+        "401": "Unauthorized — missing or invalid key",
+        "429": "Rate limited — slow down or upgrade group",
+        "500": "Upstream / gateway error"
+      },
+      "next": {
+        "kicker": "Next",
+        "title": "Where to go from here",
+        "body": "Wire authentication and error handling first, then explore the rest of the chat catalog. Image and video models share a different async-task API documented in their respective sections.",
+        "quickstart": "Quickstart",
+        "auth": "Authentication"
+      }
+    },
+    "page": {
+      "quickstart": {
+        "title": "Quickstart",
+        "lead": "Get your first response from wavydance.ai in under a minute. Same request shape as the OpenAI SDK — only base_url and key change.",
+        "s1": { "h": "1. Make your first request", "p": "Replace WAVY_API_KEY with the sk-key you generated in the console. The response shape is identical to OpenAI." },
+        "s2": { "h": "2. Or use the OpenAI SDK", "p": "Point base_url at our gateway and keep using the SDK you already know. Switch providers by changing the model string." }
+      },
+      "auth": {
+        "title": "Authentication",
+        "lead": "Every request needs an Authorization: Bearer sk-key header. Keys are scoped to your account and obey your group quota.",
+        "s1": { "h": "Bearer token", "p": "Set the Authorization header on every request. Keys are listed and rotated in the console under API Keys." }
+      },
+      "errors": {
+        "title": "Errors",
+        "lead": "Errors follow the OpenAI error envelope. Look at error.type and error.code for programmatic handling; error.message is human-readable.",
+        "s1": { "h": "Error envelope", "p": "All 4xx and 5xx responses return a JSON body with a top-level error object — same shape across providers." }
+      },
+      "rate": {
+        "title": "Rate limits",
+        "lead": "Limits are enforced per group and surfaced on response headers so clients can back off without polling a separate endpoint.",
+        "s1": { "h": "Response headers", "p": "Inspect x-ratelimit-* headers on every response. The -reset header is a wall-clock duration to full restore." }
+      }
+    },
+    "taskStub": {
+      "body": "{{model}} runs on the unified async-task API at POST /v1/tasks. Send the prompt, receive results via webhook or polling. The full task schema docs are in progress — for now see the home page Demo panel for an example payload.",
+      "note": "Heads up: the spec page for task-based models lands together with the playground image / video tabs."
+    }
   }
 }

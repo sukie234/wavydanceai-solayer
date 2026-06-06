@@ -532,5 +532,112 @@
     "about": "关于",
     "privacy": "隐私",
     "terms": "条款"
+  },
+  "docs": {
+    "topbar": { "kicker": "文档" },
+    "sidebar": {
+      "searchPlaceholder": "搜索模型…",
+      "overview": "起步",
+      "chat": "对话模型",
+      "image": "图像模型",
+      "video": "视频模型"
+    },
+    "toc": { "title": "本页目录" },
+    "index": {
+      "kicker": "wavydance.ai · 文档",
+      "title1": "一浪直达，",
+      "title2": "万模归一。",
+      "lead": "200+ 模型，一个 OpenAI 兼容入口。挑模型、发请求、交付功能。文档涵盖对话接口规格、图像 / 视频的统一异步任务接口，以及每个模型的参数速查。",
+      "modality": { "chat": "对话", "image": "图像", "video": "视频" },
+      "quickstart": { "kicker": "30 秒上手", "title": "三步拿到首个响应" },
+      "step1": { "t": "拿到 Key", "d": "注册账号，从控制台复制 sk-key。" },
+      "step2": { "t": "指向网关", "d": "把 base_url 设为 https://api.wavydance.ai/v1，就这一行。" },
+      "step3": { "t": "挑选模型", "d": "改 model 字符串即可切换提供商，SDK 不变。" },
+      "tip": {
+        "kicker": "提示",
+        "title": "上线前先在演练场跑一次。",
+        "body": "控制台演练场直接走你账户的额度，调用路径与生产 SDK 完全一致。先验证模型行为，再复制对应 SDK 代码，最后部署。",
+        "cta": "进入演练场"
+      }
+    },
+    "spec": {
+      "badge": "在线",
+      "intro": "来自 {{family}} 的 {{model}}，经 wavydance.ai 网关路由。OpenAI 兼容的 Chat Completions 接口，支持流式、多模态输入、工具调用和可调推理强度——在任何 OpenAI SDK 里改一个 model 字符串即可切换。",
+      "tryInPlayground": "在演练场试用",
+      "openapiSpec": "OpenAPI 规格",
+      "toc": {
+        "overview": "概览",
+        "features": "特性",
+        "tools": "工具与 tool_choice",
+        "parameters": "请求参数",
+        "examples": "代码示例",
+        "responses": "响应与状态码"
+      },
+      "features": {
+        "multimodal": { "t": "多模态输入", "d": "文本、视觉、音频可以同时出现在 messages 中。inline 传 image_url 或 input_audio 内容项。" },
+        "reasoning": { "t": "推理控制", "d": "通过 reasoning_effort 调节成本/质量——low、medium、high、xhigh，不必更换模型。" },
+        "tools": { "t": "工具与联网", "d": "通过 tools 字段调用函数或内置联网搜索，二者互斥。" },
+        "unified": { "t": "统一入口", "d": "所有提供商共享同一个 /v1/chat/completions。一个 SDK、一份账单、零迁移。" }
+      },
+      "tools": {
+        "title": "工具与 tool_choice",
+        "sub": "章节",
+        "lead": "模型一次回合内要么联网搜索、要么调用你的函数，二者不能同时出现。按业务选其一。",
+        "webSearch": {
+          "tag": "type: web_search",
+          "title": "联网搜索",
+          "body": "允许模型在回答前抓取实时结果。适合时效性问题、引用、Grounding。"
+        },
+        "fn": {
+          "tag": "type: function",
+          "title": "函数调用",
+          "body": "声明模型可调用的函数，返回 tool_calls 与 JSON 参数，由你执行后把结果回填。"
+        }
+      },
+      "params": { "title": "请求参数", "sub": "Schema" },
+      "examples": { "title": "代码示例", "sub": "快速上手" },
+      "responses": { "title": "响应", "sub": "状态码" },
+      "status": {
+        "200": "成功——单对象或流式事件",
+        "400": "请求错误——Schema 或 model id 不合法",
+        "401": "未授权——Key 缺失或无效",
+        "429": "超额限流——降速或升级分组",
+        "500": "上游或网关错误"
+      },
+      "next": {
+        "kicker": "下一步",
+        "title": "接下来去哪里",
+        "body": "先把认证和错误处理接好，然后浏览对话模型目录。图像与视频走另一套异步任务接口，在各自章节里。",
+        "quickstart": "快速上手",
+        "auth": "认证"
+      }
+    },
+    "page": {
+      "quickstart": {
+        "title": "快速上手",
+        "lead": "1 分钟内从 wavydance.ai 拿到第一个响应。请求结构与 OpenAI SDK 完全一致——只换 base_url 和 Key。",
+        "s1": { "h": "1. 发出第一个请求", "p": "把 WAVY_API_KEY 替换为你在控制台生成的 sk-key。响应结构与 OpenAI 完全一致。" },
+        "s2": { "h": "2. 或直接用 OpenAI SDK", "p": "把 base_url 指向我们的网关，继续用熟悉的 SDK。改一个 model 字符串就能切换提供商。" }
+      },
+      "auth": {
+        "title": "认证",
+        "lead": "每个请求都需要 Authorization: Bearer sk-key 头。Key 与账户绑定，遵循你所在分组的额度。",
+        "s1": { "h": "Bearer Token", "p": "在每个请求里加 Authorization 头。Key 在控制台 API Keys 页面管理和轮换。" }
+      },
+      "errors": {
+        "title": "错误",
+        "lead": "错误遵循 OpenAI 错误包络结构。看 error.type 和 error.code 做程序判断，error.message 给人读。",
+        "s1": { "h": "错误包络", "p": "所有 4xx / 5xx 响应都返回带顶层 error 对象的 JSON，跨提供商一致。" }
+      },
+      "rate": {
+        "title": "限流",
+        "lead": "限流按分组生效，通过响应头透传，客户端可以直接退避，无需另起接口。",
+        "s1": { "h": "响应头", "p": "每个响应都带 x-ratelimit-* 头。-reset 是距离完全恢复的墙钟秒数。" }
+      }
+    },
+    "taskStub": {
+      "body": "{{model}} 走 POST /v1/tasks 统一异步任务接口。发提示，通过 webhook 或轮询拿结果。完整 Schema 文档正在补齐——当前可以在首页 Demo 面板里看到示例 payload。",
+      "note": "提示：任务型模型的完整规格页会随演练场图像 / 视频 Tab 一起上线。"
+    }
   }
 }

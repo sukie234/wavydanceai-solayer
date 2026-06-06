@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { WavesBg } from './WavesBg'
@@ -38,9 +39,11 @@ export function Hero() {
 
           <div className="mt-10 flex flex-wrap gap-4">
             <Button size="lg">{t('hero.ctaPrimary')}</Button>
-            <Button variant="ghost" size="lg">
-              {t('hero.ctaSecondary')}
-            </Button>
+            <Link to="/docs">
+              <Button variant="ghost" size="lg">
+                {t('hero.ctaSecondary')}
+              </Button>
+            </Link>
           </div>
 
           <HeroStats />
