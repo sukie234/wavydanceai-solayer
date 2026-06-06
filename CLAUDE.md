@@ -69,6 +69,40 @@ For multi-step tasks, state a brief plan with verification at each step.
 - Write meaningful commit messages explaining why, not what.
 - Never force-push to shared branches.
 
+### Worktree per feature (parallel sessions)
+
+Multiple agents / windows on the same checkout step on each other when they
+switch branches — modified files get reset under you and uncommitted work
+disappears. The fix is a git worktree per concurrent task.
+
+**Rule:** any new feature, P0/P1 chunk, or non-trivial fix gets its own
+worktree. Don't `git checkout` a new branch in the primary checkout while
+another session is mid-task there.
+
+**Naming + location:** sibling directory of the main repo, named for the
+branch slug.
+
+```bash
+# Pattern:  ../wavydanceai-<branch-slug>
+git worktree add ../wavydanceai-feat-2fa-totp -b feat/p1-2fa-totp origin/main
+
+# When you finish (PR merged):
+git worktree remove ../wavydanceai-feat-2fa-totp
+git branch -d feat/p1-2fa-totp   # if the merge was a squash
+```
+
+The agent should `cd` into the new worktree before doing any work. The
+primary checkout stays on `main` (or whichever branch was active) and
+remains safe for the other session.
+
+**Skip the worktree only for:** one-line typo / comment fixes on the
+current branch, or pure read-only exploration. Anything that mutates more
+than ~2 files gets a worktree.
+
+**Cleanup hygiene:** when reporting a PR done, also report the worktree
+path so the user knows where to remove. Stale worktrees on disk are fine
+short-term but should be `git worktree prune`'d periodically.
+
 ### Never commit local dev artifacts
 
 The following artifacts are produced by tooling during local development /
