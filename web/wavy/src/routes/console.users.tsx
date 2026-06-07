@@ -12,6 +12,7 @@ import { getSession, isAdmin } from '@/lib/session'
 import { Role, type User } from '@/lib/types'
 import { ApiError } from '@/lib/api'
 import { cn } from '@/lib/cn'
+import { checkPassword, PASSWORD_MAX } from '@/lib/password'
 
 export const Route = createFileRoute('/console/users')({
   beforeLoad: async () => {
@@ -306,9 +307,15 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
+  const pwIssue = password.length > 0 ? checkPassword(password) : null
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setErr(null)
+    if (pwIssue) {
+      setErr(t(`register.password_${pwIssue}`))
+      return
+    }
     setSubmitting(true)
     try {
       await usersService.create({ username, password, display_name: displayName })
@@ -330,7 +337,7 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
         <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">{t('users.newUser')}</h2>
 
         <DialogField label={t('users.col.username')} value={username} onChange={setUsername} autoFocus />
-        <DialogField label="Password" type="password" value={password} onChange={setPassword} />
+        <DialogField label={t('userDialog.field.password')} type="password" value={password} onChange={setPassword} maxLength={PASSWORD_MAX} hint={t('register.passwordHint')} />
         <DialogField label="Display name" value={displayName} onChange={setDisplayName} optional />
 
         {err && (
@@ -343,7 +350,7 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" size="sm" disabled={submitting || !username || !password}>
+          <Button type="submit" size="sm" disabled={submitting || !username || !password || pwIssue !== null}>
             {submitting ? '…' : t('users.newUser')}
           </Button>
         </div>
@@ -359,6 +366,8 @@ function DialogField({
   type = 'text',
   optional,
   autoFocus,
+  maxLength,
+  hint,
 }: {
   label: string
   value: string
@@ -366,6 +375,8 @@ function DialogField({
   type?: string
   optional?: boolean
   autoFocus?: boolean
+  maxLength?: number
+  hint?: string
 }) {
   return (
     <label className="mb-4 block">
@@ -378,8 +389,10 @@ function DialogField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
+        maxLength={maxLength}
         className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
       />
+      {hint && <span className="mt-1 block text-xs text-[color:var(--muted)]/70">{hint}</span>}
     </label>
   )
 }

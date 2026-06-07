@@ -1,5 +1,6 @@
 {
   "invalid_input": "无效的输入，请检查您的输入",
+  "invalid_password_complexity": "密码需为 8–24 位，且至少包含一个字母和一个数字。",
   "send_email_failed": "发送邮件失败：",
   "invalid_parameter": "无效的参数",
   "username_taken": "该用户名已被占用，请换一个。",

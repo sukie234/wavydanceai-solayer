@@ -33,7 +33,7 @@ const (
 type User struct {
 	Id          int    `json:"id"`
 	Username    string `json:"username" gorm:"unique;index" validate:"max=12"`
-	Password    string `json:"password" gorm:"not null;" validate:"min=8,max=20"`
+	Password    string `json:"password" gorm:"not null;" validate:"min=8,max=24"`
 	DisplayName string `json:"display_name" gorm:"index" validate:"max=20"`
 	Role        int    `json:"role" gorm:"type:int;default:1"`   // admin, util
 	Status      int    `json:"status" gorm:"type:int;default:1"` // enabled, disabled

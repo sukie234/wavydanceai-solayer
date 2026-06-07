@@ -8,6 +8,7 @@ import { usersService, adminPasskeyService } from '@/lib/services/users'
 import { groupsService } from '@/lib/services/groups'
 import { ApiError } from '@/lib/api'
 import { Role, type User } from '@/lib/types'
+import { checkPassword, PASSWORD_MAX } from '@/lib/password'
 
 type Props = {
   open: boolean
@@ -94,10 +95,17 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
       : []),
   ]
 
+  const trimmedPassword = form.password.trim()
+  const pwIssue = trimmedPassword.length > 0 ? checkPassword(trimmedPassword) : null
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setErr(null)
     if (!target) return
+    if (pwIssue) {
+      setErr(t(`register.password_${pwIssue}`))
+      return
+    }
     setSubmitting(true)
     try {
       const payload: Partial<User> & { id: number; password?: string } = {
@@ -109,7 +117,7 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
         quota: Number(form.quota) || 0,
         role: form.role,
       }
-      if (form.password.trim()) payload.password = form.password.trim()
+      if (trimmedPassword) payload.password = trimmedPassword
       await usersService.update(payload)
       onSaved()
     } catch (e) {
@@ -188,7 +196,8 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
               value={form.password}
               onChange={(v) => set('password', v)}
               optional
-              hint={t('userDialog.field.passwordHint')}
+              maxLength={PASSWORD_MAX}
+              hint={pwIssue ? t(`register.password_${pwIssue}`) : t('userDialog.field.passwordHint')}
             />
           </>
         )}
@@ -199,7 +208,7 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             {t('common.cancel')}
           </Button>
-          <Button type="submit" size="sm" disabled={submitting || isLoading || !target}>
+          <Button type="submit" size="sm" disabled={submitting || isLoading || !target || pwIssue !== null}>
             {submitting ? '…' : t('common.save')}
           </Button>
         </DialogActions>

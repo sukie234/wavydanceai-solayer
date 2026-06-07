@@ -170,6 +170,13 @@ func Register(c *gin.Context) {
 		})
 		return
 	}
+	if !common.IsPasswordComplexEnough(user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
+		})
+		return
+	}
 	if config.EmailVerificationEnabled {
 		if user.Email == "" || user.VerificationCode == "" {
 			c.JSON(http.StatusOK, gin.H{
@@ -481,6 +488,13 @@ func UpdateUser(c *gin.Context) {
 		updatedUser.Password = "" // rollback to what it should be
 	}
 	updatePassword := updatedUser.Password != ""
+	if updatePassword && !common.IsPasswordComplexEnough(updatedUser.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
+		})
+		return
+	}
 	if err := updatedUser.Update(updatePassword); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -530,6 +544,13 @@ func UpdateSelf(c *gin.Context) {
 		cleanUser.Password = ""
 	}
 	updatePassword := user.Password != ""
+	if updatePassword && !common.IsPasswordComplexEnough(user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
+		})
+		return
+	}
 	if err := cleanUser.Update(updatePassword); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -622,6 +643,13 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": i18n.Translate(c, "invalid_input"),
+		})
+		return
+	}
+	if !common.IsPasswordComplexEnough(user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
 		})
 		return
 	}

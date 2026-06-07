@@ -11,6 +11,7 @@ import { twofaService, type TwoFASetupArtifact } from '@/lib/services/twofa'
 import { PasskeyCard } from '@/components/passkey/PasskeyCard'
 import { clearSessionCache } from '@/lib/session'
 import { ApiError } from '@/lib/api'
+import { checkPassword, PASSWORD_MAX } from '@/lib/password'
 
 export const Route = createFileRoute('/console/profile')({
   component: ProfilePage,
@@ -155,9 +156,10 @@ function ChangePasswordCard({ username }: { username: string }) {
     onError: (e) => setErr(e instanceof ApiError ? e.message : 'change failed'),
   })
 
-  const tooShort = pw.length > 0 && pw.length < 8
+  const pwIssue = checkPassword(pw)
+  const pwIssueForHint = pw.length > 0 ? pwIssue : null
   const mismatch = pw.length > 0 && confirm.length > 0 && pw !== confirm
-  const canSubmit = pw.length >= 8 && pw === confirm
+  const canSubmit = pw.length > 0 && pwIssue === null && pw === confirm
 
   return (
     <section className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-jelly)]">
@@ -184,6 +186,7 @@ function ChangePasswordCard({ username }: { username: string }) {
             type="password"
             value={pw}
             onChange={setPw}
+            maxLength={PASSWORD_MAX}
             hint={t('profile.password.newHint')}
           />
           <Field
@@ -191,13 +194,13 @@ function ChangePasswordCard({ username }: { username: string }) {
             type="password"
             value={confirm}
             onChange={setConfirm}
+            maxLength={PASSWORD_MAX}
           />
         </div>
 
-        {(tooShort || mismatch) && (
+        {(pwIssueForHint || mismatch) && (
           <div className="mb-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-xs text-[color:var(--coral)]">
-            {tooShort && t('profile.password.errTooShort')}
-            {!tooShort && mismatch && t('profile.password.errMismatch')}
+            {pwIssueForHint ? t(`register.password_${pwIssueForHint}`) : t('profile.password.errMismatch')}
           </div>
         )}
 

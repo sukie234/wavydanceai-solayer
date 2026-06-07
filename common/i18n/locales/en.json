@@ -1,5 +1,6 @@
 {
   "invalid_input": "Invalid input, please check your input",
+  "invalid_password_complexity": "Password must be 8–24 characters and contain at least one letter and one digit.",
   "send_email_failed": "failed to send email: ",
   "invalid_parameter": "invalid parameter",
   "username_taken": "This username is already taken — please choose another.",

@@ -55,6 +55,7 @@ type FieldProps = {
   hintTone?: 'muted' | 'warn'
   autoFocus?: boolean
   disabled?: boolean
+  maxLength?: number
 }
 
 export function Field({
@@ -68,6 +69,7 @@ export function Field({
   hintTone = 'muted',
   autoFocus,
   disabled,
+  maxLength,
 }: FieldProps) {
   return (
     <label className="mb-4 block">
@@ -82,6 +84,7 @@ export function Field({
         placeholder={placeholder}
         autoFocus={autoFocus}
         disabled={disabled}
+        maxLength={maxLength}
         className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20 disabled:cursor-not-allowed disabled:opacity-60"
       />
       {hint && (
