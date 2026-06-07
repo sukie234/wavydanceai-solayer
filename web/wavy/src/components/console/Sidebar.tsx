@@ -19,6 +19,7 @@ import {
 import { authService } from '@/lib/services/auth'
 import { Role, type User } from '@/lib/types'
 import { cn } from '@/lib/cn'
+import { BrandMark } from '@/components/BrandMark'
 
 type NavItem = {
   to: string
@@ -89,7 +90,7 @@ export function Sidebar() {
         className="group flex items-center gap-2.5 px-6 py-5 transition-opacity hover:opacity-80"
         aria-label="Back to wavydance.ai homepage"
       >
-        <LogoMark />
+        <BrandMark size={26} />
         <span className="font-display text-base font-bold tracking-[-0.5px]">
           wavydance<span className="text-current-ink">.ai</span>
         </span>
@@ -233,28 +234,6 @@ function SocialBtn({
         {label}
       </span>
     </a>
-  )
-}
-
-function LogoMark() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="sb-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M2 14 Q5 8 8 14 T14 14 T20 14"
-        stroke="url(#sb-mark)"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="20" cy="14" r="2.4" fill="url(#sb-mark)" />
-    </svg>
   )
 }
 

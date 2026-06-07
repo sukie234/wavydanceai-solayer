@@ -7,6 +7,7 @@ import { authService } from '@/lib/services/auth'
 import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
+import { BrandMark } from '@/components/BrandMark'
 
 export const Route = createFileRoute('/register')({
   beforeLoad: async () => {
@@ -72,7 +73,7 @@ function RegisterPage() {
       <div className="relative z-10 w-full max-w-[420px]">
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex items-center gap-2.5">
-            <Logo />
+            <BrandMark size={32} />
             <span className="font-display text-xl font-bold tracking-[-0.5px]">
               wavydance<span className="text-current-ink">.ai</span>
             </span>
@@ -192,18 +193,3 @@ function Field({
   )
 }
 
-function Logo() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="register-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
-        </linearGradient>
-      </defs>
-      <path d="M2 14 Q5 8 8 14 T14 14 T20 14" stroke="url(#register-mark)" strokeWidth="2.4" strokeLinecap="round" fill="none" />
-      <circle cx="20" cy="14" r="2.4" fill="url(#register-mark)" />
-    </svg>
-  )
-}

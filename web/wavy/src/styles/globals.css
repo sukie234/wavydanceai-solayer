@@ -108,6 +108,12 @@
   --shadow-jelly: 0 30px 80px rgba(6, 58, 63, 0.12);
 }
 
+/* Brand mark — show only the icon variant matching the active theme */
+[data-theme='light'] .wavy-brand-mark__dark,
+[data-theme='dark'] .wavy-brand-mark__light {
+  display: none;
+}
+
 /* Brand gradient as text fill — use sparingly per brand guide */
 @utility text-current-ink {
   background: var(--current-ink);

@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BrandMark } from '@/components/BrandMark'
 import { cn } from '@/lib/cn'
 
 export function Nav() {
@@ -32,7 +33,7 @@ export function Nav() {
         )}
       >
         <Link to="/" className="flex items-center gap-2.5 font-display text-[1.25rem] font-bold tracking-[-0.5px]">
-          <Logo />
+          <BrandMark size={28} />
           <span>
             wavydance<span className="text-current-ink">.ai</span>
           </span>
@@ -73,24 +74,3 @@ export function Nav() {
   )
 }
 
-function Logo() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="wavy-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M2 14 Q5 8 8 14 T14 14 T20 14"
-        stroke="url(#wavy-mark)"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="20" cy="14" r="2.4" fill="url(#wavy-mark)" />
-    </svg>
-  )
-}
