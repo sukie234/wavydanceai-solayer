@@ -186,6 +186,25 @@ func Register(c *gin.Context) {
 			return
 		}
 	}
+	// Pre-check duplicates so the user sees a clean message instead of the
+	// raw gorm / postgres unique-constraint error leaking through err.Error().
+	// A concurrent registration could still slip past this guard, in which
+	// case the DB unique index trips Insert below — we accept the raw error
+	// surface for that rare race.
+	if model.IsUsernameAlreadyTaken(user.Username) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "username_taken"),
+		})
+		return
+	}
+	if config.EmailVerificationEnabled && model.IsEmailAlreadyTaken(user.Email) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "email_taken"),
+		})
+		return
+	}
 	affCode := user.AffCode // this code is the inviter's code, not the user's own code
 	inviterId, _ := model.GetUserIdByAffCode(affCode)
 	cleanUser := model.User{

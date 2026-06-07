@@ -94,6 +94,7 @@
           "remaining": "Remaining: {{quota}}",
           "lastRequest": "Last: {{tokens}} tokens"
         },
+        "loadingModels": "Loading available models…",
         "error": {
           "noModels": "No chat models available",
           "noModelsHint": "Your group has no chat-capable models enabled yet. Ask an admin to add one.",
@@ -383,7 +384,45 @@
   "settings": {
     "kicker": "Root only",
     "title": "Settings",
-    "lead": "System-wide configuration. Changes take effect immediately."
+    "lead": "System-wide configuration. Changes take effect immediately.",
+    "loading": "Loading options…",
+    "save": "Save",
+    "saved": "Saved",
+    "sec": {
+      "auth": { "title": "Login & registration", "desc": "Control how users sign in to wavydance.ai." },
+      "channels": { "title": "Channels & routing", "desc": "How channels behave on failure and how usage is tracked." },
+      "display": { "title": "Display", "desc": "How quota and tokens are shown to users." },
+      "email": { "title": "Email domain restriction", "desc": "Restrict registration to specific email domains." },
+      "smtp": { "title": "SMTP", "desc": "Outgoing mail for verification and password reset." }
+    },
+    "field": {
+      "PasswordLoginEnabled": "Password login",
+      "PasswordRegisterEnabled": "Password registration",
+      "RegisterEnabled": "Open registration",
+      "RegisterEnabled_hint": "Allow new users to sign up.",
+      "EmailVerificationEnabled": "Email verification",
+      "GitHubOAuthEnabled": "GitHub OAuth",
+      "WeChatAuthEnabled": "WeChat OAuth",
+      "OidcEnabled": "OIDC SSO",
+      "TurnstileCheckEnabled": "Turnstile (Cloudflare bot check)",
+      "AutomaticDisableChannelEnabled": "Auto-disable failing channels",
+      "AutomaticEnableChannelEnabled": "Auto-enable recovered channels",
+      "ChannelDisableThreshold": "Disable threshold (sec)",
+      "ChannelDisableThreshold_hint": "Channels slower than this for too long get disabled.",
+      "ApproximateTokenEnabled": "Approximate token count",
+      "ApproximateTokenEnabled_hint": "Use a fast heuristic instead of running the tokenizer.",
+      "LogConsumeEnabled": "Log consumption events",
+      "DisplayInCurrencyEnabled": "Show quota as currency ($)",
+      "DisplayTokenStatEnabled": "Show token statistics in token list",
+      "EmailDomainRestrictionEnabled": "Enable domain whitelist",
+      "EmailDomainWhitelist": "Whitelist (comma-separated)",
+      "EmailDomainWhitelist_placeholder": "gmail.com,company.com",
+      "SMTPServer": "Server",
+      "SMTPPort": "Port",
+      "SMTPFrom": "From address",
+      "SMTPFrom_placeholder": "no-reply@wavydance.ai",
+      "SMTPAccount": "Account"
+    }
   },
   "models": {
     "kicker": "Catalog",
@@ -508,6 +547,8 @@
     "newKey": "New key",
     "empty": "No API keys yet — click \"New key\" to create your first one.",
     "deleteConfirm": "Delete key \"{{name}}\"? This cannot be undone.",
+    "copyKey": "Copy full key",
+    "copied": "Copied!",
     "col": {
       "name": "Name",
       "status": "Status",

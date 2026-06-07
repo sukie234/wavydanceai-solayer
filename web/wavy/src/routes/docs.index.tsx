@@ -82,7 +82,7 @@ function DocsIndex() {
           {t('docs.index.tip.body')}
         </p>
         <Link
-          to="/console"
+          to="/console/playground"
           className="mt-4 inline-flex items-center gap-1.5 text-[0.92rem] font-semibold text-[color:var(--cyan)] hover:underline"
         >
           {t('docs.index.tip.cta')} <ArrowRight className="h-4 w-4" />

@@ -94,6 +94,7 @@
           "remaining": "剩余额度：{{quota}}",
           "lastRequest": "上次：{{tokens}} tokens"
         },
+        "loadingModels": "正在加载可用模型…",
         "error": {
           "noModels": "暂无可用对话模型",
           "noModelsHint": "你所在的分组还没有启用对话模型。请联系管理员添加。",
@@ -383,7 +384,45 @@
   "settings": {
     "kicker": "仅 Root",
     "title": "系统设置",
-    "lead": "全站配置，修改即时生效。"
+    "lead": "全站配置，修改即时生效。",
+    "loading": "正在加载配置…",
+    "save": "保存",
+    "saved": "已保存",
+    "sec": {
+      "auth": { "title": "登录与注册", "desc": "控制用户如何登录 wavydance.ai。" },
+      "channels": { "title": "渠道与路由", "desc": "渠道失败时的行为以及用量记录策略。" },
+      "display": { "title": "显示", "desc": "额度与 token 在用户界面的展示方式。" },
+      "email": { "title": "邮箱域名限制", "desc": "限制注册仅来自指定邮箱域名。" },
+      "smtp": { "title": "SMTP 邮件", "desc": "用于验证码与密码重置的出站邮件。" }
+    },
+    "field": {
+      "PasswordLoginEnabled": "密码登录",
+      "PasswordRegisterEnabled": "密码注册",
+      "RegisterEnabled": "开放注册",
+      "RegisterEnabled_hint": "允许新用户注册账号。",
+      "EmailVerificationEnabled": "邮箱验证",
+      "GitHubOAuthEnabled": "GitHub OAuth",
+      "WeChatAuthEnabled": "微信 OAuth",
+      "OidcEnabled": "OIDC SSO",
+      "TurnstileCheckEnabled": "Turnstile（Cloudflare 反爬）",
+      "AutomaticDisableChannelEnabled": "自动禁用失败渠道",
+      "AutomaticEnableChannelEnabled": "自动启用恢复渠道",
+      "ChannelDisableThreshold": "禁用阈值（秒）",
+      "ChannelDisableThreshold_hint": "持续超过该阈值未响应的渠道会被自动禁用。",
+      "ApproximateTokenEnabled": "近似 token 计数",
+      "ApproximateTokenEnabled_hint": "用快速启发式估算，跳过 tokenizer。",
+      "LogConsumeEnabled": "记录消费事件",
+      "DisplayInCurrencyEnabled": "按货币（$）显示额度",
+      "DisplayTokenStatEnabled": "在 token 列表展示统计",
+      "EmailDomainRestrictionEnabled": "启用域名白名单",
+      "EmailDomainWhitelist": "白名单（逗号分隔）",
+      "EmailDomainWhitelist_placeholder": "gmail.com,company.com",
+      "SMTPServer": "服务器",
+      "SMTPPort": "端口",
+      "SMTPFrom": "发件人地址",
+      "SMTPFrom_placeholder": "no-reply@wavydance.ai",
+      "SMTPAccount": "账号"
+    }
   },
   "models": {
     "kicker": "模型目录",
@@ -508,6 +547,8 @@
     "newKey": "新建密钥",
     "empty": "还没有密钥 —— 点击「新建密钥」创建第一把。",
     "deleteConfirm": "删除密钥「{{name}}」？此操作不可撤销。",
+    "copyKey": "复制完整密钥",
+    "copied": "已复制！",
     "col": {
       "name": "名称",
       "status": "状态",

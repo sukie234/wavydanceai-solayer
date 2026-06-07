@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Copy, Power, PowerOff } from 'lucide-react'
+import { Plus, Trash2, Copy, Check, Power, PowerOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
@@ -163,16 +163,30 @@ function TokensPage() {
 }
 
 function KeyCell({ value }: { value: string }) {
+  const { t } = useTranslation()
+  const [copied, setCopied] = useState(false)
   const display = value ? `sk-${value.slice(0, 4)}…${value.slice(-4)}` : '—'
+
+  async function onCopy() {
+    if (!value || !navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(`sk-${value}`)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // clipboard blocked (insecure context, permission, etc.) — silently ignore
+    }
+  }
+
   return (
     <button
       type="button"
-      onClick={() => navigator.clipboard?.writeText(`sk-${value}`)}
+      onClick={onCopy}
       className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--border)] bg-[color:var(--bg2)] px-2 py-0.5 font-mono text-xs text-[color:var(--muted)] hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
-      title="Copy full key"
+      title={t('tk.copyKey')}
     >
-      <Copy className="h-3 w-3" />
-      {display}
+      {copied ? <Check className="h-3 w-3 text-[color:var(--cyan)]" /> : <Copy className="h-3 w-3" />}
+      {copied ? t('tk.copied') : display}
     </button>
   )
 }

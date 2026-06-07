@@ -9,9 +9,10 @@ type Props = {
   onSelect: (id: string) => void
   onCreate: () => void
   onDelete: (id: string) => void
+  canCreate?: boolean
 }
 
-export function SessionList({ sessions, activeId, onSelect, onCreate, onDelete }: Props) {
+export function SessionList({ sessions, activeId, onSelect, onCreate, onDelete, canCreate = true }: Props) {
   const { t } = useTranslation()
 
   return (
@@ -20,7 +21,8 @@ export function SessionList({ sessions, activeId, onSelect, onCreate, onDelete }
         <button
           type="button"
           onClick={onCreate}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm font-medium transition-colors hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)]"
+          disabled={!canCreate}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm font-medium transition-colors hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[color:var(--border)] disabled:hover:text-inherit"
         >
           <Plus className="h-3.5 w-3.5" />
           {t('console.playground.chat.newSession')}

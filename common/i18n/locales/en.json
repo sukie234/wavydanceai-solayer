@@ -1,5 +1,7 @@
 {
   "invalid_input": "Invalid input, please check your input",
   "send_email_failed": "failed to send email: ",
-  "invalid_parameter": "invalid parameter"
+  "invalid_parameter": "invalid parameter",
+  "username_taken": "This username is already taken — please choose another.",
+  "email_taken": "An account with this email already exists. Try signing in instead."
 }

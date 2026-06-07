@@ -70,6 +70,10 @@ function PlaygroundChat() {
   )
 
   const onCreate = () => {
+    // Defence against the race where the model list is still loading or the
+    // user has zero channels: clicking "New chat" otherwise spawns sessions
+    // that can never send (every message would error with "no model").
+    if (loadingModels || models.length === 0) return
     const fresh = sessionStore.create(models[0] ?? '')
     setSessions(sessionStore.list())
     setActiveId(fresh.id)
@@ -162,7 +166,11 @@ function PlaygroundChat() {
         </div>
       )}
 
-      {noModels ? (
+      {loadingModels ? (
+        <div className="flex flex-1 items-center justify-center p-10 text-sm text-[color:var(--muted)]">
+          {t('console.playground.chat.loadingModels')}
+        </div>
+      ) : noModels ? (
         <div className="flex flex-1 items-center justify-center p-10">
           <div className="max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 text-center">
             <h2 className="font-display text-lg font-semibold">{t('console.playground.chat.error.noModels')}</h2>
@@ -182,6 +190,7 @@ function PlaygroundChat() {
             onSelect={setActiveId}
             onCreate={onCreate}
             onDelete={onDelete}
+            canCreate={models.length > 0}
           />
 
           <div className="flex min-w-0 flex-col">
@@ -197,7 +206,7 @@ function PlaygroundChat() {
               </>
             ) : (
               <div className="flex flex-1 items-center justify-center text-sm text-[color:var(--muted)]">
-                <Button size="sm" onClick={onCreate}>
+                <Button size="sm" onClick={onCreate} disabled={models.length === 0}>
                   {t('console.playground.chat.newSession')}
                 </Button>
               </div>
