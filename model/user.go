@@ -11,7 +11,6 @@ import (
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/blacklist"
 	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/helper"
 	"github.com/songquanpeng/one-api/common/logger"
 	"github.com/songquanpeng/one-api/common/random"
 )
@@ -153,22 +152,13 @@ func (user *User) Insert(ctx context.Context, inviterId int) error {
 			RecordLog(ctx, inviterId, LogTypeSystem, fmt.Sprintf("邀请用户赠送 %s", common.LogQuota(config.QuotaForInviter)))
 		}
 	}
-	// create default token
-	cleanToken := Token{
-		UserId:         user.Id,
-		Name:           "default",
-		Key:            random.GenerateKey(),
-		CreatedTime:    helper.GetTimestamp(),
-		AccessedTime:   helper.GetTimestamp(),
-		ExpiredTime:    -1,
-		RemainQuota:    -1,
-		UnlimitedQuota: true,
-	}
-	result.Error = cleanToken.Insert()
-	if result.Error != nil {
-		// do not block
-		logger.SysError(fmt.Sprintf("create default token for user %d failed: %s", user.Id, result.Error.Error()))
-	}
+	// Upstream one-api auto-issued a "default" API key here with
+	// UnlimitedQuota=true and ExpiredTime=-1 so new users could chat without
+	// thinking. wavydance.ai is a billing-real product — handing every signup
+	// a never-expiring master key undermines the "what is an API key, why
+	// should I rotate it" conversation we want users to have on their first
+	// /console/tokens visit. The Token UI's own empty state nudges them to
+	// click "New key" and pick a name + expiry intentionally.
 	return nil
 }
 
