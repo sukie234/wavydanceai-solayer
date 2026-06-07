@@ -729,7 +729,9 @@
         }
       },
       "params": { "title": "请求参数", "sub": "Schema" },
-      "examples": { "title": "代码示例", "sub": "快速上手" },
+      "examples": { "kicker": "示例", "title": "代码示例", "sub": "快速上手" },
+      "collapsePane": "收起示例",
+      "expandPane": "展开示例",
       "responses": { "title": "响应", "sub": "状态码" },
       "status": {
         "200": "成功——单对象或流式事件",

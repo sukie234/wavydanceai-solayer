@@ -733,9 +733,12 @@
         "sub": "Schema"
       },
       "examples": {
+        "kicker": "Examples",
         "title": "Code examples",
         "sub": "Quickstart"
       },
+      "collapsePane": "Collapse examples",
+      "expandPane": "Show examples",
       "responses": {
         "title": "Responses",
         "sub": "Status codes"

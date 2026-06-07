@@ -1,31 +1,45 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { ChevronRight, ExternalLink, Sparkles, Zap, Network, Layers } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Code2, ExternalLink, Sparkles, Zap, Network, Layers } from 'lucide-react'
 import type { DocItem } from '@/lib/docs-catalog'
 import { categoryLabel } from '@/lib/docs-catalog'
 import { CodeBlock } from './CodeBlock'
-import { DocsToc } from './DocsToc'
 import { cn } from '@/lib/cn'
 
 type CodeLang = 'curl' | 'python' | 'node'
 
+const COLLAPSED_KEY = 'docs.spec.rightPane.collapsed'
+
 export function ChatModelSpec({ model }: { model: DocItem }) {
   const { t } = useTranslation()
   const [lang, setLang] = useState<CodeLang>('curl')
-
-  const tocEntries = [
-    { id: 'overview', label: t('docs.spec.toc.overview') },
-    { id: 'features', label: t('docs.spec.toc.features') },
-    { id: 'tools', label: t('docs.spec.toc.tools') },
-    { id: 'parameters', label: t('docs.spec.toc.parameters') },
-    { id: 'examples', label: t('docs.spec.toc.examples') },
-    { id: 'responses', label: t('docs.spec.toc.responses') },
-  ]
+  // Right-pane collapse, persisted across navigation. Users iterating on
+  // prose want the wider article; users copy-pasting code want the pane.
+  // Read after first paint to avoid an SSR / hydration-mismatch flash.
+  const [collapsed, setCollapsed] = useState(false)
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(COLLAPSED_KEY) === '1') setCollapsed(true)
+    } catch {
+      /* localStorage blocked (private mode etc.) — silently default to expanded */
+    }
+  }, [])
+  function togglePane() {
+    setCollapsed((v) => {
+      const next = !v
+      try {
+        window.localStorage.setItem(COLLAPSED_KEY, next ? '1' : '0')
+      } catch {
+        /* ignore */
+      }
+      return next
+    })
+  }
 
   return (
-    <div className="flex min-w-0 flex-1">
-      <article className="mx-auto w-full max-w-[820px] px-6 py-10 lg:px-10">
+    <div className="flex min-w-0 flex-1 items-start gap-6 px-6 py-10 lg:px-10">
+      <article className="min-w-0 flex-1 max-w-[820px]">
         <Breadcrumb model={model} />
 
         <header id="overview" className="mt-4 scroll-mt-24">
@@ -50,7 +64,7 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              to="/console"
+              to="/console/playground"
               className="inline-flex items-center gap-1.5 rounded-[10px] bg-current-grad px-4 py-2 text-[0.9rem] font-semibold text-[color:var(--cta-ink)] transition hover:-translate-y-px hover:brightness-110"
             >
               {t('docs.spec.tryInPlayground')}
@@ -119,42 +133,6 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
           <ParamTable model={model.name} />
         </section>
 
-        <section id="examples" className="mt-14 scroll-mt-24">
-          <SectionHeading n="03" title={t('docs.spec.examples.title')} sub={t('docs.spec.examples.sub')} />
-          <div className="mb-3 flex flex-wrap gap-1.5">
-            {(['curl', 'python', 'node'] as CodeLang[]).map((id) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setLang(id)}
-                className={cn(
-                  'rounded-full border border-[color:var(--border)] px-3.5 py-1 font-mono text-xs uppercase tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]',
-                  lang === id &&
-                    'border-transparent bg-current-grad text-[color:var(--cta-ink)] shadow-[0_8px_24px_rgba(63,179,217,0.25)]',
-                )}
-              >
-                {id}
-              </button>
-            ))}
-          </div>
-          <CodeBlock lang={lang} code={EXAMPLES[lang](model.name)} />
-        </section>
-
-        <section id="responses" className="mt-14 scroll-mt-24">
-          <SectionHeading n="04" title={t('docs.spec.responses.title')} sub={t('docs.spec.responses.sub')} />
-          <div className="mb-4 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
-            <StatusRow code="200" label={t('docs.spec.status.200')} variant="ok" />
-            <StatusRow code="400" label={t('docs.spec.status.400')} variant="warn" />
-            <StatusRow code="401" label={t('docs.spec.status.401')} variant="warn" />
-            <StatusRow code="429" label={t('docs.spec.status.429')} variant="warn" />
-            <StatusRow code="500" label={t('docs.spec.status.500')} variant="err" />
-          </div>
-          <CodeBlock
-            lang="json"
-            code={RESPONSE_SAMPLE(model.name)}
-          />
-        </section>
-
         <footer className="mt-16 flex flex-col gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-jelly)]">
           <div className="kicker !mb-1">{t('docs.spec.next.kicker')}</div>
           <div className="font-display text-[1.25rem] font-semibold">{t('docs.spec.next.title')}</div>
@@ -180,7 +158,78 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
         </footer>
       </article>
 
-      <DocsToc entries={tocEntries} />
+      {collapsed ? (
+        // Collapsed: a narrow vertical tab pinned to the right edge of the
+        // viewport so the user can re-summon the pane without scrolling
+        // anywhere. Sits sticky alongside the article so it tracks the
+        // current section.
+        <button
+          type="button"
+          onClick={togglePane}
+          aria-label={t('docs.spec.expandPane')}
+          className="sticky top-[88px] hidden h-[180px] w-9 flex-none items-center justify-center gap-1 rounded-l-xl border border-[color:var(--border)] border-r-0 bg-[color:var(--surface)] text-[color:var(--muted)] shadow-[var(--shadow-jelly)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)] lg:flex"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          <span
+            className="font-mono text-[0.7rem] uppercase tracking-[2px]"
+            style={{ writingMode: 'vertical-rl' }}
+          >
+            {t('docs.spec.examples.title')}
+          </span>
+        </button>
+      ) : (
+        <aside className="sticky top-[88px] hidden h-[calc(100vh-96px)] w-[460px] flex-none overflow-y-auto lg:block xl:w-[520px]">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="inline-flex items-center gap-1.5 font-mono text-[0.72rem] uppercase tracking-[2px] text-[color:var(--muted)]">
+              <Code2 className="h-3.5 w-3.5" />
+              {t('docs.spec.examples.kicker')}
+            </div>
+            <button
+              type="button"
+              onClick={togglePane}
+              aria-label={t('docs.spec.collapsePane')}
+              title={t('docs.spec.collapsePane')}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[color:var(--muted)] hover:bg-[color:var(--bg2)] hover:text-[color:var(--text)]"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-6">
+            <section id="examples" className="scroll-mt-24">
+              <SectionHeading n="03" title={t('docs.spec.examples.title')} sub={t('docs.spec.examples.sub')} />
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {(['curl', 'python', 'node'] as CodeLang[]).map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setLang(id)}
+                    className={cn(
+                      'rounded-full border border-[color:var(--border)] px-3.5 py-1 font-mono text-xs uppercase tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]',
+                      lang === id &&
+                        'border-transparent bg-current-grad text-[color:var(--cta-ink)] shadow-[0_8px_24px_rgba(63,179,217,0.25)]',
+                    )}
+                  >
+                    {id}
+                  </button>
+                ))}
+              </div>
+              <CodeBlock lang={lang} code={EXAMPLES[lang](model.name)} />
+            </section>
+
+            <section id="responses" className="scroll-mt-24">
+              <SectionHeading n="04" title={t('docs.spec.responses.title')} sub={t('docs.spec.responses.sub')} />
+              <div className="mb-4 grid gap-2 sm:grid-cols-2">
+                <StatusRow code="200" label={t('docs.spec.status.200')} variant="ok" />
+                <StatusRow code="400" label={t('docs.spec.status.400')} variant="warn" />
+                <StatusRow code="401" label={t('docs.spec.status.401')} variant="warn" />
+                <StatusRow code="429" label={t('docs.spec.status.429')} variant="warn" />
+                <StatusRow code="500" label={t('docs.spec.status.500')} variant="err" />
+              </div>
+              <CodeBlock lang="json" code={RESPONSE_SAMPLE(model.name)} />
+            </section>
+          </div>
+        </aside>
+      )}
     </div>
   )
 }
