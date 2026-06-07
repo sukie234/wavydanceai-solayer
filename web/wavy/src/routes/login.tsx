@@ -211,6 +211,14 @@ function LoginPage() {
                 onChange={setPassword}
                 autoComplete="current-password"
               />
+              <div className="-mt-2 mb-2 text-right">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs text-[color:var(--cyan)] hover:underline"
+                >
+                  {t('login.forgotPassword')}
+                </Link>
+              </div>
             </>
           )}
 

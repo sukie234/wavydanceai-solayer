@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute, redirect, useNavigate, Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
@@ -8,6 +8,7 @@ import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { BrandMark } from '@/components/BrandMark'
+import { statusService } from '@/lib/services/status'
 
 export const Route = createFileRoute('/register')({
   beforeLoad: async () => {
@@ -23,21 +24,61 @@ function RegisterPage() {
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
+  const [verificationCode, setVerificationCode] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [info, setInfo] = useState<string | null>(null)
+
+  // Email verification gate is admin-toggled at runtime, so fetch on mount.
+  // statusService is cached so this is one round-trip per session.
+  const [emailRequired, setEmailRequired] = useState(false)
+  useEffect(() => {
+    statusService.get().then((s) => setEmailRequired(!!s.email_verification)).catch(() => {})
+  }, [])
+
+  // Cooldown for the "Send code" button so users can't spam SMTP.
+  const [sendingCode, setSendingCode] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const t = window.setTimeout(() => setCooldown((s) => s - 1), 1000)
+    return () => window.clearTimeout(t)
+  }, [cooldown])
 
   const emailValid = email === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const mismatch = confirm.length > 0 && password !== confirm
   const tooShort = password.length > 0 && password.length < 8
+  const codeOk = !emailRequired || verificationCode.trim().length > 0
+  const emailOk = !emailRequired || (email !== '' && emailValid)
   const canSubmit =
-    username.length >= 3 && password.length >= 8 && emailValid && !mismatch && !loading
+    username.length >= 3 && password.length >= 8 && emailValid && !mismatch && emailOk && codeOk && !loading
+
+  async function onSendCode() {
+    setErr(null)
+    setInfo(null)
+    if (!email || !emailValid) {
+      setErr(t('register.emailInvalid'))
+      return
+    }
+    setSendingCode(true)
+    try {
+      await authService.sendVerificationCode(email)
+      setInfo(t('register.codeSent', { email }))
+      setCooldown(60)
+    } catch (e) {
+      setErr(e instanceof ApiError ? e.message : t('register.codeSendFailed'))
+    } finally {
+      setSendingCode(false)
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setErr(null)
+    setInfo(null)
     if (mismatch || tooShort || !emailValid) return
     setLoading(true)
     try {
@@ -45,6 +86,7 @@ function RegisterPage() {
         username,
         password,
         ...(email ? { email } : {}),
+        ...(emailRequired ? { verification_code: verificationCode.trim() } : {}),
       })
       // Backend creates the account but doesn't log us in. Hop through the
       // login endpoint so the session cookie lands without forcing the user
@@ -89,7 +131,7 @@ function RegisterPage() {
           <OAuthButtons mode="register" />
 
           <Field
-            label={t('register.email')}
+            label={t('register.email') + (emailRequired ? ' *' : '')}
             type="email"
             value={email}
             onChange={setEmail}
@@ -98,6 +140,41 @@ function RegisterPage() {
             hint={!emailValid ? t('register.emailInvalid') : t('register.emailHint')}
             tone={!emailValid ? 'warn' : 'muted'}
           />
+
+          {emailRequired && (
+            <label className="mb-4 block">
+              <span className="mb-1.5 block font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">
+                {t('register.verificationCode')} *
+              </span>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                  className="w-full flex-1 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2.5 font-mono text-sm tracking-wider text-[color:var(--text)] placeholder:text-[color:var(--muted)]/70 transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onSendCode}
+                  disabled={!email || !emailValid || sendingCode || cooldown > 0}
+                  className="shrink-0"
+                >
+                  {sendingCode ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                  {cooldown > 0
+                    ? t('register.resendIn', { seconds: cooldown })
+                    : t('register.sendCode')}
+                </Button>
+              </div>
+              <span className="mt-1 block text-xs text-[color:var(--muted)]/80">
+                {t('register.verificationCodeHint')}
+              </span>
+            </label>
+          )}
+
           <Field
             label={t('register.username')}
             value={username}
@@ -123,6 +200,11 @@ function RegisterPage() {
             tone={mismatch ? 'warn' : 'muted'}
           />
 
+          {info && (
+            <div className="mt-4 rounded-lg border border-[color:var(--cyan)]/30 bg-[color:var(--cyan)]/8 px-3 py-2 text-sm text-[color:var(--cyan)]">
+              {info}
+            </div>
+          )}
           {err && (
             <div className="mt-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-sm text-[color:var(--coral)]">
               {err}

@@ -344,7 +344,8 @@
     "usePasskey": "使用 Passkey",
     "useTotp": "使用验证器代码",
     "chooseFactor": "选择二次验证方式",
-    "usernameRequired": "请输入用户名"
+    "usernameRequired": "请输入用户名",
+    "forgotPassword": "忘记密码？"
   },
   "register": {
     "kicker": "wavydance.ai · 注册",
@@ -352,6 +353,12 @@
     "email": "邮箱",
     "emailHint": "用于找回密码。",
     "emailInvalid": "请输入有效的邮箱地址。",
+    "verificationCode": "邮箱验证码",
+    "verificationCodeHint": "邮件中的 6 位数字。",
+    "sendCode": "发送验证码",
+    "resendIn": "{{seconds}} 秒后可重发",
+    "codeSent": "验证码已发送至 {{email}}，请查收。",
+    "codeSendFailed": "验证码发送失败。",
     "username": "用户名",
     "password": "密码",
     "confirmPassword": "确认密码",
@@ -366,6 +373,38 @@
       "google": "使用 Google 注册",
       "github": "使用 GitHub 注册"
     }
+  },
+  "forgot": {
+    "kicker": "账号找回",
+    "title": "重置密码",
+    "lead": "输入账号绑定的邮箱，我们会发送重置链接。",
+    "email": "邮箱",
+    "send": "发送重置链接",
+    "sentTitle": "请查收邮件",
+    "sentBody": "重置链接已发送至 {{email}}，30 分钟内有效。",
+    "resend": "重新发送",
+    "resendIn": "{{seconds}} 秒后可重发",
+    "backToLogin": "想起来了？",
+    "signIn": "返回登录",
+    "failed": "重置链接发送失败"
+  },
+  "reset": {
+    "kicker": "密码重置",
+    "title": "确认重置",
+    "confirmLead": "为 {{email}} 生成新密码。继续后旧密码立即失效。",
+    "confirm": "生成新密码",
+    "successTitle": "新密码已生成",
+    "successBody": "请立即复制——此处仅显示一次。用 {{email}} 登录后到个人资料里修改。",
+    "newPasswordLabel": "临时密码",
+    "copy": "复制",
+    "copied": "已复制！",
+    "changeReminder": "登录后请立即修改。",
+    "goSignIn": "前往登录",
+    "invalidTitle": "链接无效或已过期",
+    "invalidBody": "重置链接缺少必要参数或已被使用，请重新申请。",
+    "requestAgain": "重新申请链接",
+    "backToLogin": "返回登录",
+    "failed": "重置失败"
   },
   "users": {
     "kicker": "账号管理",

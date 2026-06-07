@@ -64,4 +64,30 @@ export const authService = {
     const res = await api.put<ApiResponse>('/user/self', input)
     unwrap(res)
   },
+
+  /** Send a 6-digit registration verification code to the given email. The
+   *  backend (a) checks domain whitelist + already-taken, (b) stores the code
+   *  in Redis keyed by email, (c) sends via configured SMTP. Throws on
+   *  validation / SMTP failure with a human-readable message. */
+  async sendVerificationCode(email: string): Promise<void> {
+    const res = await api.get<ApiResponse>('/verification', { params: { email } })
+    unwrap(res)
+  },
+
+  /** Send a password-reset link to the given email. Backend mails a one-time
+   *  token; the link points at /reset-password?email=...&token=... which is
+   *  handled by the corresponding route. */
+  async sendPasswordResetEmail(email: string): Promise<void> {
+    const res = await api.get<ApiResponse>('/reset_password', { params: { email } })
+    unwrap(res)
+  },
+
+  /** Submit a new password for the given email using the one-time token from
+   *  the reset email. Backend invalidates the token on success. */
+  async resetPassword(email: string, token: string): Promise<{ password: string }> {
+    const res = await api.post<ApiResponse<string>>('/user/reset', { email, token })
+    const password = unwrap(res)
+    if (typeof password !== 'string') throw new Error('reset password: unexpected response')
+    return { password }
+  },
 }

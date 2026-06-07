@@ -344,7 +344,8 @@
     "usePasskey": "Use Passkey",
     "useTotp": "Use authenticator app code",
     "chooseFactor": "Choose a second factor",
-    "usernameRequired": "Username is required"
+    "usernameRequired": "Username is required",
+    "forgotPassword": "Forgot password?"
   },
   "register": {
     "kicker": "wavydance.ai · sign up",
@@ -352,6 +353,12 @@
     "email": "Email",
     "emailHint": "We'll use this for password recovery.",
     "emailInvalid": "Enter a valid email address.",
+    "verificationCode": "Verification code",
+    "verificationCodeHint": "6-digit code from your email.",
+    "sendCode": "Send code",
+    "resendIn": "Resend in {{seconds}}s",
+    "codeSent": "Code sent to {{email}}. Check your inbox.",
+    "codeSendFailed": "Could not send verification code.",
     "username": "Username",
     "password": "Password",
     "confirmPassword": "Confirm password",
@@ -366,6 +373,38 @@
       "google": "Sign up with Google",
       "github": "Sign up with GitHub"
     }
+  },
+  "forgot": {
+    "kicker": "Account recovery",
+    "title": "Reset your password",
+    "lead": "Enter the email tied to your account. We'll send a reset link.",
+    "email": "Email",
+    "send": "Send reset link",
+    "sentTitle": "Check your email",
+    "sentBody": "We sent a reset link to {{email}}. The link is valid for 30 minutes.",
+    "resend": "Resend",
+    "resendIn": "Resend in {{seconds}}s",
+    "backToLogin": "Remembered it?",
+    "signIn": "Back to sign in",
+    "failed": "Could not send reset link"
+  },
+  "reset": {
+    "kicker": "Password reset",
+    "title": "Confirm reset",
+    "confirmLead": "Generate a new password for {{email}}. Once you continue, the old password stops working immediately.",
+    "confirm": "Generate new password",
+    "successTitle": "New password ready",
+    "successBody": "Copy it now — this is the only time it's shown. Sign in as {{email}} and change it from your profile.",
+    "newPasswordLabel": "Temporary password",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "changeReminder": "Change this immediately after signing in.",
+    "goSignIn": "Go to sign in",
+    "invalidTitle": "Link expired or invalid",
+    "invalidBody": "The reset link is missing required parameters or has already been used. Request a fresh one.",
+    "requestAgain": "Request a new link",
+    "backToLogin": "Back to sign in",
+    "failed": "Reset failed"
   },
   "users": {
     "kicker": "Account",

@@ -69,6 +69,18 @@ services:
       timeout: 3s
       retries: 5
 
+  # Local dev SMTP catcher. Captures every outbound mail without sending it;
+  # web UI at http://localhost:8025 shows the inbox. Configure once in
+  # /console/settings → SMTP: server=mail, port=1025, from=no-reply@wavydance.local
+  # (no auth, no TLS). Don't ship this image to production.
+  mail:
+    container_name: wavydance-mail
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - "${MAIL_SMTP_PORT:-1025}:1025"
+      - "${MAIL_UI_PORT:-8025}:8025"
+
 volumes:
   db_data:
   app_logs:

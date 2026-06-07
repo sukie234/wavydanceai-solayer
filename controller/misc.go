@@ -163,7 +163,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 	}
 	code := common.GenerateVerificationCode(0)
 	common.RegisterVerificationCodeWithKey(email, code, common.PasswordResetPurpose)
-	link := fmt.Sprintf("%s/user/reset?email=%s&token=%s", config.ServerAddress, email, code)
+	link := fmt.Sprintf("%s/reset-password?email=%s&token=%s", config.ServerAddress, email, code)
 	subject := fmt.Sprintf("%s 密码重置", config.SystemName)
 	content := message.EmailTemplate(
 		subject,
