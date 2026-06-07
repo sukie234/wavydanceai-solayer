@@ -77,6 +77,15 @@ func Redeem(ctx context.Context, key string, userId int) (quota int64, err error
 		if redemption.Status != RedemptionCodeStatusEnabled {
 			return errors.New("该兑换码已被使用")
 		}
+		// Self-redeem guard. `redemption.UserId` is the creator (set by
+		// AddRedemption controller, never overwritten). An admin / root user
+		// generating codes and redeeming them on their own account has no
+		// legitimate business path — admins can credit any account directly
+		// from the user-management UI. Blocking this closes the audit gap
+		// where a credit appears with no clear funds source.
+		if redemption.UserId == userId {
+			return errors.New("不能兑换自己创建的兑换码")
+		}
 		err = tx.Model(&User{}).Where("id = ?", userId).Update("quota", gorm.Expr("quota + ?", redemption.Quota)).Error
 		if err != nil {
 			return err

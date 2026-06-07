@@ -537,7 +537,15 @@
       "create": "New codes",
       "count": "Count",
       "empty": "No redemption codes issued yet.",
-      "col": { "name": "Name", "key": "Code", "quota": "Quota", "status": "Status" }
+      "col": { "name": "Name", "key": "Code", "quota": "Quota", "status": "Status" },
+      "success": {
+        "title": "{{count}} code(s) created",
+        "lead": "Copy them now — they're shown only once. You can find them in the table afterwards, but only the first 8 characters are displayed.",
+        "copy": "Copy",
+        "copied": "Copied!",
+        "copyAll": "Copy all",
+        "close": "Done"
+      }
     }
   },
   "tk": {

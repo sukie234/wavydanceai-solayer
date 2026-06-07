@@ -108,19 +108,32 @@ func AddRedemption(c *gin.Context) {
 	}
 	var keys []string
 	for i := 0; i < redemption.Count; i++ {
-		key := random.GetUUID()
-		cleanRedemption := model.Redemption{
-			UserId:      c.GetInt(ctxkey.Id),
-			Name:        redemption.Name,
-			Key:         key,
-			CreatedTime: helper.GetTimestamp(),
-			Quota:       redemption.Quota,
+		// `key` is char(32) uniqueIndex. UUIDs collide at ~2^-122 odds, so a
+		// single attempt is enough in practice — but a 3-retry budget costs
+		// nothing and turns the cosmic-ray case into a recoverable hiccup
+		// instead of a partial batch the admin has to clean up by hand.
+		var (
+			key     string
+			lastErr error
+		)
+		for attempt := 0; attempt < 3; attempt++ {
+			key = random.GetUUID()
+			cleanRedemption := model.Redemption{
+				UserId:      c.GetInt(ctxkey.Id),
+				Name:        redemption.Name,
+				Key:         key,
+				CreatedTime: helper.GetTimestamp(),
+				Quota:       redemption.Quota,
+			}
+			lastErr = cleanRedemption.Insert()
+			if lastErr == nil {
+				break
+			}
 		}
-		err = cleanRedemption.Insert()
-		if err != nil {
+		if lastErr != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
-				"message": err.Error(),
+				"message": lastErr.Error(),
 				"data":    keys,
 			})
 			return

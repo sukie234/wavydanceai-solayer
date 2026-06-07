@@ -313,6 +313,7 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
   const [count, setCount] = useState('1')
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [generatedKeys, setGeneratedKeys] = useState<string[] | null>(null)
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -325,13 +326,18 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
     }
     setSubmitting(true)
     try {
-      await billingService.createRedemption(name, q, c)
+      const keys = await billingService.createRedemption(name, q, c)
+      setGeneratedKeys(keys)
       onCreated()
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'create failed')
     } finally {
       setSubmitting(false)
     }
+  }
+
+  if (generatedKeys) {
+    return <CreatedKeysView keys={generatedKeys} onClose={onClose} />
   }
 
   return (
@@ -364,6 +370,66 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
           </Button>
         </div>
       </form>
+    </div>
+  )
+}
+
+function CreatedKeysView({ keys, onClose }: { keys: string[]; onClose: () => void }) {
+  const { t } = useTranslation()
+  const [copiedIdx, setCopiedIdx] = useState<number | 'all' | null>(null)
+
+  async function copy(text: string, idx: number | 'all') {
+    if (!navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedIdx(idx)
+      window.setTimeout(() => setCopiedIdx((v) => (v === idx ? null : v)), 1500)
+    } catch {
+      // insecure context — silent
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]">
+        <div className="kicker mb-1.5">{t('billing.redemption.kicker')}</div>
+        <h2 className="mb-2 font-display text-xl font-bold tracking-[-0.5px]">
+          {t('billing.redemption.success.title', { count: keys.length })}
+        </h2>
+        <p className="mb-5 text-sm text-[color:var(--muted)]">
+          {t('billing.redemption.success.lead')}
+        </p>
+
+        <div className="mb-5 max-h-[40vh] space-y-1.5 overflow-y-auto">
+          {keys.map((k, i) => (
+            <div
+              key={k}
+              className="flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2"
+            >
+              <code className="flex-1 truncate font-mono text-xs text-[color:var(--text)]">{k}</code>
+              <button
+                type="button"
+                onClick={() => copy(k, i)}
+                className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs text-[color:var(--muted)] hover:text-[color:var(--cyan)]"
+                title={t('billing.redemption.success.copy')}
+              >
+                {copiedIdx === i ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                {copiedIdx === i ? t('billing.redemption.success.copied') : t('billing.redemption.success.copy')}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-end gap-2.5">
+          <Button type="button" variant="ghost" size="sm" onClick={() => copy(keys.join('\n'), 'all')}>
+            {copiedIdx === 'all' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            {copiedIdx === 'all' ? t('billing.redemption.success.copied') : t('billing.redemption.success.copyAll')}
+          </Button>
+          <Button type="button" size="sm" onClick={onClose}>
+            {t('billing.redemption.success.close')}
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

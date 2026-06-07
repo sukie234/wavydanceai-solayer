@@ -14,10 +14,12 @@ export const billingService = {
     return unwrap(res) ?? []
   },
 
-  /** Admin: create N redemption codes of `quota` each. */
-  async createRedemption(name: string, quota: number, count: number): Promise<void> {
-    const res = await api.post<ApiResponse>('/redemption/', { name, quota, count })
-    unwrap(res)
+  /** Admin: create N redemption codes of `quota` each. Returns the generated
+   *  keys (server-generated UUIDs) so the dialog can display them — they aren't
+   *  shown anywhere else in the UI once the success view closes. */
+  async createRedemption(name: string, quota: number, count: number): Promise<string[]> {
+    const res = await api.post<ApiResponse<string[]>>('/redemption/', { name, quota, count })
+    return unwrap(res) ?? []
   },
 
   /** Admin: delete a redemption code. */
