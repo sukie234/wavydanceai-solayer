@@ -14,6 +14,7 @@
       "overview": "总览",
       "channels": "渠道管理",
       "models": "模型管理",
+      "playground": "Playground",
       "tokens": "API 密钥",
       "logs": "调用日志",
       "analytics": "用量分析",
@@ -55,6 +56,50 @@
         "upgradeMeta": "sam@acme.io · 计费：按量付费",
         "routing": "已为 Claude Opus 4.6 启用优先路由",
         "routingMeta": "最小延迟策略 · 3 条容灾规则"
+      }
+    },
+    "playground": {
+      "kicker": "Playground",
+      "title": "Playground",
+      "subtitle": "用你自己的额度直接体验任意模型，无需 SDK。",
+      "modality": {
+        "chat": "对话",
+        "chatDesc": "可调参数的对话窗口，调用 LLM。",
+        "image": "图像",
+        "imageDesc": "根据提示词生成图片。",
+        "video": "视频",
+        "videoDesc": "根据提示词生成短视频。",
+        "open": "进入",
+        "comingSoon": "即将上线"
+      },
+      "chat": {
+        "title": "对话 Playground",
+        "back": "返回",
+        "newSession": "新对话",
+        "untitled": "未命名",
+        "empty": "暂无对话。",
+        "emptyMessages": "发条消息开始吧。",
+        "send": "发送",
+        "stop": "停止",
+        "placeholder": "说点什么…",
+        "params": {
+          "model": "模型",
+          "temperature": "温度",
+          "maxTokens": "最大 tokens",
+          "topP": "Top-p",
+          "system": "系统提示",
+          "systemPlaceholder": "你是一个有帮助的助手。"
+        },
+        "quota": {
+          "remaining": "剩余额度：{{quota}}",
+          "lastRequest": "上次：{{tokens}} tokens"
+        },
+        "error": {
+          "noModels": "暂无可用对话模型",
+          "noModelsHint": "你所在的分组还没有启用对话模型。请联系管理员添加。",
+          "backHome": "返回控制台",
+          "topup": "去充值"
+        }
       }
     }
   },

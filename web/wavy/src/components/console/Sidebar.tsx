@@ -14,6 +14,7 @@ import {
   Users,
   Settings,
   UserCircle,
+  Sparkles,
 } from 'lucide-react'
 import { authService } from '@/lib/services/auth'
 import { Role, type User } from '@/lib/types'
@@ -31,6 +32,7 @@ const OPERATIONS: NavItem[] = [
   { to: '/console', icon: LayoutDashboard, i18n: 'console.nav.overview' },
   { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels', minRole: Role.AdminUser },
   { to: '/console/models', icon: Boxes, i18n: 'console.nav.models', minRole: Role.AdminUser },
+  { to: '/console/playground', icon: Sparkles, i18n: 'console.nav.playground' },
   { to: '/console/tokens', icon: KeyRound, i18n: 'console.nav.tokens' },
   { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
   { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },

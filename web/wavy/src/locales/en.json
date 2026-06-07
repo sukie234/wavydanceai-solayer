@@ -14,6 +14,7 @@
       "overview": "Overview",
       "channels": "Channels",
       "models": "Models",
+      "playground": "Playground",
       "tokens": "API Keys",
       "logs": "Request Logs",
       "analytics": "Analytics",
@@ -55,6 +56,50 @@
         "upgradeMeta": "sam@acme.io · billing: pay-as-you-go",
         "routing": "Priority routing enabled for Claude Opus 4.6",
         "routingMeta": "min-latency strategy · 3 fallback rules"
+      }
+    },
+    "playground": {
+      "kicker": "Playground",
+      "title": "Playground",
+      "subtitle": "Try any model with your own quota — no SDK needed.",
+      "modality": {
+        "chat": "Chat",
+        "chatDesc": "Talk to LLMs with full parameter control.",
+        "image": "Image",
+        "imageDesc": "Generate images from text prompts.",
+        "video": "Video",
+        "videoDesc": "Generate short videos from prompts.",
+        "open": "Open",
+        "comingSoon": "Coming soon"
+      },
+      "chat": {
+        "title": "Chat Playground",
+        "back": "Back",
+        "newSession": "New chat",
+        "untitled": "Untitled",
+        "empty": "No conversations yet.",
+        "emptyMessages": "Send a message to get started.",
+        "send": "Send",
+        "stop": "Stop",
+        "placeholder": "Ask anything…",
+        "params": {
+          "model": "Model",
+          "temperature": "Temperature",
+          "maxTokens": "Max tokens",
+          "topP": "Top-p",
+          "system": "System prompt",
+          "systemPlaceholder": "You are a helpful assistant."
+        },
+        "quota": {
+          "remaining": "Remaining: {{quota}}",
+          "lastRequest": "Last: {{tokens}} tokens"
+        },
+        "error": {
+          "noModels": "No chat models available",
+          "noModelsHint": "Your group has no chat-capable models enabled yet. Ask an admin to add one.",
+          "backHome": "Back to console",
+          "topup": "Top up"
+        }
       }
     }
   },

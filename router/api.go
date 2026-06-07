@@ -76,6 +76,8 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.GET("/checkin/info", controller.GetCheckinInfo)
 				selfRoute.POST("/checkin", middleware.CriticalRateLimit(), controller.DoCheckin)
 				selfRoute.GET("/available_models", controller.GetUserAvailableModels)
+				selfRoute.GET("/playground_token", controller.GetPlaygroundToken)
+				selfRoute.GET("/playground/chat_models", controller.GetPlaygroundChatModels)
 			}
 
 			adminRoute := userRoute.Group("/")
