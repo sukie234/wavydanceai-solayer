@@ -130,6 +130,7 @@
       "keyEditPlaceholder": "Leave empty to keep current key",
       "keyEditHint": "Only fill in to rotate the key.",
       "baseUrl": "Base URL",
+      "baseUrlWarning": "Looks like a full endpoint — pass only the host (e.g. https://api.openai.com). The gateway appends /v1/chat/completions itself; saving as-is will produce a double path and 404 at request time.",
       "models": "Models",
       "modelsHint": "Comma-separated. Example: gpt-4o,gpt-4o-mini",
       "group": "Group",

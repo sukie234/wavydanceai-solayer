@@ -45,6 +45,23 @@ const EMPTY: FormState = {
   system_prompt: '',
 }
 
+// One-API appends `/v1/chat/completions` (or the per-adaptor equivalent) to
+// `base_url` itself. Pasting the full endpoint produces a double-suffix and a
+// silent 404 at request time — surfaced here as a non-blocking warning so the
+// admin can save anyway if they know what they're doing, but the first-time
+// user gets a clear nudge. Matches anything ending in `/chat/completions`,
+// `/v1/chat/completions`, `/messages`, or a stray trailing `/v1/`.
+function baseUrlLooksFull(u: string): boolean {
+  const trimmed = u.trim().replace(/\/+$/, '').toLowerCase()
+  if (!trimmed) return false
+  return (
+    trimmed.endsWith('/chat/completions') ||
+    trimmed.endsWith('/messages') ||
+    trimmed.endsWith('/v1') ||
+    trimmed.endsWith('/v1/')
+  )
+}
+
 export function ChannelDialog({ open, mode, onClose, onSaved }: Props) {
   const { t } = useTranslation()
   const [form, setForm] = useState<FormState>(EMPTY)
@@ -170,6 +187,8 @@ export function ChannelDialog({ open, mode, onClose, onSaved }: Props) {
               onChange={(v) => set('base_url', v)}
               optional
               placeholder="https://api.openai.com (leave empty for default)"
+              hint={baseUrlLooksFull(form.base_url) ? t('channelDialog.field.baseUrlWarning') : undefined}
+              hintTone={baseUrlLooksFull(form.base_url) ? 'warn' : 'muted'}
             />
 
             <TextArea

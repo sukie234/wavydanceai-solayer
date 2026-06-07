@@ -130,6 +130,7 @@
       "keyEditPlaceholder": "留空保持当前 key",
       "keyEditHint": "需要轮换密钥时再填写。",
       "baseUrl": "Base URL",
+      "baseUrlWarning": "看起来填了完整接口路径——只需要主机部分（例如 https://api.openai.com）。网关自己会拼上 /v1/chat/completions，原样保存会导致路径重复，请求时 404。",
       "models": "模型列表",
       "modelsHint": "逗号分隔。例：gpt-4o,gpt-4o-mini",
       "group": "分组",

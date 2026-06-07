@@ -50,6 +50,9 @@ type FieldProps = {
   placeholder?: string
   optional?: boolean
   hint?: string
+  /** Visual tone for the hint. `warn` paints it coral to flag a likely
+   *  user mistake (e.g. wrong base_url shape) without blocking submit. */
+  hintTone?: 'muted' | 'warn'
   autoFocus?: boolean
   disabled?: boolean
 }
@@ -62,6 +65,7 @@ export function Field({
   placeholder,
   optional,
   hint,
+  hintTone = 'muted',
   autoFocus,
   disabled,
 }: FieldProps) {
@@ -80,7 +84,17 @@ export function Field({
         disabled={disabled}
         className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20 disabled:cursor-not-allowed disabled:opacity-60"
       />
-      {hint && <span className="mt-1 block text-xs text-[color:var(--muted)]/70">{hint}</span>}
+      {hint && (
+        <span
+          className={
+            hintTone === 'warn'
+              ? 'mt-1 block text-xs text-[color:var(--coral)]'
+              : 'mt-1 block text-xs text-[color:var(--muted)]/70'
+          }
+        >
+          {hint}
+        </span>
+      )}
     </label>
   )
 }
