@@ -65,12 +65,12 @@ func TestUpdateConfigFromMap_ScalarFieldsUnchanged(t *testing.T) {
 // preserve every supported type — this is the contract LoadFromDB relies on.
 func TestRoundTrip_AllScalarKinds(t *testing.T) {
 	type all struct {
-		S  string  `json:"s"`
-		B  bool    `json:"b"`
-		I  int     `json:"i"`
-		I64 int64  `json:"i64"`
-		U  uint    `json:"u"`
-		F  float64 `json:"f"`
+		S   string  `json:"s"`
+		B   bool    `json:"b"`
+		I   int     `json:"i"`
+		I64 int64   `json:"i64"`
+		U   uint    `json:"u"`
+		F   float64 `json:"f"`
 	}
 	orig := &all{S: "hello", B: true, I: -7, I64: 9_000_000_000, U: 42, F: 3.14}
 	m, err := ConfigToMap(orig)
@@ -114,9 +114,9 @@ func TestRegistry_RegisterGetAndPrefixFilter(t *testing.T) {
 		t.Errorf("Get returned different pointer")
 	}
 	if err := cm.LoadFromDB(map[string]string{
-		"mymod.v":      "updated",
-		"othermod.v":   "ignored",
-		"flat-key":     "ignored",
+		"mymod.v":    "updated",
+		"othermod.v": "ignored",
+		"flat-key":   "ignored",
 	}); err != nil {
 		t.Fatalf("LoadFromDB: %v", err)
 	}

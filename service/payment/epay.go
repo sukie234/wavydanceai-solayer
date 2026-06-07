@@ -23,8 +23,8 @@ import (
 // Wire format:
 //   - request: GET to {EpayUrl} with query params + md5 signature
 //   - notify : merchant POSTs/GETs back to our notify_url with the same
-//              signature scheme. We MUST reply with literal "success" to ack;
-//              anything else triggers retries.
+//     signature scheme. We MUST reply with literal "success" to ack;
+//     anything else triggers retries.
 var Epay Gateway = &EpayGateway{}
 
 type EpayGateway struct{}

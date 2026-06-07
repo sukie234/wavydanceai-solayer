@@ -21,11 +21,11 @@ type CallbackResult struct {
 // PendingOrder is what backbone hands to adapter.CreateOrder.
 // Adapters MUST NOT mutate it.
 type PendingOrder struct {
-	TradeNo   string
-	UserId    int
+	TradeNo    string
+	UserId     int
 	MoneyCents int64
-	Currency  string
-	Quota     int64
+	Currency   string
+	Quota      int64
 
 	// Callback / return URLs the adapter should hand to the gateway.
 	NotifyURL string // server webhook
@@ -35,9 +35,9 @@ type PendingOrder struct {
 // Gateway is the interface Stripe / E-Pay implement.
 // Crypto adapters use the richer CryptoAdapter interface in crypto/adapter.go.
 type Gateway interface {
-	Name() string                                                                        // "stripe", "epay"
-	DisplayName() string                                                                 // UI label
-	IsEnabled() bool                                                                     // global toggle
-	CreateOrder(ctx context.Context, order *PendingOrder) (payURL string, err error)     // returns redirect / checkout URL
-	HandleCallback(c *gin.Context) (*CallbackResult, error)                              // verify signature + parse
+	Name() string                                                                    // "stripe", "epay"
+	DisplayName() string                                                             // UI label
+	IsEnabled() bool                                                                 // global toggle
+	CreateOrder(ctx context.Context, order *PendingOrder) (payURL string, err error) // returns redirect / checkout URL
+	HandleCallback(c *gin.Context) (*CallbackResult, error)                          // verify signature + parse
 }

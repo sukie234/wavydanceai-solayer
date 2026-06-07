@@ -20,11 +20,11 @@ type ConfigKey struct {
 // Specialised lifecycles add either HostedCryptoAdapter (webhook-driven) or
 // OnChainCryptoAdapter (deposit-address + watcher) on top of this.
 type CryptoAdapter interface {
-	Name() string                  // "nowpayments" — used in URL :adapter param
-	DisplayName() string           // "USDT Pay" — UI label
-	SupportedAssets() []string     // e.g. ["USDT-TRC20","USDT-ERC20","BTC"]
+	Name() string              // "nowpayments" — used in URL :adapter param
+	DisplayName() string       // "USDT Pay" — UI label
+	SupportedAssets() []string // e.g. ["USDT-TRC20","USDT-ERC20","BTC"]
 	DeclaredConfigKeys() []ConfigKey
-	IsEnabled() bool               // read CryptoAdaptersEnabled whitelist
+	IsEnabled() bool // read CryptoAdaptersEnabled whitelist
 }
 
 // HostedCryptoAdapter is implemented by adapters that talk to a hosted

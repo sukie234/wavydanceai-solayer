@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"net/smtp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -50,7 +51,9 @@ func SendEmail(subject string, receiver string, content string) error {
 		receiver, config.SystemName, config.SMTPFrom, encodedSubject, messageId, time.Now().Format(time.RFC1123Z), content))
 
 	auth := smtp.PlainAuth("", config.SMTPAccount, config.SMTPToken, config.SMTPServer)
-	addr := fmt.Sprintf("%s:%d", config.SMTPServer, config.SMTPPort)
+	// net.JoinHostPort brackets IPv6 hosts ([::1]:25); plain "%s:%d" produces
+	// invalid addresses like "::1:25" that net.Dial rejects.
+	addr := net.JoinHostPort(config.SMTPServer, strconv.Itoa(config.SMTPPort))
 	to := strings.Split(receiver, ";")
 
 	if config.SMTPPort == 465 || !shouldAuth() {
@@ -62,9 +65,9 @@ func SendEmail(subject string, receiver string, content string) error {
 				InsecureSkipVerify: true,
 				ServerName:         config.SMTPServer,
 			}
-			conn, err = tls.Dial("tcp", fmt.Sprintf("%s:%d", config.SMTPServer, config.SMTPPort), tlsConfig)
+			conn, err = tls.Dial("tcp", addr, tlsConfig)
 		} else {
-			conn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", config.SMTPServer, config.SMTPPort))
+			conn, err = net.Dial("tcp", addr)
 		}
 		if err != nil {
 			return err

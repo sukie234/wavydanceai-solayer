@@ -243,11 +243,11 @@ func TestEpayNotify_RejectsShortPayment(t *testing.T) {
 // signature is round-trippable through the same scheme.
 func TestEpaySign_RoundTrip(t *testing.T) {
 	params := map[string]string{
-		"pid":          "p1",
-		"out_trade_no": "x-1",
-		"money":        "1.00",
-		"name":         "demo",
-		"type":         "alipay",
+		"pid":               "p1",
+		"out_trade_no":      "x-1",
+		"money":             "1.00",
+		"name":              "demo",
+		"type":              "alipay",
 		"empty_should_drop": "",
 	}
 	sig := epaySignForTest(params, testEpayKey)

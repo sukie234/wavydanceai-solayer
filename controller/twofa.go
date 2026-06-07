@@ -286,9 +286,9 @@ func verifyTOTPOrBackup(user *model.User, code string) bool {
 func base64Bytes(b []byte) string { return stdB64.EncodeToString(b) }
 
 var (
-	errNotSignedIn     = &topupError{msg: "not signed in"}
-	errNoPendingSetup  = &topupError{msg: "2fa setup not started"}
-	errInvalid2FACode  = &topupError{msg: "invalid code"}
-	err2FANotEnabled   = &topupError{msg: "2fa not enabled"}
-	errNoPending2FA    = &topupError{msg: "no pending 2fa challenge"}
+	errNotSignedIn    = &topupError{msg: "not signed in"}
+	errNoPendingSetup = &topupError{msg: "2fa setup not started"}
+	errInvalid2FACode = &topupError{msg: "invalid code"}
+	err2FANotEnabled  = &topupError{msg: "2fa not enabled"}
+	errNoPending2FA   = &topupError{msg: "no pending 2fa challenge"}
 )

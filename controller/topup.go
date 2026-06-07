@@ -16,7 +16,7 @@ import (
 
 // TopupAmountOption is one purchasable amount tier we expose to the user.
 type TopupAmountOption struct {
-	Money    int64  `json:"money"`    // CNY cents (or USD cents — see PaymentCurrency)
+	Money    int64  `json:"money"` // CNY cents (or USD cents — see PaymentCurrency)
 	Quota    int64  `json:"quota"`
 	Display  string `json:"display"`
 	Discount string `json:"discount,omitempty"` // e.g. "9折"; empty if no discount
@@ -51,11 +51,11 @@ func GetTopupInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"stripe_enabled":   config.StripeEnabled,
-			"epay_enabled":     config.EpayEnabled,
-			"crypto_adapters":  cryptos,
-			"amount_options":   defaultAmountOptions(),
-			"return_url":       config.PaymentReturnURL,
+			"stripe_enabled":  config.StripeEnabled,
+			"epay_enabled":    config.EpayEnabled,
+			"crypto_adapters": cryptos,
+			"amount_options":  defaultAmountOptions(),
+			"return_url":      config.PaymentReturnURL,
 		},
 	})
 }
