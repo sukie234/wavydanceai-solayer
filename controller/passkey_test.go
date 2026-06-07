@@ -273,7 +273,9 @@ func TestSecondFactorPasskeyAfterPassword(t *testing.T) {
 	engine.ServeHTTP(regBeginRec, regBegin)
 	require.Equal(t, http.StatusOK, regBeginRec.Code, regBeginRec.Body.String())
 	regCookie := regBeginRec.Result().Header.Get("Set-Cookie")
-	var rEnv struct{ Data json.RawMessage `json:"data"` }
+	var rEnv struct {
+		Data json.RawMessage `json:"data"`
+	}
 	require.NoError(t, json.Unmarshal(regBeginRec.Body.Bytes(), &rEnv))
 	attestationOptions, err := vwa.ParseAttestationOptions(string(rEnv.Data))
 	require.NoError(t, err)
@@ -308,7 +310,9 @@ func TestSecondFactorPasskeyAfterPassword(t *testing.T) {
 	engine.ServeHTTP(sfBeginRec, sfBegin)
 	require.Equal(t, http.StatusOK, sfBeginRec.Code, sfBeginRec.Body.String())
 	sfCookie := sfBeginRec.Result().Header.Get("Set-Cookie")
-	var sfEnv struct{ Data json.RawMessage `json:"data"` }
+	var sfEnv struct {
+		Data json.RawMessage `json:"data"`
+	}
 	require.NoError(t, json.Unmarshal(sfBeginRec.Body.Bytes(), &sfEnv))
 	assertionOptions, err := vwa.ParseAssertionOptions(string(sfEnv.Data))
 	require.NoError(t, err)

@@ -233,4 +233,3 @@ func (m *Manager) FinishLogin(u *model.User, creds []model.PasskeyCredential, se
 	matched.LastUsedAt = now
 	return matched, nil
 }
-
