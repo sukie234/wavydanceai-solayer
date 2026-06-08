@@ -302,7 +302,7 @@ const EXAMPLES: Record<CodeLang, (model: string) => string> = {
     "model": "${m}",
     "stream": true,
     "messages": [
-      { "role": "user", "content": "Hello, wave!" }
+      { "role": "user", "content": "Hello, world!" }
     ],
     "reasoning_effort": "medium"
   }'`,
@@ -315,7 +315,7 @@ client = OpenAI(
 
 resp = client.chat.completions.create(
     model="${m}",
-    messages=[{"role": "user", "content": "Hello, wave!"}],
+    messages=[{"role": "user", "content": "Hello, world!"}],
     stream=True,
     extra_body={"reasoning_effort": "medium"},
 )
@@ -330,7 +330,7 @@ const client = new OpenAI({
 
 const stream = await client.chat.completions.create({
   model: "${m}",
-  messages: [{ role: "user", content: "Hello, wave!" }],
+  messages: [{ role: "user", content: "Hello, world!" }],
   stream: true,
   // @ts-expect-error — solayer extension
   reasoning_effort: "medium",
@@ -349,7 +349,7 @@ var body = """
     {
       "model": "${m}",
       "stream": true,
-      "messages": [{"role": "user", "content": "Hello, wave!"}],
+      "messages": [{"role": "user", "content": "Hello, world!"}],
       "reasoning_effort": "medium"
     }
     """;
@@ -377,7 +377,7 @@ const RESPONSE_SAMPLE = (m: string) => `{
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "Hello back — wave received."
+        "content": "Hello back — world received."
       },
       "finish_reason": "stop"
     }

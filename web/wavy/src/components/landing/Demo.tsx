@@ -106,7 +106,7 @@ function ChatCode() {
       <S>"wd-••••••••••••"</S>,{'\n'}
       ){'\n\n'}
       resp = client.chat.completions.<F>create</F>({'\n'}    model=<S>"claude-opus-4-6"</S>,  <C># or gpt-5.2, deepseek-v4…</C>
-      {'\n'}    messages=[{'{'}<S>"role"</S>: <S>"user"</S>,{'\n'}               <S>"content"</S>: <S>"Hello, wave!"</S>{'}'}],{'\n'}
+      {'\n'}    messages=[{'{'}<S>"role"</S>: <S>"user"</S>,{'\n'}               <S>"content"</S>: <S>"Hello, world!"</S>{'}'}],{'\n'}
       )  <C># ← OpenAI-compatible: change one line</C>
     </pre>
   )
