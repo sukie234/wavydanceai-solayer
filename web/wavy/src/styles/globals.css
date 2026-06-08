@@ -19,6 +19,13 @@
     --glass: #8fd8e5;
     --coral: #f49bab;
     --live: #2bbe8c;
+    /* Accent tokens — light-theme values darker than dark-theme so AA contrast
+       holds against the pale Sea Foam page background (#f3fafc). All clear
+       4.5:1 against light bg. */
+    --gold: #996212;
+    --muted-soft: #4f6975;
+    --rose: #a82d4a;
+    --aqua: #147263;
     --cta-ink: #052832;
     --current: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
     --current-ink: linear-gradient(110deg, #2e8fb0 0%, #2fa3b3 60%, #4fb3c9 100%);
@@ -52,6 +59,10 @@
     --glass: #b5ecf2;
     --coral: #f49bab;
     --live: #3ed9a4;
+    --gold: #f5c26b;
+    --muted-soft: #9fbfca;
+    --rose: #e2607b;
+    --aqua: #7be8d8;
     --cta-ink: #052832;
     --current: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
     --current-ink: linear-gradient(110deg, #3fb3d9 0%, #4ed4dc 55%, #b5ecf2 100%);
@@ -100,6 +111,10 @@
   --color-glass: var(--glass);
   --color-coral: var(--coral);
   --color-live: var(--live);
+  --color-gold: var(--gold);
+  --color-muted-soft: var(--muted-soft);
+  --color-rose: var(--rose);
+  --color-aqua: var(--aqua);
 
   --font-display: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
   --font-body: 'Inter', 'Noto Sans SC', system-ui, sans-serif;

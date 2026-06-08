@@ -92,7 +92,7 @@ function QuotaCard({
         {/* Progress bar */}
         <div className="mt-5 h-2 overflow-hidden rounded-full bg-[color:var(--border)]/55">
           <span
-            className="block h-full rounded-full bg-gradient-to-r from-[#3FB3D9] via-[#4ED4DC] to-[#B5ECF2] transition-[width] duration-700"
+            className="block h-full rounded-full bg-gradient-to-r from-[color:var(--cyan)] via-[color:var(--mint)] to-[color:var(--glass)] transition-[width] duration-700"
             style={{ width: `${usedPct}%` }}
           />
         </div>

@@ -22,11 +22,11 @@ export function AuthShell({ kickerKey, titleKey, children }: Props) {
       {/* ambient glows */}
       <div
         className="pointer-events-none absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full opacity-60 blur-[120px]"
-        style={{ background: 'radial-gradient(circle, #4ED4DC, transparent 65%)', opacity: 'var(--glow-op)' }}
+        style={{ background: 'radial-gradient(circle, var(--mint), transparent 65%)', opacity: 'var(--glow-op)' }}
       />
       <div
         className="pointer-events-none absolute -right-32 bottom-0 h-[460px] w-[460px] rounded-full opacity-50 blur-[120px]"
-        style={{ background: 'radial-gradient(circle, #3FB3D9, transparent 65%)', opacity: 'var(--glow-op)' }}
+        style={{ background: 'radial-gradient(circle, var(--cyan), transparent 65%)', opacity: 'var(--glow-op)' }}
       />
 
       <div className="relative z-10 w-full max-w-[420px]">

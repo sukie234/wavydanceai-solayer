@@ -90,10 +90,10 @@ export function StatusPill({ active, label }: { active: boolean; label: string }
         'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-xs uppercase tracking-[1px]',
         active
           ? 'bg-[color:var(--live)]/12 text-[color:var(--live)]'
-          : 'bg-[#E2607B]/12 text-[#E2607B]',
+          : 'bg-[color:var(--rose)]/12 text-[color:var(--rose)]',
       )}
     >
-      <span className={cn('h-1.5 w-1.5 rounded-full', active ? 'bg-[color:var(--live)]' : 'bg-[#E2607B]')} />
+      <span className={cn('h-1.5 w-1.5 rounded-full', active ? 'bg-[color:var(--live)]' : 'bg-[color:var(--rose)]')} />
       {label}
     </span>
   )

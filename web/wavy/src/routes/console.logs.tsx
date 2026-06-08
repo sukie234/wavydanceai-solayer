@@ -147,7 +147,7 @@ function FilterInput({ value, onChange, placeholder }: { value: string; onChange
 const TYPE_TONE: Record<number, string> = {
   1: 'bg-[color:var(--live)]/12 text-[color:var(--live)]',
   2: 'bg-[color:var(--cyan)]/12 text-[color:var(--cyan)]',
-  3: 'bg-[#F5C26B]/12 text-[#F5C26B]',
+  3: 'bg-[color:var(--gold)]/12 text-[color:var(--gold)]',
   4: 'bg-[color:var(--muted)]/12 text-[color:var(--muted)]',
   5: 'bg-[color:var(--coral)]/12 text-[color:var(--coral)]',
 }

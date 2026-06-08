@@ -58,9 +58,9 @@ function Mark() {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
       <defs>
         <linearGradient id="docs-mark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#3FB3D9" />
-          <stop offset="60%" stopColor="#4ED4DC" />
-          <stop offset="100%" stopColor="#B5ECF2" />
+          <stop offset="0%" stopColor="var(--cyan)" />
+          <stop offset="60%" stopColor="var(--mint)" />
+          <stop offset="100%" stopColor="var(--glass)" />
         </linearGradient>
       </defs>
       <path d="M2 14 Q5 8 8 14 T14 14 T20 14" stroke="url(#docs-mark)" strokeWidth="2.2" strokeLinecap="round" fill="none" />

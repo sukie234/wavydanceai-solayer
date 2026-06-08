@@ -43,7 +43,7 @@ export function StatCard({ kicker, value, delta, spark, unit, style }: Props) {
           <span
             className={cn(
               'inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-xs font-medium tabular-nums',
-              up ? 'bg-[color:var(--live)]/12 text-[color:var(--live)]' : 'bg-[#E2607B]/12 text-[#E2607B]',
+              up ? 'bg-[color:var(--live)]/12 text-[color:var(--live)]' : 'bg-[color:var(--rose)]/12 text-[color:var(--rose)]',
             )}
           >
             {up ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}

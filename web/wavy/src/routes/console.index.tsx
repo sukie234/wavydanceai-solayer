@@ -116,7 +116,7 @@ export default function Dashboard() {
               <h3 className="font-display text-base font-bold tracking-[-0.3px]">{t('console.dash.chart.title')}</h3>
               <p className="mt-1 text-xs text-[color:var(--muted)]">{t('console.dash.chart.sub')}</p>
             </div>
-            <span className="rounded-md bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC] px-2.5 py-1 font-mono text-xs font-bold tracking-[1px] text-[#052832]">
+            <span className="rounded-md bg-gradient-to-r from-[color:var(--cyan)] to-[color:var(--mint)] px-2.5 py-1 font-mono text-xs font-bold tracking-[1px] text-[color:var(--cta-ink)]">
               7D
             </span>
           </header>

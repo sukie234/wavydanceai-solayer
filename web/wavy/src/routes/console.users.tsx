@@ -298,7 +298,7 @@ function IconBtn({
       className={cn(
         'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition',
         tone === 'default' && 'hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)]',
-        tone === 'warn' && 'hover:border-[#F5C26B]/70 hover:text-[#F5C26B]',
+        tone === 'warn' && 'hover:border-[color:var(--gold)]/70 hover:text-[color:var(--gold)]',
         tone === 'coral' && 'hover:border-[color:var(--coral)]/70 hover:text-[color:var(--coral)]',
       )}
     >

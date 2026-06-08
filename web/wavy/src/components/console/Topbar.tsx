@@ -154,8 +154,8 @@ function UserMenu({ user }: { user: User | null }) {
         )}
       >
         <span
-          className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-[#052832]"
-          style={{ background: 'linear-gradient(135deg,#3FB3D9,#4ED4DC,#B5ECF2)' }}
+          className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-[color:var(--cta-ink)]"
+          style={{ background: 'linear-gradient(135deg,var(--cyan),var(--mint),var(--glass))' }}
         >
           {initials}
         </span>

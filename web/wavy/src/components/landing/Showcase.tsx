@@ -107,11 +107,11 @@ function CardBody({ kind, t }: { kind: string; t: (k: string) => string }) {
                 <polyline
                   points="12,80 40,58 68,66 96,38 124,46 140,20"
                   fill="none"
-                  stroke="#4ED4DC"
+                  stroke="var(--mint)"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
-                <circle cx="96" cy="38" r="4" fill="#F49BAB" />
+                <circle cx="96" cy="38" r="4" fill="var(--coral)" />
               </svg>
             </div>
             <span className="text-[0.9rem] text-[color:var(--muted)]">{t('show.c1.q')}</span>
@@ -146,7 +146,7 @@ function CardBody({ kind, t }: { kind: string; t: (k: string) => string }) {
           <Box label={t('show.lbl.in_audio')}>
             <div className="flex flex-1 items-center justify-center">
               <svg width="170" height="60" viewBox="0 0 170 60">
-                <g fill="#3FB3D9">
+                <g fill="var(--cyan)">
                   {[6, 16, 26, 36, 46, 56, 66, 76, 86, 96, 106, 116, 126, 136, 146].map((x, i) => {
                     const h = [16, 32, 44, 24, 12, 36, 20, 48, 28, 16, 40, 24, 8, 32, 16][i]
                     const y = (60 - h) / 2

@@ -193,10 +193,10 @@ function SupportRow() {
         <SocialBtn label="Discord" href="#" color="#5865F2">
           <DiscordIcon />
         </SocialBtn>
-        <SocialBtn label="GitHub" href="#" color="#94A3B8">
+        <SocialBtn label="GitHub" href="#" color="var(--muted-soft)">
           <GithubIcon />
         </SocialBtn>
-        <SocialBtn label="X" href="#" color="#94A3B8">
+        <SocialBtn label="X" href="#" color="var(--muted-soft)">
           <XIcon />
         </SocialBtn>
         <SocialBtn label="Telegram" href="#" color="#229ED9">
@@ -227,7 +227,7 @@ function SocialBtn({
     >
       <span
         className="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-        style={{ background: `linear-gradient(135deg, ${color}40, transparent)` }}
+        style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 25%, transparent), transparent)` }}
       />
       <span className="relative transition-colors group-hover:text-[color:var(--text)]" style={{ width: 14, height: 14 }}>
         {children}

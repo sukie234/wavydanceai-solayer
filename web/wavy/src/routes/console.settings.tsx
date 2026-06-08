@@ -277,7 +277,7 @@ function Toggle({
       className={cn(
         'relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50',
         checked
-          ? 'border-transparent bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC]'
+          ? 'border-transparent bg-gradient-to-r from-[color:var(--cyan)] to-[color:var(--mint)]'
           : 'border-[color:var(--border)] bg-[color:var(--bg2)]',
       )}
     >

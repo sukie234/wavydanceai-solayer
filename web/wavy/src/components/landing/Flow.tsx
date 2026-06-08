@@ -70,7 +70,7 @@ function Step({
 
 function Snippet({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-[#062B36] px-3 py-2.5 font-mono text-[0.74rem] text-[#B5ECF2]">
+    <div className="overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-[#062B36] px-3 py-2.5 font-mono text-[0.74rem] text-[color:var(--glass)]">
       {children}
     </div>
   )

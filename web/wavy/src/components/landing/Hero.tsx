@@ -12,11 +12,11 @@ export function Hero() {
     // load the scrolling vendor banner peeks at the bottom edge as a scroll cue.
     <header className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-gradient-to-b from-[color:var(--bg)] to-[color:var(--bg2)] px-[6vw] pb-20 pt-[140px]">
       <div
-        className="pointer-events-none absolute -left-40 -top-56 z-0 h-[680px] w-[680px] rounded-full bg-[#3FB3D9] blur-[140px]"
+        className="pointer-events-none absolute -left-40 -top-56 z-0 h-[680px] w-[680px] rounded-full bg-[color:var(--cyan)] blur-[140px]"
         style={{ opacity: 'var(--glow-op)' }}
       />
       <div
-        className="pointer-events-none absolute -right-52 -top-28 z-0 h-[680px] w-[680px] rounded-full bg-[#4ED4DC] blur-[140px]"
+        className="pointer-events-none absolute -right-52 -top-28 z-0 h-[680px] w-[680px] rounded-full bg-[color:var(--mint)] blur-[140px]"
         style={{ opacity: 'var(--glow-op)' }}
       />
 

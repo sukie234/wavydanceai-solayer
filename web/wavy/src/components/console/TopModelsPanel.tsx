@@ -61,7 +61,7 @@ export function TopModelsPanel({ data, loading }: Props) {
                 <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{m.name}</div>
                 <div className="mt-1 h-1 overflow-hidden rounded-full bg-[color:var(--border)]/60">
                   <span
-                    className="block h-full rounded-full bg-gradient-to-r from-[#3FB3D9] via-[#4ED4DC] to-[#B5ECF2]"
+                    className="block h-full rounded-full bg-gradient-to-r from-[color:var(--cyan)] via-[color:var(--mint)] to-[color:var(--glass)]"
                     style={{ width: `${(m.quota / max) * 100}%`, transition: 'width 700ms cubic-bezier(.22,.8,.3,1)' }}
                   />
                 </div>

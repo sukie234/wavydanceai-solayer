@@ -64,7 +64,7 @@ export function Leaderboard() {
               className={cn(
                 'rounded-full border border-[color:var(--border)] bg-transparent px-5 py-2 font-mono text-[0.8rem] tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]',
                 tab === tabItem.id &&
-                  'border-transparent bg-gradient-to-r from-[#3FB3D9] to-[#4ED4DC] font-bold text-[#052832]',
+                  'border-transparent bg-gradient-to-r from-[color:var(--cyan)] to-[color:var(--mint)] font-bold text-[color:var(--cta-ink)]',
               )}
             >
               {t(tabItem.key)}
@@ -104,7 +104,7 @@ export function Leaderboard() {
                 </span>
                 <span className="hidden h-2 overflow-hidden rounded-full bg-[color:var(--border)]/55 md:block">
                   <i
-                    className="block h-full rounded-full bg-gradient-to-r from-[#3FB3D9] via-[#4ED4DC] to-[#B5ECF2] transition-[width] duration-700"
+                    className="block h-full rounded-full bg-gradient-to-r from-[color:var(--cyan)] via-[color:var(--mint)] to-[color:var(--glass)] transition-[width] duration-700"
                     style={{ width: `${(d.tok / max) * 100}%` }}
                   />
                 </span>
@@ -114,7 +114,7 @@ export function Leaderboard() {
                 <span
                   className={cn(
                     'text-right font-mono text-xs tabular-nums',
-                    d.trend >= 0 ? 'text-[color:var(--live)]' : 'text-[#E2607B]',
+                    d.trend >= 0 ? 'text-[color:var(--live)]' : 'text-[color:var(--rose)]',
                   )}
                 >
                   {d.trend >= 0 ? '▲' : '▼'} {Math.abs(d.trend)}%
