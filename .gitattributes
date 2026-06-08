@@ -1,0 +1,4 @@
+# Ensure shell scripts always use LF line endings in the repo and on checkout,
+# so Docker Linux containers can execute them without "no such file" errors.
+entrypoint.sh text eol=lf
+*.sh text eol=lf
