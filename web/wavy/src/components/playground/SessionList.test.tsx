@@ -2,7 +2,13 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SessionList } from './SessionList'
-import type { ChatSession } from './types'
+import type { ChatSession } from './chat/types'
+
+const KEYS = {
+  createLabelKey: 'console.playground.chat.newSession',
+  emptyLabelKey: 'console.playground.chat.empty',
+  untitledLabelKey: 'console.playground.chat.untitled',
+} as const
 
 function makeSession(id: string, title: string): ChatSession {
   return {
@@ -26,6 +32,7 @@ describe('<SessionList>', () => {
         onSelect={vi.fn()}
         onCreate={vi.fn()}
         onDelete={vi.fn()}
+        {...KEYS}
       />,
     )
     // i18n is not initialized in tests so we assert on the raw key. The en/zh
@@ -42,6 +49,7 @@ describe('<SessionList>', () => {
         onSelect={onSelect}
         onCreate={vi.fn()}
         onDelete={vi.fn()}
+        {...KEYS}
       />,
     )
     await userEvent.click(screen.getByText('Second'))
@@ -58,6 +66,7 @@ describe('<SessionList>', () => {
         onSelect={onSelect}
         onCreate={vi.fn()}
         onDelete={onDelete}
+        {...KEYS}
       />,
     )
     await userEvent.click(screen.getByRole('button', { name: 'delete' }))
@@ -74,6 +83,7 @@ describe('<SessionList>', () => {
         onSelect={vi.fn()}
         onCreate={onCreate}
         onDelete={vi.fn()}
+        {...KEYS}
       />,
     )
     await userEvent.click(screen.getByRole('button', { name: 'console.playground.chat.newSession' }))

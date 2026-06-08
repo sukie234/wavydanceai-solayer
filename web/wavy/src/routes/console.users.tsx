@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
 import { UserDialog } from '@/components/console/UserDialog'
+import { Dialog } from '@/components/console/Dialog'
 import { ROLE_LABEL, usersService, type UserAction } from '@/lib/services/users'
 import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
@@ -335,14 +336,8 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
-      <form
-        onSubmit={submit}
-        className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
-      >
-        <div className="kicker mb-1.5">{t('users.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">{t('users.newUser')}</h2>
-
+    <Dialog open onClose={onClose} title={t('users.newUser')} kicker={t('users.kicker')}>
+      <form onSubmit={submit}>
         <DialogField label={t('users.col.username')} value={username} onChange={setUsername} autoFocus />
         <DialogField label={t('userDialog.field.password')} type="password" value={password} onChange={setPassword} maxLength={PASSWORD_MAX} hint={t('register.passwordHint')} />
         <DialogField label="Display name" value={displayName} onChange={setDisplayName} optional />
@@ -362,7 +357,7 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }
 

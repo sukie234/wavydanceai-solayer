@@ -729,7 +729,13 @@
       "overview": "起步",
       "chat": "对话模型",
       "image": "图像模型",
-      "video": "视频模型"
+      "video": "视频模型",
+      "items": {
+        "quickstart": "快速开始",
+        "authentication": "身份认证",
+        "errors": "错误码",
+        "rateLimits": "限流策略"
+      }
     },
     "toc": { "title": "本页目录" },
     "index": {
@@ -784,9 +790,7 @@
         }
       },
       "params": { "title": "请求参数", "sub": "Schema" },
-      "examples": { "kicker": "示例", "title": "代码示例", "sub": "快速上手" },
-      "collapsePane": "收起示例",
-      "expandPane": "展开示例",
+      "examples": { "title": "代码示例", "sub": "快速上手" },
       "responses": { "title": "响应", "sub": "状态码" },
       "status": {
         "200": "成功——单对象或流式事件",

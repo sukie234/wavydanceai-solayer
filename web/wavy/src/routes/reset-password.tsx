@@ -5,7 +5,7 @@ import { Check, Copy, Loader2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { authService } from '@/lib/services/auth'
 import { ApiError } from '@/lib/api'
-import { BrandMark } from '@/components/BrandMark'
+import { AuthShell } from '@/components/auth/AuthShell'
 
 /**
  * Landing page for the reset link emailed by /api/reset_password. The link
@@ -58,19 +58,7 @@ function ResetPasswordPage() {
   const linkInvalid = !email || !token
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-[color:var(--bg)] to-[color:var(--bg2)] px-6">
-      <div className="relative z-10 w-full max-w-[420px]">
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center gap-2.5">
-            <BrandMark size={32} />
-            <span className="font-display text-xl font-bold tracking-[-0.5px]">
-              wavydance<span className="text-current-ink">.ai</span>
-            </span>
-          </div>
-          <div className="kicker">{t('reset.kicker')}</div>
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-[-1px]">{t('reset.title')}</h1>
-        </div>
-
+    <AuthShell kickerKey="reset.kicker" titleKey="reset.title">
         <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-[var(--shadow-jelly)]">
           {linkInvalid ? (
             <div className="text-center">
@@ -134,7 +122,6 @@ function ResetPasswordPage() {
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthShell>
   )
 }

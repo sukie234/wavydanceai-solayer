@@ -729,7 +729,13 @@
       "overview": "Get started",
       "chat": "Chat models",
       "image": "Image models",
-      "video": "Video models"
+      "video": "Video models",
+      "items": {
+        "quickstart": "Quickstart",
+        "authentication": "Authentication",
+        "errors": "Errors",
+        "rateLimits": "Rate limits"
+      }
     },
     "toc": { "title": "On this page" },
     "index": {
@@ -788,12 +794,9 @@
         "sub": "Schema"
       },
       "examples": {
-        "kicker": "Examples",
         "title": "Code examples",
         "sub": "Quickstart"
       },
-      "collapsePane": "Collapse examples",
-      "expandPane": "Show examples",
       "responses": {
         "title": "Responses",
         "sub": "Status codes"

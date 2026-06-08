@@ -1,18 +1,36 @@
 import { useTranslation } from 'react-i18next'
 import { Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import type { ChatSession } from './types'
 
-type Props = {
-  sessions: ChatSession[]
+type SessionLike = { id: string; title?: string }
+
+type Props<T extends SessionLike> = {
+  sessions: T[]
   activeId: string | null
   onSelect: (id: string) => void
   onCreate: () => void
   onDelete: (id: string) => void
   canCreate?: boolean
+  /** i18n key for the "new …" button label. */
+  createLabelKey: string
+  /** i18n key for the empty-state copy. */
+  emptyLabelKey: string
+  /** i18n key for the placeholder when a session has no title. */
+  untitledLabelKey: string
 }
 
-export function SessionList({ sessions, activeId, onSelect, onCreate, onDelete, canCreate = true }: Props) {
+/** Shared session-list rail used by chat + media playgrounds. */
+export function SessionList<T extends SessionLike>({
+  sessions,
+  activeId,
+  onSelect,
+  onCreate,
+  onDelete,
+  canCreate = true,
+  createLabelKey,
+  emptyLabelKey,
+  untitledLabelKey,
+}: Props<T>) {
   const { t } = useTranslation()
 
   return (
@@ -25,14 +43,14 @@ export function SessionList({ sessions, activeId, onSelect, onCreate, onDelete, 
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm font-medium transition-colors hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[color:var(--border)] disabled:hover:text-inherit"
         >
           <Plus className="h-3.5 w-3.5" />
-          {t('console.playground.chat.newSession')}
+          {t(createLabelKey)}
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-2">
         {sessions.length === 0 && (
           <div className="px-2 py-6 text-center text-xs text-[color:var(--muted)]">
-            {t('console.playground.chat.empty')}
+            {t(emptyLabelKey)}
           </div>
         )}
         {sessions.map((s) => (
@@ -47,7 +65,7 @@ export function SessionList({ sessions, activeId, onSelect, onCreate, onDelete, 
             )}
             onClick={() => onSelect(s.id)}
           >
-            <span className="flex-1 truncate">{s.title || t('console.playground.chat.untitled')}</span>
+            <span className="flex-1 truncate">{s.title || t(untitledLabelKey)}</span>
             <button
               type="button"
               aria-label="delete"

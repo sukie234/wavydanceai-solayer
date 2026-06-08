@@ -12,7 +12,7 @@ import {
   type Modality,
 } from '../modelSpecs'
 import { DynamicParamsPanel } from '../DynamicParamsPanel'
-import { MediaSessionList } from './SessionList'
+import { SessionList } from '../SessionList'
 import { ResultGallery } from './ResultGallery'
 import { PromptComposer } from './PromptComposer'
 import { useMediaGenerate } from './useMediaGenerate'
@@ -223,7 +223,7 @@ export function MediaPlayground({ modality }: Props) {
         </div>
       ) : (
         <div className="grid flex-1 grid-cols-[240px_1fr_280px] overflow-hidden">
-          <MediaSessionList
+          <SessionList
             sessions={sessions}
             activeId={activeId}
             onSelect={setActiveId}
@@ -232,6 +232,7 @@ export function MediaPlayground({ modality }: Props) {
             canCreate={models.length > 0}
             createLabelKey={`console.playground.${modality}.newSession`}
             emptyLabelKey={`console.playground.${modality}.empty`}
+            untitledLabelKey="console.playground.chat.untitled"
           />
 
           <div className="flex min-w-0 flex-col">

@@ -54,6 +54,7 @@ export function DocsSidebar() {
 }
 
 function SidebarRow({ item, pathname }: { item: DocItem; pathname: string }) {
+  const { t } = useTranslation()
   const expected =
     item.category === 'overview' ? `/docs/${item.slug}` : `/docs/${item.category}/${item.slug}`
   // Approximate active state by comparing the pathname suffix — keeps the
@@ -66,7 +67,7 @@ function SidebarRow({ item, pathname }: { item: DocItem; pathname: string }) {
   )
   const inner = (
     <>
-      <span className="truncate font-mono text-[0.82rem]">{item.name}</span>
+      <span className="truncate font-mono text-[0.82rem]">{item.nameKey ? t(item.nameKey) : item.name}</span>
       {item.badge && (
         <span
           className={cn(

@@ -5,7 +5,7 @@ import { Loader2, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { authService } from '@/lib/services/auth'
 import { ApiError } from '@/lib/api'
-import { BrandMark } from '@/components/BrandMark'
+import { AuthShell } from '@/components/auth/AuthShell'
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordPage,
@@ -45,24 +45,7 @@ function ForgotPasswordPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-[color:var(--bg)] to-[color:var(--bg2)] px-6">
-      <div
-        className="pointer-events-none absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full opacity-60 blur-[120px]"
-        style={{ background: 'radial-gradient(circle, #4ED4DC, transparent 65%)', opacity: 'var(--glow-op)' }}
-      />
-
-      <div className="relative z-10 w-full max-w-[420px]">
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center gap-2.5">
-            <BrandMark size={32} />
-            <span className="font-display text-xl font-bold tracking-[-0.5px]">
-              wavydance<span className="text-current-ink">.ai</span>
-            </span>
-          </div>
-          <div className="kicker">{t('forgot.kicker')}</div>
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-[-1px]">{t('forgot.title')}</h1>
-        </div>
-
+    <AuthShell kickerKey="forgot.kicker" titleKey="forgot.title">
         <form
           onSubmit={onSubmit}
           className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-[var(--shadow-jelly)]"
@@ -123,7 +106,6 @@ function ForgotPasswordPage() {
             </Link>
           </p>
         </form>
-      </div>
-    </div>
+    </AuthShell>
   )
 }

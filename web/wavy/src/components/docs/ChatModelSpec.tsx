@@ -1,45 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Code2, ExternalLink, Sparkles, Zap, Network, Layers } from 'lucide-react'
+import { ChevronRight, ExternalLink, Sparkles, Zap, Network, Layers } from 'lucide-react'
 import type { DocItem } from '@/lib/docs-catalog'
 import { categoryLabel } from '@/lib/docs-catalog'
 import { CodeBlock } from './CodeBlock'
 import { cn } from '@/lib/cn'
 
-type CodeLang = 'curl' | 'python' | 'node'
-
-const COLLAPSED_KEY = 'docs.spec.rightPane.collapsed'
+type CodeLang = 'curl' | 'python' | 'node' | 'java'
 
 export function ChatModelSpec({ model }: { model: DocItem }) {
   const { t } = useTranslation()
   const [lang, setLang] = useState<CodeLang>('curl')
-  // Right-pane collapse, persisted across navigation. Users iterating on
-  // prose want the wider article; users copy-pasting code want the pane.
-  // Read after first paint to avoid an SSR / hydration-mismatch flash.
-  const [collapsed, setCollapsed] = useState(false)
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(COLLAPSED_KEY) === '1') setCollapsed(true)
-    } catch {
-      /* localStorage blocked (private mode etc.) — silently default to expanded */
-    }
-  }, [])
-  function togglePane() {
-    setCollapsed((v) => {
-      const next = !v
-      try {
-        window.localStorage.setItem(COLLAPSED_KEY, next ? '1' : '0')
-      } catch {
-        /* ignore */
-      }
-      return next
-    })
-  }
 
   return (
-    <div className="flex min-w-0 flex-1 items-start gap-6 px-6 py-10 lg:px-10">
-      <article className="min-w-0 flex-1 max-w-[820px]">
+    <div className="mx-auto flex w-full min-w-0 max-w-[1500px] flex-1 items-start gap-6 px-6 py-10 lg:px-10 2xl:max-w-[1600px]">
+      <article className="min-w-0 flex-1 max-w-[820px] 2xl:max-w-[920px]">
         <Breadcrumb model={model} />
 
         <header id="overview" className="mt-4 scroll-mt-24">
@@ -158,78 +134,42 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
         </footer>
       </article>
 
-      {collapsed ? (
-        // Collapsed: a narrow vertical tab pinned to the right edge of the
-        // viewport so the user can re-summon the pane without scrolling
-        // anywhere. Sits sticky alongside the article so it tracks the
-        // current section.
-        <button
-          type="button"
-          onClick={togglePane}
-          aria-label={t('docs.spec.expandPane')}
-          className="sticky top-[88px] hidden h-[180px] w-9 flex-none items-center justify-center gap-1 rounded-l-xl border border-[color:var(--border)] border-r-0 bg-[color:var(--surface)] text-[color:var(--muted)] shadow-[var(--shadow-jelly)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)] lg:flex"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span
-            className="font-mono text-[0.7rem] uppercase tracking-[2px]"
-            style={{ writingMode: 'vertical-rl' }}
-          >
-            {t('docs.spec.examples.title')}
-          </span>
-        </button>
-      ) : (
-        <aside className="sticky top-[88px] hidden h-[calc(100vh-96px)] w-[460px] flex-none overflow-y-auto lg:block xl:w-[520px]">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="inline-flex items-center gap-1.5 font-mono text-[0.72rem] uppercase tracking-[2px] text-[color:var(--muted)]">
-              <Code2 className="h-3.5 w-3.5" />
-              {t('docs.spec.examples.kicker')}
+      <aside className="sticky top-[88px] hidden h-[calc(100vh-96px)] w-[460px] flex-none overflow-y-auto lg:block xl:w-[520px] 2xl:w-[600px]">
+        <div className="flex flex-col gap-6">
+          <section id="examples" className="scroll-mt-24">
+            <SectionHeading n="03" title={t('docs.spec.examples.title')} sub={t('docs.spec.examples.sub')} />
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {(['curl', 'python', 'node', 'java'] as CodeLang[]).map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setLang(id)}
+                  className={cn(
+                    'rounded-full border border-[color:var(--border)] px-3.5 py-1 font-mono text-xs uppercase tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]',
+                    lang === id &&
+                      'border-transparent bg-current-grad text-[color:var(--cta-ink)] shadow-[0_8px_24px_rgba(63,179,217,0.25)]',
+                  )}
+                >
+                  {id}
+                </button>
+              ))}
             </div>
-            <button
-              type="button"
-              onClick={togglePane}
-              aria-label={t('docs.spec.collapsePane')}
-              title={t('docs.spec.collapsePane')}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[color:var(--muted)] hover:bg-[color:var(--bg2)] hover:text-[color:var(--text)]"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="flex flex-col gap-6">
-            <section id="examples" className="scroll-mt-24">
-              <SectionHeading n="03" title={t('docs.spec.examples.title')} sub={t('docs.spec.examples.sub')} />
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                {(['curl', 'python', 'node'] as CodeLang[]).map((id) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => setLang(id)}
-                    className={cn(
-                      'rounded-full border border-[color:var(--border)] px-3.5 py-1 font-mono text-xs uppercase tracking-[1px] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]',
-                      lang === id &&
-                        'border-transparent bg-current-grad text-[color:var(--cta-ink)] shadow-[0_8px_24px_rgba(63,179,217,0.25)]',
-                    )}
-                  >
-                    {id}
-                  </button>
-                ))}
-              </div>
-              <CodeBlock lang={lang} code={EXAMPLES[lang](model.name)} />
-            </section>
+            <CodeBlock lang={lang} code={EXAMPLES[lang](model.name)} />
+          </section>
 
-            <section id="responses" className="scroll-mt-24">
-              <SectionHeading n="04" title={t('docs.spec.responses.title')} sub={t('docs.spec.responses.sub')} />
-              <div className="mb-4 grid gap-2 sm:grid-cols-2">
-                <StatusRow code="200" label={t('docs.spec.status.200')} variant="ok" />
-                <StatusRow code="400" label={t('docs.spec.status.400')} variant="warn" />
-                <StatusRow code="401" label={t('docs.spec.status.401')} variant="warn" />
-                <StatusRow code="429" label={t('docs.spec.status.429')} variant="warn" />
-                <StatusRow code="500" label={t('docs.spec.status.500')} variant="err" />
-              </div>
-              <CodeBlock lang="json" code={RESPONSE_SAMPLE(model.name)} />
-            </section>
-          </div>
-        </aside>
-      )}
+          <section id="responses" className="scroll-mt-24">
+            <SectionHeading n="04" title={t('docs.spec.responses.title')} sub={t('docs.spec.responses.sub')} />
+            <div className="mb-4 grid gap-2 sm:grid-cols-2">
+              <StatusRow code="200" label={t('docs.spec.status.200')} variant="ok" />
+              <StatusRow code="400" label={t('docs.spec.status.400')} variant="warn" />
+              <StatusRow code="401" label={t('docs.spec.status.401')} variant="warn" />
+              <StatusRow code="429" label={t('docs.spec.status.429')} variant="warn" />
+              <StatusRow code="500" label={t('docs.spec.status.500')} variant="err" />
+            </div>
+            <CodeBlock lang="json" code={RESPONSE_SAMPLE(model.name)} />
+          </section>
+        </div>
+      </aside>
     </div>
   )
 }
@@ -399,6 +339,32 @@ const stream = await client.chat.completions.create({
 for await (const chunk of stream) {
   process.stdout.write(chunk.choices[0].delta?.content ?? "");
 }`,
+  java: (m) => `import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+var body = """
+    {
+      "model": "${m}",
+      "stream": true,
+      "messages": [{"role": "user", "content": "Hello, wave!"}],
+      "reasoning_effort": "medium"
+    }
+    """;
+
+var client = HttpClient.newHttpClient();
+var req = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.wavydance.ai/v1/chat/completions"))
+    .header("Authorization", "Bearer " + System.getenv("WAVY_API_KEY"))
+    .header("Content-Type", "application/json")
+    .POST(BodyPublishers.ofString(body))
+    .build();
+
+client.send(req, BodyHandlers.ofLines())
+    .body()
+    .forEach(System.out::println);`,
 }
 
 const RESPONSE_SAMPLE = (m: string) => `{

@@ -8,6 +8,8 @@ export type DocCategory = 'overview' | 'chat' | 'image' | 'video'
 export type DocItem = {
   slug: string
   name: string
+  /** Optional i18n key for the sidebar label. Falls back to `name` when absent. */
+  nameKey?: string
   family?: string
   category: DocCategory
   badge?: 'new' | 'beta'
@@ -26,10 +28,10 @@ export const DOCS: DocSection[] = [
     id: 'overview',
     titleKey: 'docs.sidebar.overview',
     items: [
-      { slug: 'quickstart', name: 'Quickstart', category: 'overview' },
-      { slug: 'authentication', name: 'Authentication', category: 'overview' },
-      { slug: 'errors', name: 'Errors', category: 'overview' },
-      { slug: 'rate-limits', name: 'Rate limits', category: 'overview' },
+      { slug: 'quickstart', name: 'Quickstart', nameKey: 'docs.sidebar.items.quickstart', category: 'overview' },
+      { slug: 'authentication', name: 'Authentication', nameKey: 'docs.sidebar.items.authentication', category: 'overview' },
+      { slug: 'errors', name: 'Errors', nameKey: 'docs.sidebar.items.errors', category: 'overview' },
+      { slug: 'rate-limits', name: 'Rate limits', nameKey: 'docs.sidebar.items.rateLimits', category: 'overview' },
     ],
   },
   {

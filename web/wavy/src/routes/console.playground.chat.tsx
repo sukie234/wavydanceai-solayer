@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { SessionList } from '@/components/playground/chat/SessionList'
+import { SessionList } from '@/components/playground/SessionList'
 import { MessageList } from '@/components/playground/chat/MessageList'
 import { Composer } from '@/components/playground/chat/Composer'
 import { ParamsPanel } from '@/components/playground/chat/ParamsPanel'
@@ -191,6 +191,9 @@ function PlaygroundChat() {
             onCreate={onCreate}
             onDelete={onDelete}
             canCreate={models.length > 0}
+            createLabelKey="console.playground.chat.newSession"
+            emptyLabelKey="console.playground.chat.empty"
+            untitledLabelKey="console.playground.chat.untitled"
           />
 
           <div className="flex min-w-0 flex-col">

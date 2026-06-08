@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, StatusPill, type Column } from '@/components/console/DataTable'
 import { billingService } from '@/lib/services/billing'
+import { Dialog } from '@/components/console/Dialog'
 import { authService } from '@/lib/services/auth'
 import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
@@ -350,16 +351,13 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
-      <form
-        onSubmit={submit}
-        className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
-      >
-        <div className="kicker mb-1.5">{t('billing.redemption.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px]">
-          {t('billing.redemption.create')}
-        </h2>
-
+    <Dialog
+      open
+      onClose={onClose}
+      title={t('billing.redemption.create')}
+      kicker={t('billing.redemption.kicker')}
+    >
+      <form onSubmit={submit}>
         <DialogField label={t('billing.redemption.col.name')} value={name} onChange={setName} autoFocus />
         <DialogField label={t('billing.redemption.col.quota')} value={quota} onChange={setQuota} type="number" />
         <DialogField label={t('billing.redemption.count')} value={count} onChange={setCount} type="number" />
@@ -379,7 +377,7 @@ function CreateRedemptionDialog({ onClose, onCreated }: { onClose: () => void; o
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }
 
@@ -399,47 +397,46 @@ function CreatedKeysView({ keys, onClose }: { keys: string[]; onClose: () => voi
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]">
-        <div className="kicker mb-1.5">{t('billing.redemption.kicker')}</div>
-        <h2 className="mb-2 font-display text-xl font-bold tracking-[-0.5px]">
-          {t('billing.redemption.success.title', { count: keys.length })}
-        </h2>
-        <p className="mb-5 text-sm text-[color:var(--muted)]">
-          {t('billing.redemption.success.lead')}
-        </p>
+    <Dialog
+      open
+      onClose={onClose}
+      title={t('billing.redemption.success.title', { count: keys.length })}
+      kicker={t('billing.redemption.kicker')}
+    >
+      <p className="mb-5 -mt-4 text-sm text-[color:var(--muted)]">
+        {t('billing.redemption.success.lead')}
+      </p>
 
-        <div className="mb-5 max-h-[40vh] space-y-1.5 overflow-y-auto">
-          {keys.map((k, i) => (
-            <div
-              key={k}
-              className="flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2"
+      <div className="mb-5 max-h-[40vh] space-y-1.5 overflow-y-auto">
+        {keys.map((k, i) => (
+          <div
+            key={k}
+            className="flex items-center gap-2 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2"
+          >
+            <code className="flex-1 truncate font-mono text-xs text-[color:var(--text)]">{k}</code>
+            <button
+              type="button"
+              onClick={() => copy(k, i)}
+              className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs text-[color:var(--muted)] hover:text-[color:var(--cyan)]"
+              title={t('billing.redemption.success.copy')}
             >
-              <code className="flex-1 truncate font-mono text-xs text-[color:var(--text)]">{k}</code>
-              <button
-                type="button"
-                onClick={() => copy(k, i)}
-                className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs text-[color:var(--muted)] hover:text-[color:var(--cyan)]"
-                title={t('billing.redemption.success.copy')}
-              >
-                {copiedIdx === i ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                {copiedIdx === i ? t('billing.redemption.success.copied') : t('billing.redemption.success.copy')}
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex justify-end gap-2.5">
-          <Button type="button" variant="ghost" size="sm" onClick={() => copy(keys.join('\n'), 'all')}>
-            {copiedIdx === 'all' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            {copiedIdx === 'all' ? t('billing.redemption.success.copied') : t('billing.redemption.success.copyAll')}
-          </Button>
-          <Button type="button" size="sm" onClick={onClose}>
-            {t('billing.redemption.success.close')}
-          </Button>
-        </div>
+              {copiedIdx === i ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedIdx === i ? t('billing.redemption.success.copied') : t('billing.redemption.success.copy')}
+            </button>
+          </div>
+        ))}
       </div>
-    </div>
+
+      <div className="flex justify-end gap-2.5">
+        <Button type="button" variant="ghost" size="sm" onClick={() => copy(keys.join('\n'), 'all')}>
+          {copiedIdx === 'all' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+          {copiedIdx === 'all' ? t('billing.redemption.success.copied') : t('billing.redemption.success.copyAll')}
+        </Button>
+        <Button type="button" size="sm" onClick={onClose}>
+          {t('billing.redemption.success.close')}
+        </Button>
+      </div>
+    </Dialog>
   )
 }
 
