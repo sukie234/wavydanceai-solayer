@@ -592,7 +592,8 @@
       "allStatus": "全部状态",
       "empty": "没有符合条件的订单。",
       "complete": "补单",
-      "completePrompt": "补单原因（计入审计日志）："
+      "completePrompt": "补单原因（计入审计日志）：",
+      "completePlaceholder": "例如：已与银行流水 #4421 核对"
     },
     "result": {
       "successTitle": "支付成功",
@@ -630,6 +631,8 @@
       "count": "数量",
       "empty": "尚未生成任何兑换码。",
       "col": { "name": "名称", "key": "码值", "quota": "配额", "status": "状态" },
+      "deleteTitle": "删除兑换码",
+      "deleteConfirm": "确定删除兑换码 \"{{name}}\" 吗？",
       "success": {
         "title": "已生成 {{count}} 个兑换码",
         "lead": "请立即复制——此处只显示这一次。之后在表格里只能看到前 8 位。",

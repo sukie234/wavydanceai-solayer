@@ -15,6 +15,7 @@ import {
   Settings,
   UserCircle,
   Sparkles,
+  BookOpen,
 } from 'lucide-react'
 import { authService } from '@/lib/services/auth'
 import { Role, type User } from '@/lib/types'
@@ -39,6 +40,7 @@ const OPERATIONS: NavItem[] = [
   { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },
   { to: '/console/billing', icon: Receipt, i18n: 'console.nav.billing' },
   { to: '/console/topup', icon: Wallet, i18n: 'console.nav.topup' },
+  { to: '/docs', icon: BookOpen, i18n: 'console.nav.docs' },
 ]
 
 const ACCOUNT: NavItem[] = [

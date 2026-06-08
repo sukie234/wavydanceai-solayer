@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogActions, DialogError, Field, Select } from './Dialog'
 import { usersService, adminPasskeyService } from '@/lib/services/users'
 import { groupsService } from '@/lib/services/groups'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { ApiError } from '@/lib/api'
 import { Role, type User } from '@/lib/types'
 import { checkPassword, PASSWORD_MAX } from '@/lib/password'
@@ -46,6 +47,7 @@ const empty = (): FormState => ({
 export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const confirmDialog = useConfirm()
   const [form, setForm] = useState<FormState>(empty)
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -225,7 +227,13 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
                 type="button"
                 className="font-mono text-xs text-[color:var(--coral)] transition hover:opacity-70"
                 onClick={async () => {
-                  if (window.confirm(`Clear all ${target.passkeys!.length} passkeys for ${target.username}?`)) {
+                  const ok = await confirmDialog({
+                    title: 'Clear all passkeys',
+                    message: `Remove all ${target.passkeys!.length} passkeys for ${target.username}? They will need to re-register on every device.`,
+                    tone: 'danger',
+                    confirmText: 'Clear all',
+                  })
+                  if (ok) {
                     await adminPasskeyService.clear(target.id)
                     qc.invalidateQueries({ queryKey: ['user', userId] })
                   }
@@ -249,7 +257,12 @@ export function UserDialog({ open, userId, me, onClose, onSaved }: Props) {
                     title="Delete passkey"
                     className="ml-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-[color:var(--muted)] transition hover:text-[color:var(--coral)]"
                     onClick={async () => {
-                      if (window.confirm(`Delete "${k.name || 'Unnamed Passkey'}"?`)) {
+                      const ok = await confirmDialog({
+                        title: 'Delete passkey',
+                        message: `Delete "${k.name || 'Unnamed Passkey'}"?`,
+                        tone: 'danger',
+                      })
+                      if (ok) {
                         await adminPasskeyService.deleteOne(target.id, k.id)
                         qc.invalidateQueries({ queryKey: ['user', userId] })
                       }

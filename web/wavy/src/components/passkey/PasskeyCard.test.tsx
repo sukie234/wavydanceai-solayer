@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PasskeyCard } from './PasskeyCard'
+import { AppDialogsProvider } from '@/components/ui/AppDialogs'
 import type { PasskeyView } from '@/lib/services/passkey'
 
 vi.mock('@/lib/services/passkey', () => ({
@@ -33,7 +34,11 @@ function renderWithQuery(ui: React.ReactElement) {
       mutations: { retry: false },
     },
   })
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>)
+  return render(
+    <QueryClientProvider client={qc}>
+      <AppDialogsProvider>{ui}</AppDialogsProvider>
+    </QueryClientProvider>,
+  )
 }
 
 beforeEach(() => {
@@ -87,19 +92,20 @@ describe('<PasskeyCard>', () => {
     expect(btn).toHaveAttribute('title', 'This browser does not support WebAuthn')
   })
 
-  it('does not call register when prompt returns empty string', async () => {
+  it('does not call register when the name prompt is left empty', async () => {
     mockList.mockResolvedValue([])
-    const promptSpy = vi.spyOn(window, 'prompt').mockReturnValue('')
 
     renderWithQuery(<PasskeyCard />)
     await screen.findByText('No passkeys registered yet.')
 
     await userEvent.click(screen.getByRole('button', { name: /add passkey/i }))
 
-    expect(promptSpy).toHaveBeenCalled()
-    expect(mockRegister).not.toHaveBeenCalled()
+    // Themed prompt dialog opens — clear the prefilled value and confirm.
+    const input = await screen.findByPlaceholderText(/MacBook Pro/i)
+    await userEvent.clear(input)
+    await userEvent.click(screen.getByRole('button', { name: /^add$/i }))
 
-    promptSpy.mockRestore()
+    expect(mockRegister).not.toHaveBeenCalled()
   })
 
   it('calls register and invalidates list on successful add', async () => {
@@ -112,12 +118,15 @@ describe('<PasskeyCard>', () => {
 
     mockRegister.mockResolvedValue(newKey)
 
-    const promptSpy = vi.spyOn(window, 'prompt').mockReturnValue('YubiKey')
-
     renderWithQuery(<PasskeyCard />)
     await screen.findByText('No passkeys registered yet.')
 
     await userEvent.click(screen.getByRole('button', { name: /add passkey/i }))
+
+    const input = await screen.findByPlaceholderText(/MacBook Pro/i)
+    await userEvent.clear(input)
+    await userEvent.type(input, 'YubiKey')
+    await userEvent.click(screen.getByRole('button', { name: /^add$/i }))
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith('YubiKey')
@@ -125,7 +134,5 @@ describe('<PasskeyCard>', () => {
     await waitFor(() => {
       expect(screen.getByText('YubiKey')).toBeInTheDocument()
     })
-
-    promptSpy.mockRestore()
   })
 })

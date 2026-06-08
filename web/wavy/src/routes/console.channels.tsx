@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
 import { ChannelDialog } from '@/components/console/ChannelDialog'
 import { CHANNEL_TYPE, channelsService } from '@/lib/services/channels'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
 import type { Channel } from '@/lib/types'
 
@@ -26,6 +27,7 @@ const PAGE_SIZE = 10 // visual hint; backend uses its own ItemsPerPage
 function ChannelsPage() {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const confirmDialog = useConfirm()
   const [p, setP] = useState(0)
   const [dialog, setDialog] = useState<DialogState>(null)
 
@@ -133,8 +135,13 @@ function ChannelsPage() {
           <IconBtn
             label="Delete"
             tone="coral"
-            onClick={() => {
-              if (confirm(t('ch.deleteConfirm', { name: r.name }))) remove.mutate(r.id)
+            onClick={async () => {
+              const ok = await confirmDialog({
+                title: t('common.delete'),
+                message: t('ch.deleteConfirm', { name: r.name }),
+                tone: 'danger',
+              })
+              if (ok) remove.mutate(r.id)
             }}
           >
             <Trash2 className="h-3.5 w-3.5" />

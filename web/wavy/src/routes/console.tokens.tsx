@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
 import { tokensService } from '@/lib/services/tokens'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { TokenStatus, type Token } from '@/lib/types'
 
 export const Route = createFileRoute('/console/tokens')({
@@ -18,6 +19,7 @@ const PAGE_SIZE = 10 // visual hint; backend uses its own ItemsPerPage
 function TokensPage() {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const confirmDialog = useConfirm()
   const [p, setP] = useState(0)
   const [showCreate, setShowCreate] = useState(false)
 
@@ -120,8 +122,13 @@ function TokensPage() {
           <IconBtn
             label="Delete"
             tone="coral"
-            onClick={() => {
-              if (confirm(t('tk.deleteConfirm', { name: r.name }))) remove.mutate(r.id)
+            onClick={async () => {
+              const ok = await confirmDialog({
+                title: t('common.delete'),
+                message: t('tk.deleteConfirm', { name: r.name }),
+                tone: 'danger',
+              })
+              if (ok) remove.mutate(r.id)
             }}
           >
             <Trash2 className="h-3.5 w-3.5" />

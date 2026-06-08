@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, StatusPill, type Column } from '@/components/console/DataTable'
 import { billingService } from '@/lib/services/billing'
 import { authService } from '@/lib/services/auth'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
 import type { Redemption } from '@/lib/types'
 import { ApiError } from '@/lib/api'
@@ -181,6 +182,7 @@ function RedeemCard({ onRedeemed }: { onRedeemed: () => void }) {
 function RedemptionsAdminSection() {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const confirmDialog = useConfirm()
   const [showCreate, setShowCreate] = useState(false)
   const { data, isLoading } = useQuery({
     queryKey: ['redemptions'],
@@ -228,8 +230,15 @@ function RedemptionsAdminSection() {
       cell: (r) => (
         <button
           type="button"
-          onClick={() => {
-            if (confirm(`Delete redemption "${r.name || r.key.slice(0, 8)}"?`)) remove.mutate(r.id)
+          onClick={async () => {
+            const ok = await confirmDialog({
+              title: t('billing.redemption.deleteTitle'),
+              message: t('billing.redemption.deleteConfirm', {
+                name: r.name || r.key.slice(0, 8),
+              }),
+              tone: 'danger',
+            })
+            if (ok) remove.mutate(r.id)
           }}
           className="flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--coral)]/70 hover:text-[color:var(--coral)]"
           aria-label="Delete"

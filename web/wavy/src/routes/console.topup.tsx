@@ -6,6 +6,7 @@ import { CreditCard, Coins, Bitcoin, Loader2, CheckCircle2, Clock, XCircle, Exte
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, StatusPill, type Column } from '@/components/console/DataTable'
 import { topupService } from '@/lib/services/topup'
+import { usePrompt } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
 import type { Topup, TopupAmountOption } from '@/lib/types'
 import { ApiError } from '@/lib/api'
@@ -325,6 +326,7 @@ function MyTopupsSection() {
 function AdminTopupsSection() {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const promptDialog = usePrompt()
   const [statusFilter, setStatusFilter] = useState<'' | 'pending' | 'success' | 'failed' | 'refunded'>('')
   const { data, isLoading } = useQuery({
     queryKey: ['admin-topups', statusFilter],
@@ -366,8 +368,13 @@ function AdminTopupsSection() {
         return (
           <button
             type="button"
-            onClick={() => {
-              const note = prompt(t('topup.admin.completePrompt'))
+            onClick={async () => {
+              const note = await promptDialog({
+                title: t('topup.admin.complete'),
+                message: t('topup.admin.completePrompt'),
+                placeholder: t('topup.admin.completePlaceholder'),
+                confirmText: t('topup.admin.complete'),
+              })
               if (note !== null && r.trade_no) complete.mutate({ trade_no: r.trade_no, note })
             }}
             className="flex h-7 items-center gap-1 rounded-md border border-[color:var(--border)] px-2 text-[11px] font-medium text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)]"

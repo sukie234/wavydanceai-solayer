@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
 import { UserDialog } from '@/components/console/UserDialog'
 import { ROLE_LABEL, usersService, type UserAction } from '@/lib/services/users'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
 import { Role, type User } from '@/lib/types'
 import { ApiError } from '@/lib/api'
@@ -220,13 +221,19 @@ function RowActions({
   const isMe = me.id === user.id
   const meRole = me.role
   const canManage = !isMe && meRole > user.role // can only act on lower-ranked users
+  const confirmDialog = useConfirm()
 
   const promote = () => onManage({ username: user.username, action: 'promote' })
   const demote = () => onManage({ username: user.username, action: 'demote' })
   const enable = () => onManage({ username: user.username, action: 'enable' })
   const disable = () => onManage({ username: user.username, action: 'disable' })
-  const del = () => {
-    if (confirm(`Delete user "${user.username}"? This cannot be undone.`)) onRemove(user.id)
+  const del = async () => {
+    const ok = await confirmDialog({
+      title: 'Delete user',
+      message: `Delete user "${user.username}"? This cannot be undone.`,
+      tone: 'danger',
+    })
+    if (ok) onRemove(user.id)
   }
 
   return (
