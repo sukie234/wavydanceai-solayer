@@ -42,3 +42,8 @@ jobs:
       - uses: wagoid/commitlint-github-action@v6
         with:
           configFile: commitlint.config.mjs
+          # Only lint commits on the first-parent chain of the PR branch.
+          # Without this, sync-upstream merges drag in the upstream's own
+          # history (e.g. "add payment model (#18)" PR-squash titles) and
+          # fail lint on commits we don't own.
+          firstParent: true
