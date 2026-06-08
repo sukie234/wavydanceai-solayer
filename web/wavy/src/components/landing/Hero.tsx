@@ -49,6 +49,20 @@ export function Hero() {
           <HeroStats />
         </div>
 
+        <div className="relative flex justify-center md:translate-x-0">
+          <video
+            className="w-[min(95vw,864px)] rounded-[2rem] [mask-image:radial-gradient(ellipse_at_center,#000_10%,transparent_78%)]"
+            src="/card.mp4"
+            autoPlay
+            muted={true}
+            loop={true}
+            controls={false}
+            playsInline
+            preload="metadata"
+            disablePictureInPicture
+            aria-hidden
+          />
+        </div>
       </div>
 
       <WavesBg />
@@ -88,10 +102,11 @@ function HeroStats() {
   }, [])
 
   return (
-    <div className="mt-14 flex flex-wrap gap-10">
+    <div className="mt-14 flex flex-nowrap items-baseline gap-x-6 gap-y-3 overflow-x-auto">
       <Stat label={t('hero.st1')} value={models >= 200 ? '200+' : String(models)} />
       <Stat label={t('hero.st2')} value={lat} ticking={tick} />
       <Stat label={t('hero.st3')} value="99.99%" />
+      <Stat label={t('hero.st4')} value="15%" />
     </div>
   )
 }
