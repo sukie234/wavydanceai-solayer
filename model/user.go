@@ -11,7 +11,6 @@ import (
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/blacklist"
 	"github.com/songquanpeng/one-api/common/config"
-	"github.com/songquanpeng/one-api/common/helper"
 	"github.com/songquanpeng/one-api/common/logger"
 	"github.com/songquanpeng/one-api/common/random"
 )
@@ -32,17 +31,28 @@ const (
 // User if you add sensitive fields, don't forget to clean them in setupLogin function.
 // Otherwise, the sensitive information will be saved on local storage in plain text!
 type User struct {
-	Id               int    `json:"id"`
-	Username         string `json:"username" gorm:"unique;index" validate:"max=12"`
-	Password         string `json:"password" gorm:"not null;" validate:"min=8,max=20"`
-	DisplayName      string `json:"display_name" gorm:"index" validate:"max=20"`
-	Role             int    `json:"role" gorm:"type:int;default:1"`   // admin, util
-	Status           int    `json:"status" gorm:"type:int;default:1"` // enabled, disabled
-	Email            string `json:"email" gorm:"index" validate:"max=50"`
-	GitHubId         string `json:"github_id" gorm:"column:github_id;index"`
-	WeChatId         string `json:"wechat_id" gorm:"column:wechat_id;index"`
-	LarkId           string `json:"lark_id" gorm:"column:lark_id;index"`
-	OidcId           string `json:"oidc_id" gorm:"column:oidc_id;index"`
+	Id          int    `json:"id"`
+	// `username_chars` is a custom validator (see common/validator.go) that
+	// restricts to letters, digits, underscores, and hyphens — no spaces or
+	// punctuation. Keeps URLs and console rendering predictable.
+	Username    string `json:"username" gorm:"unique;index" validate:"min=3,max=12,username_chars"`
+	Password    string `json:"password" gorm:"not null;" validate:"min=8,max=24"`
+	DisplayName string `json:"display_name" gorm:"index" validate:"max=20"`
+	Role        int    `json:"role" gorm:"type:int;default:1"`   // admin, util
+	Status      int    `json:"status" gorm:"type:int;default:1"` // enabled, disabled
+	Email       string `json:"email" gorm:"index" validate:"max=50"`
+	GitHubId    string `json:"github_id" gorm:"column:github_id;index"`
+	WeChatId    string `json:"wechat_id" gorm:"column:wechat_id;index"`
+	LarkId      string `json:"lark_id" gorm:"column:lark_id;index"`
+	OidcId      string `json:"oidc_id" gorm:"column:oidc_id;index"`
+	GoogleId    string `json:"google_id" gorm:"column:google_id;index"`
+	// TOTP secret (base32). Never returned to clients; cleared on disable.
+	TwoFASecret string `json:"-" gorm:"column:two_fa_secret;type:varchar(128)"`
+	// True once the user has confirmed setup with a valid code.
+	TwoFAEnabled bool `json:"two_fa_enabled" gorm:"column:two_fa_enabled;default:false"`
+	// JSON array of sha256 hex hashes of single-use recovery codes; entries
+	// are removed (not marked) when consumed.
+	BackupCodes      string `json:"-" gorm:"column:backup_codes;type:text"`
 	VerificationCode string `json:"verification_code" gorm:"-:all"`                                    // this field is only for Email verification, don't save it to database!
 	AccessToken      string `json:"access_token" gorm:"type:char(32);column:access_token;uniqueIndex"` // this token is for system management
 	Quota            int64  `json:"quota" gorm:"bigint;default:0"`
@@ -145,22 +155,13 @@ func (user *User) Insert(ctx context.Context, inviterId int) error {
 			RecordLog(ctx, inviterId, LogTypeSystem, fmt.Sprintf("邀请用户赠送 %s", common.LogQuota(config.QuotaForInviter)))
 		}
 	}
-	// create default token
-	cleanToken := Token{
-		UserId:         user.Id,
-		Name:           "default",
-		Key:            random.GenerateKey(),
-		CreatedTime:    helper.GetTimestamp(),
-		AccessedTime:   helper.GetTimestamp(),
-		ExpiredTime:    -1,
-		RemainQuota:    -1,
-		UnlimitedQuota: true,
-	}
-	result.Error = cleanToken.Insert()
-	if result.Error != nil {
-		// do not block
-		logger.SysError(fmt.Sprintf("create default token for user %d failed: %s", user.Id, result.Error.Error()))
-	}
+	// Upstream one-api auto-issued a "default" API key here with
+	// UnlimitedQuota=true and ExpiredTime=-1 so new users could chat without
+	// thinking. wavydance.ai is a billing-real product — handing every signup
+	// a never-expiring master key undermines the "what is an API key, why
+	// should I rotate it" conversation we want users to have on their first
+	// /console/tokens visit. The Token UI's own empty state nudges them to
+	// click "New key" and pick a name + expiry intentionally.
 	return nil
 }
 
@@ -184,6 +185,9 @@ func (user *User) Update(updatePassword bool) error {
 func (user *User) Delete() error {
 	if user.Id == 0 {
 		return errors.New("id 为空！")
+	}
+	if err := hardDeletePasskeysOnUserDelete(user.Id); err != nil {
+		return err
 	}
 	blacklist.BanUser(user.Id)
 	user.Username = fmt.Sprintf("deleted_%s", random.GetUUID())
@@ -257,6 +261,14 @@ func (user *User) FillUserByOidcId() error {
 	return nil
 }
 
+func (user *User) FillUserByGoogleId() error {
+	if user.GoogleId == "" {
+		return errors.New("google id 为空！")
+	}
+	DB.Where(User{GoogleId: user.GoogleId}).First(user)
+	return nil
+}
+
 func (user *User) FillUserByWeChatId() error {
 	if user.WeChatId == "" {
 		return errors.New("WeChat id 为空！")
@@ -291,6 +303,10 @@ func IsLarkIdAlreadyTaken(githubId string) bool {
 
 func IsOidcIdAlreadyTaken(oidcId string) bool {
 	return DB.Where("oidc_id = ?", oidcId).Find(&User{}).RowsAffected == 1
+}
+
+func IsGoogleIdAlreadyTaken(googleId string) bool {
+	return DB.Where("google_id = ?", googleId).Find(&User{}).RowsAffected == 1
 }
 
 func IsUsernameAlreadyTaken(username string) bool {

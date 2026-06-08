@@ -12,7 +12,7 @@ COPY VERSION /VERSION
 RUN VITE_REACT_APP_VERSION=$(cat /VERSION) bun run build:only
 
 # ---------- Stage 2: compile Go binary ----------
-FROM golang:1.23-alpine AS go-builder
+FROM golang:1.25-alpine AS go-builder
 
 RUN apk add --no-cache gcc musl-dev sqlite-dev build-base
 
@@ -39,7 +39,11 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates tzdata
 
 COPY --from=go-builder /build/one-api /
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 3000
 WORKDIR /data
-ENTRYPOINT ["/one-api"]
+# Shim maps Fly's DATABASE_URL → SQL_DSN and defaults --log-dir. Local
+# docker-compose sets SQL_DSN directly so the mapping is a no-op there.
+ENTRYPOINT ["/entrypoint.sh"]

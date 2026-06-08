@@ -57,7 +57,7 @@ function Step({
     <div
       className={cn(
         'flex flex-col gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-[26px_24px] shadow-[var(--shadow-jelly)] transition-all duration-500',
-        active && '-translate-y-1.5 border-[color:var(--primary)] shadow-[0_26px_50px_-18px_rgba(46,143,176,0.45)]',
+        active && '-translate-y-1.5 border-[color:var(--cyan)] shadow-[0_26px_50px_-18px_rgba(46,143,176,0.45)]',
       )}
     >
       <span className="font-mono text-[0.78rem] font-bold tracking-[2px] text-current-ink">STEP {String(n).padStart(2, '0')}</span>
@@ -70,7 +70,7 @@ function Step({
 
 function Snippet({ children }: { children: React.ReactNode }) {
   return (
-    <div className="overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-[#062B36] px-3 py-2.5 font-mono text-[0.74rem] text-[#a4e58f]">
+    <div className="overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-[#062B36] px-3 py-2.5 font-mono text-[0.74rem] text-[color:var(--glass)]">
       {children}
     </div>
   )
@@ -78,7 +78,7 @@ function Snippet({ children }: { children: React.ReactNode }) {
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-[color:var(--primary)]/40 px-2.5 py-0.5 font-mono text-[0.7rem] tracking-[1px] text-[color:var(--primary)]">
+    <span className="rounded-full border border-[color:var(--cyan)]/40 px-2.5 py-0.5 font-mono text-[0.7rem] tracking-[1px] text-[color:var(--cyan)]">
       {children}
     </span>
   )
@@ -95,7 +95,7 @@ function Connector({ delay }: { delay?: boolean }) {
         className="h-0.5 w-full"
         style={{
           background:
-            'repeating-linear-gradient(90deg,color-mix(in srgb,var(--primary) 55%,transparent) 0 8px,transparent 8px 16px)',
+            'repeating-linear-gradient(90deg,color-mix(in srgb,var(--cyan) 55%,transparent) 0 8px,transparent 8px 16px)',
           backgroundSize: '16px 2px',
           animation: 'wavy-dash .9s linear infinite',
         }}
@@ -107,8 +107,8 @@ function Connector({ delay }: { delay?: boolean }) {
           width: 10,
           height: 10,
           borderRadius: '50%',
-          background: 'var(--primary)',
-          boxShadow: '0 0 12px var(--primary)',
+          background: 'var(--mint)',
+          boxShadow: '0 0 12px var(--mint)',
           animation: `wavy-pkt 2.4s ease-in-out infinite ${delay ? '1.2s' : '0s'}`,
         }}
       />

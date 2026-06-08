@@ -1,0 +1,33 @@
+# Disposable Postgres + Redis for integration tests.
+# Used by `make test-integration`. Data is tmpfs-backed and discarded
+# on shutdown — never reuse this stack for development.
+#
+# Different ports than docker-compose.yml so both stacks can run side
+# by side (e.g. running tests while a dev instance is up).
+
+services:
+  test-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    tmpfs:
+      - /var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d test"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  test-redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 10

@@ -118,7 +118,7 @@ function LogsPage() {
         <select
           value={type}
           onChange={(e) => { setType(Number(e.target.value)); setP(0) }}
-          className="rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm focus:border-[color:var(--primary)] focus:outline-none"
+          className="rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm focus:border-[color:var(--cyan)] focus:outline-none"
         >
           <option value={0}>{t('lg.filter.allTypes')}</option>
           {Object.entries(LOG_TYPE_LABEL).filter(([k]) => k !== '0').map(([k, v]) => (
@@ -139,15 +139,15 @@ function FilterInput({ value, onChange, placeholder }: { value: string; onChange
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-44 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm placeholder:text-[color:var(--muted)]/70 focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
+      className="w-44 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm placeholder:text-[color:var(--muted)]/70 focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
     />
   )
 }
 
 const TYPE_TONE: Record<number, string> = {
-  1: 'bg-[color:var(--primary)]/12 text-[color:var(--primary)]',
-  2: 'bg-[color:var(--primary)]/12 text-[color:var(--primary)]',
-  3: 'bg-[#F5C26B]/12 text-[#F5C26B]',
+  1: 'bg-[color:var(--live)]/12 text-[color:var(--live)]',
+  2: 'bg-[color:var(--cyan)]/12 text-[color:var(--cyan)]',
+  3: 'bg-[color:var(--gold)]/12 text-[color:var(--gold)]',
   4: 'bg-[color:var(--muted)]/12 text-[color:var(--muted)]',
   5: 'bg-[color:var(--coral)]/12 text-[color:var(--coral)]',
 }

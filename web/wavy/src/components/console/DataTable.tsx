@@ -89,11 +89,11 @@ export function StatusPill({ active, label }: { active: boolean; label: string }
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-xs uppercase tracking-[1px]',
         active
-          ? 'bg-[color:var(--primary)]/12 text-[color:var(--primary)]'
-          : 'bg-[#E2607B]/12 text-[#E2607B]',
+          ? 'bg-[color:var(--live)]/12 text-[color:var(--live)]'
+          : 'bg-[color:var(--rose)]/12 text-[color:var(--rose)]',
       )}
     >
-      <span className={cn('h-1.5 w-1.5 rounded-full', active ? 'bg-[color:var(--primary)]' : 'bg-[#E2607B]')} />
+      <span className={cn('h-1.5 w-1.5 rounded-full', active ? 'bg-[color:var(--live)]' : 'bg-[color:var(--rose)]')} />
       {label}
     </span>
   )
@@ -108,7 +108,7 @@ export function Pager({ p, onP, hasMore }: { p: number; onP: (next: number) => v
           type="button"
           onClick={() => onP(Math.max(0, p - 1))}
           disabled={p === 0}
-          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)] disabled:opacity-40"
+          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)] disabled:opacity-40"
         >
           ← Prev
         </button>
@@ -116,7 +116,7 @@ export function Pager({ p, onP, hasMore }: { p: number; onP: (next: number) => v
           type="button"
           onClick={() => onP(p + 1)}
           disabled={!hasMore}
-          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)] disabled:opacity-40"
+          className="rounded-md border border-[color:var(--border)] px-3 py-1 transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)] disabled:opacity-40"
         >
           Next →
         </button>

@@ -11,8 +11,12 @@ import {
   ScrollText,
   BarChart3,
   Receipt,
+  Wallet,
   Users,
   Settings,
+  UserCircle,
+  Sparkles,
+  BookOpen,
 } from 'lucide-react'
 import { authService } from '@/lib/services/auth'
 import { Role, type User } from '@/lib/types'
@@ -30,13 +34,18 @@ const OPERATIONS: NavItem[] = [
   { to: '/console', icon: LayoutDashboard, i18n: 'console.nav.overview' },
   { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels', minRole: Role.AdminUser },
   { to: '/console/models', icon: Boxes, i18n: 'console.nav.models', minRole: Role.AdminUser },
+  { to: '/console/playground', icon: Sparkles, i18n: 'console.nav.playground' },
   { to: '/console/tokens', icon: KeyRound, i18n: 'console.nav.tokens' },
   { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
   { to: '/console/analytics', icon: BarChart3, i18n: 'console.nav.analytics' },
   { to: '/console/billing', icon: Receipt, i18n: 'console.nav.billing' },
+  { to: '/console/topup', icon: Wallet, i18n: 'console.nav.topup' },
+  { to: '/docs', icon: BookOpen, i18n: 'console.nav.docs' },
 ]
 
 const ACCOUNT: NavItem[] = [
+  // Profile is for every signed-in user — no role gate.
+  { to: '/console/profile', icon: UserCircle, i18n: 'console.nav.profile' },
   { to: '/console/users', icon: Users, i18n: 'console.nav.users', minRole: Role.AdminUser },
   { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings', minRole: Role.RootUser },
 ]
@@ -181,10 +190,10 @@ function SupportRow() {
         <SocialBtn label="Discord" href="https://discord.com/invite/solayerlabs" color="#5865F2">
           <DiscordIcon />
         </SocialBtn>
-        <SocialBtn label="GitHub" href="https://github.com/solayer-labs" color="#94A3B8">
+        <SocialBtn label="GitHub" href="https://github.com/solayer-labs" color="var(--muted-soft)">
           <GithubIcon />
         </SocialBtn>
-        <SocialBtn label="X" href="https://x.com/solayer_labs" color="#94A3B8">
+        <SocialBtn label="X" href="https://x.com/solayer_labs" color="var(--muted-soft)">
           <XIcon />
         </SocialBtn>
         <SocialBtn label="Website" href="https://solayer.org/" color="#084d3e">
@@ -215,7 +224,7 @@ function SocialBtn({
     >
       <span
         className="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-        style={{ background: `linear-gradient(135deg, ${color}40, transparent)` }}
+        style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 25%, transparent), transparent)` }}
       />
       <span className="relative transition-colors group-hover:text-[color:var(--text)]" style={{ width: 14, height: 14 }}>
         {children}

@@ -169,6 +169,15 @@ func migrateDB() error {
 	if err = DB.AutoMigrate(&Channel{}); err != nil {
 		return err
 	}
+	if err = DB.AutoMigrate(&Topup{}); err != nil {
+		return err
+	}
+	if err = DB.AutoMigrate(&Checkin{}); err != nil {
+		return err
+	}
+	if err = DB.AutoMigrate(&PasskeyCredential{}); err != nil {
+		return err
+	}
 	return nil
 }
 

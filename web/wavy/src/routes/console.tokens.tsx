@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Copy, Power, PowerOff } from 'lucide-react'
+import { Plus, Trash2, Copy, Check, Power, PowerOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
 import { tokensService } from '@/lib/services/tokens'
+import { Dialog } from '@/components/console/Dialog'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { TokenStatus, type Token } from '@/lib/types'
 
 export const Route = createFileRoute('/console/tokens')({
@@ -18,6 +20,7 @@ const PAGE_SIZE = 10 // visual hint; backend uses its own ItemsPerPage
 function TokensPage() {
   const { t } = useTranslation()
   const qc = useQueryClient()
+  const confirmDialog = useConfirm()
   const [p, setP] = useState(0)
   const [showCreate, setShowCreate] = useState(false)
 
@@ -120,8 +123,13 @@ function TokensPage() {
           <IconBtn
             label="Delete"
             tone="coral"
-            onClick={() => {
-              if (confirm(t('tk.deleteConfirm', { name: r.name }))) remove.mutate(r.id)
+            onClick={async () => {
+              const ok = await confirmDialog({
+                title: t('common.delete'),
+                message: t('tk.deleteConfirm', { name: r.name }),
+                tone: 'danger',
+              })
+              if (ok) remove.mutate(r.id)
             }}
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -163,16 +171,30 @@ function TokensPage() {
 }
 
 function KeyCell({ value }: { value: string }) {
+  const { t } = useTranslation()
+  const [copied, setCopied] = useState(false)
   const display = value ? `sk-${value.slice(0, 4)}…${value.slice(-4)}` : '—'
+
+  async function onCopy() {
+    if (!value || !navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(`sk-${value}`)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // clipboard blocked (insecure context, permission, etc.) — silently ignore
+    }
+  }
+
   return (
     <button
       type="button"
-      onClick={() => navigator.clipboard?.writeText(`sk-${value}`)}
-      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--border)] bg-[color:var(--bg2)] px-2 py-0.5 font-mono text-xs text-[color:var(--muted)] hover:border-[color:var(--primary)] hover:text-[color:var(--text)]"
-      title="Copy full key"
+      onClick={onCopy}
+      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--border)] bg-[color:var(--bg2)] px-2 py-0.5 font-mono text-xs text-[color:var(--muted)] hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]"
+      title={t('tk.copyKey')}
     >
-      <Copy className="h-3 w-3" />
-      {display}
+      {copied ? <Check className="h-3 w-3 text-[color:var(--cyan)]" /> : <Copy className="h-3 w-3" />}
+      {copied ? t('tk.copied') : display}
     </button>
   )
 }
@@ -196,7 +218,7 @@ function IconBtn({
       className={
         tone === 'coral'
           ? 'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--coral)] hover:text-[color:var(--coral)]'
-          : 'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--primary)] hover:text-[color:var(--text)]'
+          : 'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--text)]'
       }
     >
       {children}
@@ -230,55 +252,47 @@ function CreateTokenModal({ onClose, onCreated }: { onClose: () => void; onCreat
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 [backdrop-filter:blur(8px)]" onClick={onClose}>
-      <div
-        className="w-full max-w-[440px] rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[0_40px_80px_rgba(0,0,0,0.3)]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="kicker mb-2">{t('tk.modal.kicker')}</div>
-        <h3 className="mb-5 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">{t('tk.modal.title')}</h3>
+    <Dialog open onClose={onClose} title={t('tk.modal.title')} kicker={t('tk.modal.kicker')}>
+      <label className="mb-4 block">
+        <span className="mb-1.5 block font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">
+          {t('tk.modal.name')}
+        </span>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoFocus
+          placeholder="production-app"
+          className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm placeholder:text-[color:var(--muted)]/70 focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
+        />
+      </label>
 
+      <label className="mb-4 flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={unlimited} onChange={(e) => setUnlimited(e.target.checked)} />
+        {t('tk.modal.unlimited')}
+      </label>
+
+      {!unlimited && (
         <label className="mb-4 block">
           <span className="mb-1.5 block font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">
-            {t('tk.modal.name')}
+            {t('tk.modal.quota')}
           </span>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoFocus
-            placeholder="production-app"
-            className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm placeholder:text-[color:var(--muted)]/70 focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
+            type="number"
+            min="1"
+            value={quotaInDollars}
+            onChange={(e) => setQuotaInDollars(e.target.value)}
+            className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
           />
         </label>
+      )}
 
-        <label className="mb-4 flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={unlimited} onChange={(e) => setUnlimited(e.target.checked)} />
-          {t('tk.modal.unlimited')}
-        </label>
+      {err && <div className="mb-3 text-sm text-[color:var(--coral)]">{err}</div>}
 
-        {!unlimited && (
-          <label className="mb-4 block">
-            <span className="mb-1.5 block font-mono text-xs uppercase tracking-[2px] text-[color:var(--muted)]">
-              {t('tk.modal.quota')}
-            </span>
-            <input
-              type="number"
-              min="1"
-              value={quotaInDollars}
-              onChange={(e) => setQuotaInDollars(e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
-            />
-          </label>
-        )}
-
-        {err && <div className="mb-3 text-sm text-[color:var(--coral)]">{err}</div>}
-
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variant="ghost" size="sm" onClick={onClose}>{t('tk.modal.cancel')}</Button>
-          <Button size="sm" disabled={submitting} onClick={submit}>{t('tk.modal.create')}</Button>
-        </div>
+      <div className="mt-5 flex justify-end gap-2">
+        <Button variant="ghost" size="sm" onClick={onClose}>{t('tk.modal.cancel')}</Button>
+        <Button size="sm" disabled={submitting} onClick={submit}>{t('tk.modal.create')}</Button>
       </div>
-    </div>
+    </Dialog>
   )
 }
 

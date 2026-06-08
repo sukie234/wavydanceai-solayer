@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/config"
@@ -58,6 +59,34 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": err.Error(),
 			"success": false,
+		})
+		return
+	}
+	hasPasskey := model.HasPasskey(user.Id)
+	if user.TwoFAEnabled || hasPasskey {
+		// Password is good but we still need a second factor. Park the user
+		// id on the session and ask the frontend to finish the dance via
+		// /api/user/login/2fa or /api/user/login/2fa/passkey/*.
+		session := sessions.Default(c)
+		session.Set(sessionKeyPending2FAUserId, user.Id)
+		if err := session.Save(); err != nil {
+			c.JSON(http.StatusOK, gin.H{"success": false, "message": err.Error()})
+			return
+		}
+		methods := make([]string, 0, 2)
+		if user.TwoFAEnabled {
+			methods = append(methods, "totp")
+		}
+		if hasPasskey {
+			methods = append(methods, "passkey")
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data": gin.H{
+				"two_fa_required":     true, // deprecated, kept for one release
+				"two_factor_required": true,
+				"methods":             methods,
+			},
 		})
 		return
 	}
@@ -136,9 +165,34 @@ func Register(c *gin.Context) {
 		return
 	}
 	if err := common.Validate.Struct(&user); err != nil {
+		// Surface a field-specific message when the failing tag is unique to
+		// one field, so the UI doesn't have to render the opaque
+		// "invalid_input" for things like "your username has a space".
+		msgKey := "invalid_input"
+		if vErrs, ok := err.(validator.ValidationErrors); ok {
+			for _, fe := range vErrs {
+				if fe.Field() == "Username" {
+					switch fe.Tag() {
+					case "username_chars":
+						msgKey = "invalid_username_chars"
+					case "min":
+						msgKey = "invalid_username_short"
+					case "max":
+						msgKey = "invalid_username_long"
+					}
+				}
+			}
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
-			"message": i18n.Translate(c, "invalid_input"),
+			"message": i18n.Translate(c, msgKey),
+		})
+		return
+	}
+	if !common.IsPasswordComplexEnough(user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
 		})
 		return
 	}
@@ -158,6 +212,29 @@ func Register(c *gin.Context) {
 			return
 		}
 	}
+	// Pre-check duplicates so the user sees a clean message instead of the
+	// raw gorm / postgres unique-constraint error leaking through err.Error().
+	// A concurrent registration could still slip past this guard, in which
+	// case the DB unique index trips Insert below — we accept the raw error
+	// surface for that rare race.
+	if model.IsUsernameAlreadyTaken(user.Username) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "username_taken"),
+		})
+		return
+	}
+	// Email uniqueness is enforced whenever an email is provided, not just
+	// when the admin has flipped EmailVerificationEnabled. Without this guard
+	// the same address can register N accounts, which silently breaks the
+	// password-reset flow (it does FillUserByEmail and assumes 1:1 mapping).
+	if user.Email != "" && model.IsEmailAlreadyTaken(user.Email) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "email_taken"),
+		})
+		return
+	}
 	affCode := user.AffCode // this code is the inviter's code, not the user's own code
 	inviterId, _ := model.GetUserIdByAffCode(affCode)
 	cleanUser := model.User{
@@ -165,9 +242,11 @@ func Register(c *gin.Context) {
 		Password:    user.Password,
 		DisplayName: user.Username,
 		InviterId:   inviterId,
-	}
-	if config.EmailVerificationEnabled {
-		cleanUser.Email = user.Email
+		// Persist the email whenever it was provided, not only when
+		// EmailVerificationEnabled was on at registration time. Without this
+		// the duplicate guard above would never fire on subsequent signups
+		// because the prior account would have no email stored.
+		Email: user.Email,
 	}
 	if err := cleanUser.Insert(ctx, inviterId); err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -251,10 +330,32 @@ func GetUser(c *gin.Context) {
 		})
 		return
 	}
+	passkeys, _ := model.ListPasskeysByUserId(user.Id)
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    user,
+		"data": gin.H{
+			"id":             user.Id,
+			"username":       user.Username,
+			"display_name":   user.DisplayName,
+			"role":           user.Role,
+			"status":         user.Status,
+			"email":          user.Email,
+			"github_id":      user.GitHubId,
+			"wechat_id":      user.WeChatId,
+			"lark_id":        user.LarkId,
+			"oidc_id":        user.OidcId,
+			"google_id":      user.GoogleId,
+			"two_fa_enabled": user.TwoFAEnabled,
+			"access_token":   user.AccessToken,
+			"quota":          user.Quota,
+			"used_quota":     user.UsedQuota,
+			"request_count":  user.RequestCount,
+			"group":          user.Group,
+			"aff_code":       user.AffCode,
+			"inviter_id":     user.InviterId,
+			"passkeys":       toPasskeyViews(passkeys),
+		},
 	})
 	return
 }
@@ -412,6 +513,13 @@ func UpdateUser(c *gin.Context) {
 		updatedUser.Password = "" // rollback to what it should be
 	}
 	updatePassword := updatedUser.Password != ""
+	if updatePassword && !common.IsPasswordComplexEnough(updatedUser.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
+		})
+		return
+	}
 	if err := updatedUser.Update(updatePassword); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -461,6 +569,13 @@ func UpdateSelf(c *gin.Context) {
 		cleanUser.Password = ""
 	}
 	updatePassword := user.Password != ""
+	if updatePassword && !common.IsPasswordComplexEnough(user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
+		})
+		return
+	}
 	if err := cleanUser.Update(updatePassword); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -553,6 +668,13 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": i18n.Translate(c, "invalid_input"),
+		})
+		return
+	}
+	if !common.IsPasswordComplexEnough(user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": i18n.Translate(c, "invalid_password_complexity"),
 		})
 		return
 	}
