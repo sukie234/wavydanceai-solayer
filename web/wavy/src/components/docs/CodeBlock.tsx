@@ -40,19 +40,19 @@ export function CodeBlock({
         style={{ background: `linear-gradient(90deg, transparent, var(--glass-edge), transparent)` }}
       />
       <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
-        <span className="font-mono text-[0.72rem] uppercase tracking-[2px] text-[color:var(--muted-soft)]">
+        <span className="font-mono text-[0.72rem] uppercase tracking-[2px] text-[color:var(--code-muted)]">
           {lang ?? 'shell'}
         </span>
         <button
           type="button"
           onClick={copy}
-          className="flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[0.7rem] uppercase tracking-[1.5px] text-[color:var(--muted-soft)] transition hover:bg-white/5 hover:text-[color:var(--text)]"
+          className="flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[0.7rem] uppercase tracking-[1.5px] text-[color:var(--code-muted)] transition hover:bg-white/5 hover:text-[color:var(--code-text)]"
         >
           {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
           {copied ? 'copied' : 'copy'}
         </button>
       </div>
-      <pre className="m-0 overflow-x-auto p-5 font-mono text-[0.83rem] leading-[1.7] text-[color:var(--text)]">
+      <pre className="m-0 overflow-x-auto p-5 font-mono text-[0.83rem] leading-[1.7] text-[color:var(--code-text)]">
         <code>{code}</code>
       </pre>
     </div>

@@ -82,7 +82,7 @@ export function Demo() {
               ))}
             </div>
           </div>
-          <div className="relative overflow-x-auto p-[22px] font-mono text-[0.84rem] leading-[1.75] text-[color:var(--text)]">
+          <div className="relative overflow-x-auto p-[22px] font-mono text-[0.84rem] leading-[1.75] text-[color:var(--code-text)]">
             {tab === 'chat' && <ChatCode />}
             {tab === 'image' && <ImageCode />}
             {tab === 'video' && <VideoCode />}
@@ -93,10 +93,10 @@ export function Demo() {
   )
 }
 
-const K = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--glass)]">{children}</span>
-const S = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--cyan)]">{children}</span>
-const C = ({ children }: { children: React.ReactNode }) => <span className="text-[#7FA9B5]">{children}</span>
-const F = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--coral)]">{children}</span>
+const K = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--code-key)]">{children}</span>
+const S = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--code-str)]">{children}</span>
+const C = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--code-comment)]">{children}</span>
+const F = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--code-fn)]">{children}</span>
 
 function ChatCode() {
   return (
