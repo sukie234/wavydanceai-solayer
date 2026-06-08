@@ -251,15 +251,16 @@
     }
   },
   "hero": {
-    "tag": "All systems flowing · 99.99% uptime",
-    "title": "One Wave.",
+    "tag": "All systems online · 99.99% uptime",
+    "title": "One Key.",
     "title_grad": "Every Model.",
-    "sub": "The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed at the speed of the current.",
+    "sub": "The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed in under 40ms.",
     "ctaPrimary": "Start free",
     "ctaSecondary": "Read the Docs",
     "st1": "models, one API",
     "st2": "routing overhead",
-    "st3": "uptime with failover"
+    "st3": "uptime SLA",
+    "st4": "Solayer Pay cashback"
   },
   "demo": {
     "kicker": "One gateway, two protocols",
@@ -270,14 +271,14 @@
   },
   "lb": {
     "kicker": "Leaderboard",
-    "title": "What the wave is riding",
+    "title": "What the gateway is routing",
     "lead": "Most-used models on solayer.org, ranked by tokens processed in the last 24 hours.",
     "note": "Tokens = last 24h · arrow = 3-day trend",
     "tab": { "all": "All", "llm": "LLM", "image": "Image", "video": "Video" }
   },
   "show": {
     "kicker": "Showcase",
-    "title": "Every modality. One wave.",
+    "title": "Every modality. One key.",
     "lead": "Live samples from the models behind the gateway — vision, code, audio, reasoning and Chinese, all through the same endpoint.",
     "tag": { "vision": "Vision", "code": "Code", "audio": "Audio", "reason": "Reasoning", "zh": "Chinese" },
     "lbl": {
@@ -301,8 +302,8 @@
       "a": "Rates: A = 1/6, B = 1/4, C = −1/12 per hour. Net = 2/12 + 3/12 − 1/12 = 4/12 = 1/3. Full tank ÷ net rate = 1 ÷ (1/3) = 3 hours. ✓ verified by dimensional check."
     },
     "c5": {
-      "q": "“Turn our slogan 'One Wave. Every Model.' into a watery Chinese brand line.”",
-      "a": "「一浪直达，万模归一。」— keeps the motion of the wave and lands the product truth: every model flows into one endpoint. Eight characters, parallel, memorable."
+      "q": "“Turn our slogan 'One Key. Every Model.' into a parallel Chinese brand line.”",
+      "a": "「一钥通用，万模归一。」— one key unlocks every model; every model converges to one endpoint. Eight characters, balanced couplet, memorable."
     }
   },
   "flow": {
@@ -368,7 +369,7 @@
     }
   },
   "community": {
-    "title": "Join the wave 🌊",
+    "title": "Join the community",
     "lead": "8,000+ developers share routing recipes, cost dashboards and early model access in our community."
   },
   "login": {
@@ -744,7 +745,7 @@
     "toc": { "title": "On this page" },
     "index": {
       "kicker": "solayer.org · docs",
-      "title1": "One Wave.",
+      "title1": "One Key.",
       "title2": "Every API.",
       "lead": "200+ models behind a single OpenAI-compatible endpoint. Pick a model, send a request, ship a feature. These docs cover the chat schema, the unified async-task API for image and video, and per-model parameter cheat sheets.",
       "modality": { "chat": "Chat", "image": "Image", "video": "Video" },

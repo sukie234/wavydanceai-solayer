@@ -41,6 +41,15 @@
     --current-ink: linear-gradient(110deg, #084D3E 0%, #0d6b53 60%, #a4e58f 100%);
     --shadow: 0 30px 80px rgba(8, 77, 62, 0.12);
     --glow-op: 0.2;
+    /* Code-panel content — `--glass-bg` is dark in BOTH themes, so syntax
+       colors inside code panels must stay bright in light mode too.
+       These tokens are theme-static (defined only on :root). */
+    --code-text: #eafbfe;
+    --code-key: #c5f0b0;
+    --code-str: #a4e58f;
+    --code-fn: #f49bab;
+    --code-comment: #7FA9B5;
+    --code-muted: #9fbfca;
     /* Code-panel water glass — heavier in light mode so code text stays readable
        against the pale page background */
     --glass-bg: linear-gradient(

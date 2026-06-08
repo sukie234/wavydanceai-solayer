@@ -11,7 +11,7 @@ export function Footer() {
             solayer<span className="text-current-ink">.ai</span>
           </div>
           <div className="mt-2.5 font-mono text-[0.8rem] tracking-[2px] text-[color:var(--muted)]/60">
-            ONE WAVE. EVERY MODEL.
+            ONE KEY. EVERY MODEL.
           </div>
         </div>
         <Col title={t('footer.product')}>
