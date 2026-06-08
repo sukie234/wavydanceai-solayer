@@ -4,5 +4,8 @@
   "send_email_failed": "发送邮件失败：",
   "invalid_parameter": "无效的参数",
   "username_taken": "该用户名已被占用，请换一个。",
-  "email_taken": "该邮箱已有账号，请直接登录。"
+  "email_taken": "该邮箱已有账号，请直接登录。",
+  "invalid_username_short": "用户名至少 3 位字符。",
+  "invalid_username_long": "用户名最多 12 位字符。",
+  "invalid_username_chars": "用户名只能包含字母、数字、下划线和连字符。"
 }

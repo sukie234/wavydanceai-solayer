@@ -8,6 +8,7 @@ import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { checkPassword, PASSWORD_MAX } from '@/lib/password'
+import { checkUsername, USERNAME_MAX } from '@/lib/username'
 import { AuthShell } from '@/components/auth/AuthShell'
 import { statusService } from '@/lib/services/status'
 
@@ -56,10 +57,12 @@ function RegisterPage() {
   // typing, though, so the field doesn't shout at them on first render.
   const pwIssue = checkPassword(password)
   const pwIssueForHint = password.length > 0 ? pwIssue : null
+  const usernameIssue = checkUsername(username)
+  const usernameIssueForHint = username.length > 0 ? usernameIssue : null
   const codeOk = !emailRequired || verificationCode.trim().length > 0
   const emailOk = !emailRequired || (email !== '' && emailValid)
   const canSubmit =
-    username.length >= 3 &&
+    usernameIssue === null &&
     pwIssue === null &&
     emailValid &&
     !mismatch &&
@@ -170,6 +173,13 @@ function RegisterPage() {
             value={username}
             onChange={setUsername}
             autoComplete="username"
+            maxLength={USERNAME_MAX}
+            hint={
+              usernameIssueForHint
+                ? t(`register.username_${usernameIssueForHint}`)
+                : t('register.usernameHint')
+            }
+            tone={usernameIssueForHint ? 'warn' : 'muted'}
           />
           <Field
             label={t('register.password')}

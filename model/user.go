@@ -32,7 +32,10 @@ const (
 // Otherwise, the sensitive information will be saved on local storage in plain text!
 type User struct {
 	Id          int    `json:"id"`
-	Username    string `json:"username" gorm:"unique;index" validate:"max=12"`
+	// `username_chars` is a custom validator (see common/validator.go) that
+	// restricts to letters, digits, underscores, and hyphens — no spaces or
+	// punctuation. Keeps URLs and console rendering predictable.
+	Username    string `json:"username" gorm:"unique;index" validate:"min=3,max=12,username_chars"`
 	Password    string `json:"password" gorm:"not null;" validate:"min=8,max=24"`
 	DisplayName string `json:"display_name" gorm:"index" validate:"max=20"`
 	Role        int    `json:"role" gorm:"type:int;default:1"`   // admin, util

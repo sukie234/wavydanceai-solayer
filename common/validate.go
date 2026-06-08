@@ -11,6 +11,21 @@ var Validate *validator.Validate
 
 func init() {
 	Validate = validator.New()
+	// Custom `username_chars` rule — letters / digits / `_` / `-` only.
+	// Spaces and punctuation would break URL slugs, terminal display, and
+	// downstream tooling that doesn't quote usernames.
+	_ = Validate.RegisterValidation("username_chars", func(fl validator.FieldLevel) bool {
+		s := fl.Field().String()
+		if s == "" {
+			return false
+		}
+		for _, r := range s {
+			if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '_' && r != '-' {
+				return false
+			}
+		}
+		return true
+	})
 }
 
 // IsPasswordComplexEnough enforces the user-facing password complexity rule:
