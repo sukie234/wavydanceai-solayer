@@ -20,10 +20,11 @@ if [ -n "$LOG_DATABASE_URL" ] && [ -z "$LOG_SQL_DSN" ]; then
   export LOG_SQL_DSN="$LOG_DATABASE_URL"
 fi
 
-# Default --log-dir to /app/logs so the Fly volume mount catches output.
+# Default --log-dir to /data/logs (the Fly volume mount).
 # Callers can still override by passing --log-dir explicitly.
 if ! printf '%s\n' "$@" | grep -q -- '--log-dir'; then
-  set -- --log-dir /app/logs "$@"
+  mkdir -p /data/logs
+  set -- --log-dir /data/logs "$@"
 fi
 
 exec /one-api "$@"
