@@ -1,0 +1,3 @@
+[extend]
+# Extend the default ruleset so we only need to declare exceptions.
+useDefault = true

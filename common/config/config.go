@@ -167,3 +167,54 @@ var UserContentRequestTimeout = env.Int("USER_CONTENT_REQUEST_TIMEOUT", 30)
 
 var EnforceIncludeUsage = env.Bool("ENFORCE_INCLUDE_USAGE", false)
 var TestPrompt = env.String("TEST_PROMPT", "Output only your specific model name with no additional text.")
+
+// ---------- Payments (P0 商业化充值) ----------
+//
+// Global toggles + URLs for the topup subsystem. Per-gateway secrets
+// (Stripe API key, EPay key, NOWPayments IPN secret) live in env vars
+// or per-adapter ConfigKey declarations, not here.
+
+// PaymentEnabled is the master switch. When false, all topup endpoints
+// return "payments disabled" regardless of per-gateway flags. Defaults on
+// so a fresh deployment surfaces the topup UI without requiring an admin
+// to toggle it first.
+var PaymentEnabled = true
+
+// StripeEnabled / EpayEnabled control the two baseline non-crypto gateways.
+// Stripe defaults on because we ship the Stripe SDK by default and the env
+// vars (STRIPE_API_SECRET_KEY / STRIPE_WEBHOOK_SECRET) are how real keys
+// are injected — the toggle just gates whether the gateway surfaces in the
+// /topup/info response. EPay stays opt-in because it requires merchant
+// credentials specific to the operator.
+var StripeEnabled = true
+var EpayEnabled = false
+
+// PaymentCallbackBaseURL is the public HTTPS origin our webhooks live on.
+// Adapters compose notify URLs from this + their endpoint path. Required
+// in any deployment that accepts real payments.
+var PaymentCallbackBaseURL = ""
+
+// PaymentReturnURL is where the user is redirected after completing payment.
+// Typically a frontend route like https://app.example.com/topup-result
+// (matches the route registered in web/wavy/src/routes/topup-result.tsx).
+var PaymentReturnURL = ""
+
+// CryptoAdaptersEnabled is the whitelist of crypto adapter Name()s currently
+// active in this deployment. Empty slice = no crypto. Stored in option table
+// as a comma-separated string (matches EmailDomainWhitelist convention).
+var CryptoAdaptersEnabled = []string{}
+
+// Stripe — sensitive keys live in env vars only, never in the option table
+// (so they can't leak through /api/option/). StripeCurrency is configurable
+// because the same code can serve USD / EUR / HKD / CNY deployments.
+var StripeAPISecretKey = env.String("STRIPE_API_SECRET_KEY", "")
+var StripeWebhookSecret = env.String("STRIPE_WEBHOOK_SECRET", "")
+var StripeCurrency = env.String("STRIPE_CURRENCY", "usd")
+
+// E-Pay (彩虹易支付协议) — wraps Alipay / WeChat / QQ. Keys in env only,
+// same reasoning as Stripe. EpayUrl is the merchant's submit.php endpoint;
+// EpayDefaultMethod is the type code sent if the request doesn't pick one.
+var EpayId = env.String("EPAY_ID", "")
+var EpayKey = env.String("EPAY_KEY", "")
+var EpayUrl = env.String("EPAY_URL", "")
+var EpayDefaultMethod = env.String("EPAY_DEFAULT_METHOD", "alipay")

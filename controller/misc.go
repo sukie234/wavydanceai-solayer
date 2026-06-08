@@ -11,6 +11,7 @@ import (
 	"github.com/songquanpeng/one-api/common/i18n"
 	"github.com/songquanpeng/one-api/common/message"
 	"github.com/songquanpeng/one-api/model"
+	"github.com/songquanpeng/one-api/setting/auth_setting"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,6 +45,8 @@ func GetStatus(c *gin.Context) {
 			"oidc_authorization_endpoint": config.OidcAuthorizationEndpoint,
 			"oidc_token_endpoint":         config.OidcTokenEndpoint,
 			"oidc_userinfo_endpoint":      config.OidcUserinfoEndpoint,
+			"google_oauth":                auth_setting.GetGoogleSetting().Enabled,
+			"google_client_id":            auth_setting.GetGoogleSetting().ClientId,
 		},
 	})
 	return
@@ -160,7 +163,7 @@ func SendPasswordResetEmail(c *gin.Context) {
 	}
 	code := common.GenerateVerificationCode(0)
 	common.RegisterVerificationCodeWithKey(email, code, common.PasswordResetPurpose)
-	link := fmt.Sprintf("%s/user/reset?email=%s&token=%s", config.ServerAddress, email, code)
+	link := fmt.Sprintf("%s/reset-password?email=%s&token=%s", config.ServerAddress, email, code)
 	subject := fmt.Sprintf("%s 密码重置", config.SystemName)
 	content := message.EmailTemplate(
 		subject,

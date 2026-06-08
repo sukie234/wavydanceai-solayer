@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/helper"
@@ -66,12 +67,24 @@ func Redeem(ctx context.Context, key string, userId int) (quota int64, err error
 	}
 
 	err = DB.Transaction(func(tx *gorm.DB) error {
-		err := tx.Set("gorm:query_option", "FOR UPDATE").Where(keyCol+" = ?", key).First(redemption).Error
+		// SELECT ... FOR UPDATE — without the row lock, two concurrent requests
+		// with the same redemption code both read status='enabled' and both
+		// credit quota. gorm v2 silently ignores tx.Set("gorm:query_option").
+		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where(keyCol+" = ?", key).First(redemption).Error
 		if err != nil {
 			return errors.New("无效的兑换码")
 		}
 		if redemption.Status != RedemptionCodeStatusEnabled {
 			return errors.New("该兑换码已被使用")
+		}
+		// Self-redeem guard. `redemption.UserId` is the creator (set by
+		// AddRedemption controller, never overwritten). An admin / root user
+		// generating codes and redeeming them on their own account has no
+		// legitimate business path — admins can credit any account directly
+		// from the user-management UI. Blocking this closes the audit gap
+		// where a credit appears with no clear funds source.
+		if redemption.UserId == userId {
+			return errors.New("不能兑换自己创建的兑换码")
 		}
 		err = tx.Model(&User{}).Where("id = ?", userId).Update("quota", gorm.Expr("quota + ?", redemption.Quota)).Error
 		if err != nil {

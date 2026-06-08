@@ -1,13 +1,16 @@
 @import 'tailwindcss';
 
 /* ============================================================
-   Jelly Sea — design tokens (source: web_reference/brand_guide.md)
-   Light mode = Shallow Lagoon, Dark mode = Deep Lagoon
+   Solayer — design tokens
+   Light mode = neutral / deep green, Dark mode = inverted
+   Brand accents (--cyan / --mint / --glass) all resolve to
+   Solayer green tones so upstream-tokenized components inherit
+   the rebrand without per-file edits.
    ============================================================ */
 
 @layer base {
   :root {
-    /* Shallow Lagoon (light) */
+    /* Surfaces & text (light) */
     --bg: #ffffff;
     --bg2: #f5f5f5;
     --surface: #ffffff;
@@ -15,21 +18,31 @@
     --text: #3e4040;
     --muted: #3e4040;
     --title: #111827;
-    --cyan: #2e8fb0;
+
+    /* Solayer green palette (light) */
+    --cyan: #0d6b53;        /* mid green — formerly cyan accent */
+    --mint: #084d3e;        /* primary green */
+    --glass: #a4e58f;       /* light/glow green */
     --primary: #084d3e;
     --primary-hover: rgba(8, 77, 62, 0.9);
     --primary-light: rgb(164, 229, 143);
-    --mint: #084d3e;
-    --glass: #8fd8e5;
+
+    /* Secondary accents */
     --coral: #f49bab;
     --live: #2bbe8c;
+    /* Accent tokens (light values darker for AA contrast vs light bg) */
+    --gold: #996212;
+    --muted-soft: #4f6975;
+    --rose: #a82d4a;
+    --aqua: #147263;
+
     --cta-ink: #0c0d0e;
     --current: linear-gradient(110deg, #084D3E 0%, #0d6b53 55%, #a4e58f 100%);
     --current-ink: linear-gradient(110deg, #084D3E 0%, #0d6b53 60%, #a4e58f 100%);
     --shadow: 0 30px 80px rgba(8, 77, 62, 0.12);
     --glow-op: 0.2;
     /* Code-panel water glass — heavier in light mode so code text stays readable
-       against the pale Sea Foam page background */
+       against the pale page background */
     --glass-bg: linear-gradient(
       135deg,
       rgba(8, 54, 68, 0.82) 0%,
@@ -44,7 +57,7 @@
   }
 
   [data-theme='dark'] {
-    /* Deep Lagoon (dark) */
+    /* Surfaces & text (dark) */
     --bg: #0c0d0e;
     --bg2: #111213;
     --surface: #161718;
@@ -52,21 +65,30 @@
     --text: #9ea0a0;
     --muted: #9ea0a0;
     --title: #e5e7eb;
-    --cyan: #3fb3d9;
+
+    /* Solayer green palette (dark) */
+    --cyan: #5fc99c;        /* brighter mid green */
+    --mint: #a4e58f;        /* primary green */
+    --glass: #c5f0b0;       /* lightest glow green */
     --primary: #a4e58f;
     --primary-hover: rgba(164, 229, 143, 0.9);
     --primary-light: #a4e58f;
-    --mint: #a4e58f;
-    --glass: #b5ecf2;
+
+    /* Secondary accents */
     --coral: #f49bab;
     --live: #3ed9a4;
+    /* Brighter accent values for dark theme */
+    --gold: #f5c26b;
+    --muted-soft: #9fbfca;
+    --rose: #e2607b;
+    --aqua: #7be8d8;
+
     --cta-ink: #0c0d0e;
     --current: linear-gradient(110deg, #084D3E 0%, #0d6b53 55%, #a4e58f 100%);
     --current-ink: linear-gradient(110deg, #a4e58f 0%, #0d6b53 55%, #084D3E 100%);
     --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
     --glow-op: 0.16;
-    /* Dark mode keeps the lighter, more translucent water-glass — ambient cyan
-       glows refract beautifully through against the deep page background */
+    /* Dark mode keeps the lighter, more translucent water-glass */
     --glass-bg: linear-gradient(
       135deg,
       rgba(8, 54, 68, 0.22) 0%,
@@ -112,6 +134,10 @@
   --color-glass: var(--glass);
   --color-coral: var(--coral);
   --color-live: var(--primary);
+  --color-gold: var(--gold);
+  --color-muted-soft: var(--muted-soft);
+  --color-rose: var(--rose);
+  --color-aqua: var(--aqua);
 
   --font-display: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
   --font-body: 'Inter', 'Noto Sans SC', system-ui, sans-serif;

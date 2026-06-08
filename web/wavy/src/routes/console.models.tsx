@@ -169,7 +169,7 @@ function OwnerBadge({ owner }: { owner: string }) {
         'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-xs',
         color ? '' : 'bg-[color:var(--border)]/40 text-[color:var(--muted)]',
       )}
-      style={color ? { background: `${color}1f`, color } : undefined}
+      style={color ? { background: `color-mix(in srgb, ${color} 12%, transparent)`, color } : undefined}
     >
       <span
         className="h-1.5 w-1.5 rounded-full"
@@ -189,10 +189,10 @@ const OWNER_COLOR: Record<string, string> = {
   qwen: '#615CED',
   meta: '#0082FB',
   mistralai: '#FF7000',
-  xai: '#94A3B8',
-  moonshot: '#7BE8D8',
+  xai: 'var(--muted-soft)',
+  moonshot: 'var(--aqua)',
   zhipuai: '#3859FF',
-  baichuan: '#F23F5D',
+  baichuan: 'var(--rose)',
   '01.ai': '#9D4EDD',
   cohere: '#39594D',
 }

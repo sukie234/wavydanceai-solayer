@@ -2,15 +2,19 @@ import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, ShieldCheck, ShieldOff, Power, PowerOff, Trash2, ArrowUp, ArrowDown } from 'lucide-react'
+import { Plus, ShieldCheck, ShieldOff, Power, PowerOff, Trash2, ArrowUp, ArrowDown, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { DataTable, Pager, StatusPill, type Column } from '@/components/console/DataTable'
+import { UserDialog } from '@/components/console/UserDialog'
+import { Dialog } from '@/components/console/Dialog'
 import { ROLE_LABEL, usersService, type UserAction } from '@/lib/services/users'
+import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
 import { Role, type User } from '@/lib/types'
 import { ApiError } from '@/lib/api'
 import { cn } from '@/lib/cn'
+import { checkPassword, PASSWORD_MAX } from '@/lib/password'
 
 export const Route = createFileRoute('/console/users')({
   beforeLoad: async () => {
@@ -29,6 +33,7 @@ function UsersPage() {
   const qc = useQueryClient()
   const [p, setP] = useState(0)
   const [showCreate, setShowCreate] = useState(false)
+  const [editUserId, setEditUserId] = useState<number | null>(null)
   const [err, setErr] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
@@ -113,7 +118,15 @@ function UsersPage() {
       header: '',
       width: '180px',
       align: 'right',
-      cell: (u) => <RowActions me={me} user={u} onManage={manage.mutate} onRemove={remove.mutate} />,
+      cell: (u) => (
+        <RowActions
+          me={me}
+          user={u}
+          onEdit={() => setEditUserId(u.id)}
+          onManage={manage.mutate}
+          onRemove={remove.mutate}
+        />
+      ),
     },
   ]
 
@@ -159,6 +172,17 @@ function UsersPage() {
           }}
         />
       )}
+
+      <UserDialog
+        open={editUserId !== null}
+        userId={editUserId}
+        me={me}
+        onClose={() => setEditUserId(null)}
+        onSaved={() => {
+          setEditUserId(null)
+          qc.invalidateQueries({ queryKey: ['users'] })
+        }}
+      />
     </div>
   )
 }
@@ -172,7 +196,7 @@ function RoleBadge({ role }: { role: number }) {
     isRoot
       ? 'bg-[color:var(--coral)]/12 text-[color:var(--coral)]'
       : isAdmin
-        ? 'bg-[color:var(--primary)]/15 text-[color:var(--primary)]'
+        ? 'bg-[color:var(--cyan)]/15 text-[color:var(--cyan)]'
         : 'bg-[color:var(--border)]/40 text-[color:var(--muted)]'
   return (
     <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-xs uppercase tracking-[1px]', tone)}>
@@ -185,28 +209,41 @@ function RoleBadge({ role }: { role: number }) {
 function RowActions({
   me,
   user,
+  onEdit,
   onManage,
   onRemove,
 }: {
   me: User
   user: User
+  onEdit: () => void
   onManage: (args: { username: string; action: UserAction }) => void
   onRemove: (id: number) => void
 }) {
   const isMe = me.id === user.id
   const meRole = me.role
   const canManage = !isMe && meRole > user.role // can only act on lower-ranked users
+  const confirmDialog = useConfirm()
 
   const promote = () => onManage({ username: user.username, action: 'promote' })
   const demote = () => onManage({ username: user.username, action: 'demote' })
   const enable = () => onManage({ username: user.username, action: 'enable' })
   const disable = () => onManage({ username: user.username, action: 'disable' })
-  const del = () => {
-    if (confirm(`Delete user "${user.username}"? This cannot be undone.`)) onRemove(user.id)
+  const del = async () => {
+    const ok = await confirmDialog({
+      title: 'Delete user',
+      message: `Delete user "${user.username}"? This cannot be undone.`,
+      tone: 'danger',
+    })
+    if (ok) onRemove(user.id)
   }
 
   return (
     <div className="flex items-center justify-end gap-1.5">
+      {canManage && (
+        <IconBtn label="Edit" onClick={onEdit}>
+          <Pencil className="h-3.5 w-3.5" />
+        </IconBtn>
+      )}
       {canManage && user.role < Role.AdminUser && meRole >= Role.AdminUser && (
         <IconBtn label="Promote to admin" onClick={promote}>
           <ArrowUp className="h-3.5 w-3.5" />
@@ -260,8 +297,8 @@ function IconBtn({
       onClick={onClick}
       className={cn(
         'flex h-7 w-7 items-center justify-center rounded-md border border-[color:var(--border)] text-[color:var(--muted)] transition',
-        tone === 'default' && 'hover:border-[color:var(--primary)] hover:text-[color:var(--primary)]',
-        tone === 'warn' && 'hover:border-[#F5C26B]/70 hover:text-[#F5C26B]',
+        tone === 'default' && 'hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)]',
+        tone === 'warn' && 'hover:border-[color:var(--gold)]/70 hover:text-[color:var(--gold)]',
         tone === 'coral' && 'hover:border-[color:var(--coral)]/70 hover:text-[color:var(--coral)]',
       )}
     >
@@ -278,9 +315,15 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
+  const pwIssue = password.length > 0 ? checkPassword(password) : null
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setErr(null)
+    if (pwIssue) {
+      setErr(t(`register.password_${pwIssue}`))
+      return
+    }
     setSubmitting(true)
     try {
       await usersService.create({ username, password, display_name: displayName })
@@ -293,16 +336,10 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
-      <form
-        onSubmit={submit}
-        className="w-full max-w-md rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]"
-      >
-        <div className="kicker mb-1.5">{t('users.kicker')}</div>
-        <h2 className="mb-6 font-display text-xl font-bold tracking-[-0.5px] text-[color:var(--title)]">{t('users.newUser')}</h2>
-
+    <Dialog open onClose={onClose} title={t('users.newUser')} kicker={t('users.kicker')}>
+      <form onSubmit={submit}>
         <DialogField label={t('users.col.username')} value={username} onChange={setUsername} autoFocus />
-        <DialogField label="Password" type="password" value={password} onChange={setPassword} />
+        <DialogField label={t('userDialog.field.password')} type="password" value={password} onChange={setPassword} maxLength={PASSWORD_MAX} hint={t('register.passwordHint')} />
         <DialogField label="Display name" value={displayName} onChange={setDisplayName} optional />
 
         {err && (
@@ -315,12 +352,12 @@ function CreateUserDialog({ onClose, onCreated }: { onClose: () => void; onCreat
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" size="sm" disabled={submitting || !username || !password}>
+          <Button type="submit" size="sm" disabled={submitting || !username || !password || pwIssue !== null}>
             {submitting ? '…' : t('users.newUser')}
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }
 
@@ -331,6 +368,8 @@ function DialogField({
   type = 'text',
   optional,
   autoFocus,
+  maxLength,
+  hint,
 }: {
   label: string
   value: string
@@ -338,6 +377,8 @@ function DialogField({
   type?: string
   optional?: boolean
   autoFocus?: boolean
+  maxLength?: number
+  hint?: string
 }) {
   return (
     <label className="mb-4 block">
@@ -350,8 +391,10 @@ function DialogField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
-        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20"
+        maxLength={maxLength}
+        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20"
       />
+      {hint && <span className="mt-1 block text-xs text-[color:var(--muted)]/70">{hint}</span>}
     </label>
   )
 }

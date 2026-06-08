@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-go@v5
         if: matrix.language == 'go'
         with:
-          go-version: ^1.22
+          go-version: ^1.25
       - uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
@@ -37,7 +37,14 @@ jobs:
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    # Requires "Dependency graph" to be enabled at
+    # Settings → Code security & analysis on this repository. Until it
+    # is turned on, the action errors out with "not supported on this
+    # repository", which surfaces as a red check on every PR. Gate the
+    # job on a repo variable so it stays skipped (and therefore green)
+    # by default; set `vars.ENABLE_DEPENDENCY_REVIEW = 'true'` after
+    # toggling the setting to re-enable scanning.
+    if: github.event_name == 'pull_request' && vars.ENABLE_DEPENDENCY_REVIEW == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/dependency-review-action@v4
@@ -54,3 +61,4 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml

@@ -1,5 +1,11 @@
 {
   "invalid_input": "Invalid input, please check your input",
+  "invalid_password_complexity": "Password must be 8–24 characters and contain at least one letter and one digit.",
   "send_email_failed": "failed to send email: ",
-  "invalid_parameter": "invalid parameter"
+  "invalid_parameter": "invalid parameter",
+  "username_taken": "This username is already taken — please choose another.",
+  "email_taken": "An account with this email already exists. Try signing in instead.",
+  "invalid_username_short": "Username must be at least 3 characters.",
+  "invalid_username_long": "Username must be 12 characters or fewer.",
+  "invalid_username_chars": "Username may only contain letters, digits, underscores, and hyphens."
 }

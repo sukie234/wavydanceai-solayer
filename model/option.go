@@ -4,6 +4,7 @@ import (
 	"github.com/songquanpeng/one-api/common/config"
 	"github.com/songquanpeng/one-api/common/logger"
 	billingratio "github.com/songquanpeng/one-api/relay/billing/ratio"
+	settingconfig "github.com/songquanpeng/one-api/setting/config"
 	"strconv"
 	"strings"
 	"time"
@@ -75,6 +76,20 @@ func InitOptionMap() {
 	config.OptionMap["QuotaPerUnit"] = strconv.FormatFloat(config.QuotaPerUnit, 'f', -1, 64)
 	config.OptionMap["RetryTimes"] = strconv.Itoa(config.RetryTimes)
 	config.OptionMap["Theme"] = config.Theme
+	// Payments (P0)
+	config.OptionMap["PaymentEnabled"] = strconv.FormatBool(config.PaymentEnabled)
+	config.OptionMap["StripeEnabled"] = strconv.FormatBool(config.StripeEnabled)
+	config.OptionMap["EpayEnabled"] = strconv.FormatBool(config.EpayEnabled)
+	config.OptionMap["PaymentCallbackBaseURL"] = config.PaymentCallbackBaseURL
+	config.OptionMap["PaymentReturnURL"] = config.PaymentReturnURL
+	config.OptionMap["CryptoAdaptersEnabled"] = strings.Join(config.CryptoAdaptersEnabled, ",")
+	// Seed defaults for every module registered via setting/config. Legacy
+	// keys above use the flat name (e.g. "PaymentEnabled"); registered
+	// modules use "<module>.<field>" — the two namespaces never collide
+	// because "." is not legal in a Go identifier.
+	for k, v := range settingconfig.GlobalConfig.ExportAllConfigs() {
+		config.OptionMap[k] = v
+	}
 	config.OptionMapRWMutex.Unlock()
 	loadOptionsFromDatabase()
 }
@@ -90,6 +105,17 @@ func loadOptionsFromDatabase() {
 			logger.SysError("failed to update option map: " + err.Error())
 		}
 	}
+	// Replay the now-populated OptionMap into every registered settings
+	// module. This handles the "module registered before DB seeded" case
+	// and keeps typed structs in sync with the flat snapshot. LoadFromDB
+	// filters by prefix so legacy keys are ignored.
+	config.OptionMapRWMutex.RLock()
+	snapshot := make(map[string]string, len(config.OptionMap))
+	for k, v := range config.OptionMap {
+		snapshot[k] = v
+	}
+	config.OptionMapRWMutex.RUnlock()
+	_ = settingconfig.GlobalConfig.LoadFromDB(snapshot)
 }
 
 func SyncOptions(frequency int) {
@@ -120,6 +146,13 @@ func updateOptionMap(key string, value string) (err error) {
 	config.OptionMapRWMutex.Lock()
 	defer config.OptionMapRWMutex.Unlock()
 	config.OptionMap[key] = value
+	// New-style keys ("<module>.<field>") route into the typed registry.
+	// We skip the legacy switch below — those branches only handle bare
+	// names, not dotted ones, so falling through is harmless but wasteful.
+	if strings.Contains(key, ".") {
+		_ = settingconfig.GlobalConfig.LoadFromDB(map[string]string{key: value})
+		return nil
+	}
 	if strings.HasSuffix(key, "Enabled") {
 		boolValue := value == "true"
 		switch key {
@@ -153,6 +186,12 @@ func updateOptionMap(key string, value string) (err error) {
 			config.DisplayInCurrencyEnabled = boolValue
 		case "DisplayTokenStatEnabled":
 			config.DisplayTokenStatEnabled = boolValue
+		case "PaymentEnabled":
+			config.PaymentEnabled = boolValue
+		case "StripeEnabled":
+			config.StripeEnabled = boolValue
+		case "EpayEnabled":
+			config.EpayEnabled = boolValue
 		}
 	}
 	switch key {
@@ -239,6 +278,18 @@ func updateOptionMap(key string, value string) (err error) {
 		config.QuotaPerUnit, _ = strconv.ParseFloat(value, 64)
 	case "Theme":
 		config.Theme = value
+	case "PaymentCallbackBaseURL":
+		config.PaymentCallbackBaseURL = value
+	case "PaymentReturnURL":
+		config.PaymentReturnURL = value
+	case "CryptoAdaptersEnabled":
+		var enabled []string
+		for _, name := range strings.Split(value, ",") {
+			if trimmed := strings.TrimSpace(name); trimmed != "" {
+				enabled = append(enabled, trimmed)
+			}
+		}
+		config.CryptoAdaptersEnabled = enabled
 	}
 	return err
 }

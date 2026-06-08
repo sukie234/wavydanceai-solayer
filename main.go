@@ -22,6 +22,7 @@ import (
 	"github.com/songquanpeng/one-api/model"
 	"github.com/songquanpeng/one-api/relay/adaptor/openai"
 	"github.com/songquanpeng/one-api/router"
+	passkey_setting "github.com/songquanpeng/one-api/setting/passkey"
 )
 
 //go:embed web/build/*
@@ -63,6 +64,9 @@ func main() {
 
 	// Initialize options
 	model.InitOptionMap()
+	if err := passkey_setting.GetPasskeySetting().Validate(); err != nil {
+		logger.FatalLog("passkey config invalid: " + err.Error())
+	}
 	logger.SysLog(fmt.Sprintf("using theme %s", config.Theme))
 	if common.RedisEnabled {
 		// for compatibility with old versions

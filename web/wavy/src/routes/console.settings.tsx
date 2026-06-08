@@ -18,73 +18,77 @@ export const Route = createFileRoute('/console/settings')({
   component: SettingsPage,
 })
 
+// Field labels / hints / placeholders are i18n keys (resolved against the
+// `settings.*` namespace at render). The literal `key` is the backend option
+// name and stays untranslated — it doubles as the mono-font caption below
+// the label.
 type Field =
-  | { key: string; kind: 'bool'; label: string; hint?: string }
-  | { key: string; kind: 'text'; label: string; hint?: string; placeholder?: string }
-  | { key: string; kind: 'number'; label: string; hint?: string }
+  | { key: string; kind: 'bool'; labelKey: string; hintKey?: string }
+  | { key: string; kind: 'text'; labelKey: string; hintKey?: string; placeholderKey?: string }
+  | { key: string; kind: 'number'; labelKey: string; hintKey?: string }
 
 type Section = {
   id: string
-  title: string
-  desc?: string
+  titleKey: string
+  descKey?: string
   fields: Field[]
 }
 
 const SECTIONS: Section[] = [
   {
     id: 'auth',
-    title: 'Login & registration',
-    desc: 'Control how users sign in to solayer.org.',
+    titleKey: 'settings.sec.auth.title',
+    descKey: 'settings.sec.auth.desc',
     fields: [
-      { key: 'PasswordLoginEnabled', kind: 'bool', label: 'Password login' },
-      { key: 'PasswordRegisterEnabled', kind: 'bool', label: 'Password registration' },
-      { key: 'RegisterEnabled', kind: 'bool', label: 'Open registration', hint: 'Allow new users to sign up.' },
-      { key: 'EmailVerificationEnabled', kind: 'bool', label: 'Email verification' },
-      { key: 'GitHubOAuthEnabled', kind: 'bool', label: 'GitHub OAuth' },
-      { key: 'WeChatAuthEnabled', kind: 'bool', label: 'WeChat OAuth' },
-      { key: 'OidcEnabled', kind: 'bool', label: 'OIDC SSO' },
-      { key: 'TurnstileCheckEnabled', kind: 'bool', label: 'Turnstile (Cloudflare bot check)' },
+      { key: 'PasswordLoginEnabled', kind: 'bool', labelKey: 'settings.field.PasswordLoginEnabled' },
+      { key: 'PasswordRegisterEnabled', kind: 'bool', labelKey: 'settings.field.PasswordRegisterEnabled' },
+      { key: 'RegisterEnabled', kind: 'bool', labelKey: 'settings.field.RegisterEnabled', hintKey: 'settings.field.RegisterEnabled_hint' },
+      { key: 'EmailVerificationEnabled', kind: 'bool', labelKey: 'settings.field.EmailVerificationEnabled' },
+      { key: 'GitHubOAuthEnabled', kind: 'bool', labelKey: 'settings.field.GitHubOAuthEnabled' },
+      { key: 'WeChatAuthEnabled', kind: 'bool', labelKey: 'settings.field.WeChatAuthEnabled' },
+      { key: 'OidcEnabled', kind: 'bool', labelKey: 'settings.field.OidcEnabled' },
+      { key: 'TurnstileCheckEnabled', kind: 'bool', labelKey: 'settings.field.TurnstileCheckEnabled' },
     ],
   },
   {
     id: 'channels',
-    title: 'Channels & routing',
-    desc: 'How channels behave on failure and how usage is tracked.',
+    titleKey: 'settings.sec.channels.title',
+    descKey: 'settings.sec.channels.desc',
     fields: [
-      { key: 'AutomaticDisableChannelEnabled', kind: 'bool', label: 'Auto-disable failing channels' },
-      { key: 'AutomaticEnableChannelEnabled', kind: 'bool', label: 'Auto-enable recovered channels' },
-      { key: 'ChannelDisableThreshold', kind: 'number', label: 'Disable threshold (sec)', hint: 'Channels slower than this for too long get disabled.' },
-      { key: 'ApproximateTokenEnabled', kind: 'bool', label: 'Approximate token count', hint: 'Use a fast heuristic instead of running the tokenizer.' },
-      { key: 'LogConsumeEnabled', kind: 'bool', label: 'Log consumption events' },
+      { key: 'AutomaticDisableChannelEnabled', kind: 'bool', labelKey: 'settings.field.AutomaticDisableChannelEnabled' },
+      { key: 'AutomaticEnableChannelEnabled', kind: 'bool', labelKey: 'settings.field.AutomaticEnableChannelEnabled' },
+      { key: 'ChannelDisableThreshold', kind: 'number', labelKey: 'settings.field.ChannelDisableThreshold', hintKey: 'settings.field.ChannelDisableThreshold_hint' },
+      { key: 'ApproximateTokenEnabled', kind: 'bool', labelKey: 'settings.field.ApproximateTokenEnabled', hintKey: 'settings.field.ApproximateTokenEnabled_hint' },
+      { key: 'LogConsumeEnabled', kind: 'bool', labelKey: 'settings.field.LogConsumeEnabled' },
     ],
   },
   {
     id: 'display',
-    title: 'Display',
-    desc: 'How quota and tokens are shown to users.',
+    titleKey: 'settings.sec.display.title',
+    descKey: 'settings.sec.display.desc',
     fields: [
-      { key: 'DisplayInCurrencyEnabled', kind: 'bool', label: 'Show quota as currency ($)' },
-      { key: 'DisplayTokenStatEnabled', kind: 'bool', label: 'Show token statistics in token list' },
+      { key: 'DisplayInCurrencyEnabled', kind: 'bool', labelKey: 'settings.field.DisplayInCurrencyEnabled' },
+      { key: 'DisplayTokenStatEnabled', kind: 'bool', labelKey: 'settings.field.DisplayTokenStatEnabled' },
     ],
   },
   {
     id: 'email',
-    title: 'Email domain restriction',
-    desc: 'Restrict registration to specific email domains.',
+    titleKey: 'settings.sec.email.title',
+    descKey: 'settings.sec.email.desc',
     fields: [
-      { key: 'EmailDomainRestrictionEnabled', kind: 'bool', label: 'Enable domain whitelist' },
-      { key: 'EmailDomainWhitelist', kind: 'text', label: 'Whitelist (comma-separated)', placeholder: 'gmail.com,company.com' },
+      { key: 'EmailDomainRestrictionEnabled', kind: 'bool', labelKey: 'settings.field.EmailDomainRestrictionEnabled' },
+      { key: 'EmailDomainWhitelist', kind: 'text', labelKey: 'settings.field.EmailDomainWhitelist', placeholderKey: 'settings.field.EmailDomainWhitelist_placeholder' },
     ],
   },
   {
     id: 'smtp',
-    title: 'SMTP',
-    desc: 'Outgoing mail for verification and password reset.',
+    titleKey: 'settings.sec.smtp.title',
+    descKey: 'settings.sec.smtp.desc',
     fields: [
-      { key: 'SMTPServer', kind: 'text', label: 'Server' },
-      { key: 'SMTPPort', kind: 'number', label: 'Port' },
-      { key: 'SMTPFrom', kind: 'text', label: 'From address', placeholder: 'no-reply@solayer.org' },
-      { key: 'SMTPAccount', kind: 'text', label: 'Account' },
+      { key: 'SMTPServer', kind: 'text', labelKey: 'settings.field.SMTPServer' },
+      { key: 'SMTPPort', kind: 'number', labelKey: 'settings.field.SMTPPort' },
+      { key: 'SMTPFrom', kind: 'text', labelKey: 'settings.field.SMTPFrom', placeholderKey: 'settings.field.SMTPFrom_placeholder' },
+      { key: 'SMTPAccount', kind: 'text', labelKey: 'settings.field.SMTPAccount' },
       // Token/Secret fields are intentionally NOT returned by the backend's GetOptions.
       // We render them as write-only inputs that update without showing the current value.
     ],
@@ -112,7 +116,7 @@ function SettingsPage() {
       {isLoading && (
         <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] px-5 py-16 text-center text-sm text-[color:var(--muted)]">
           <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />
-          Loading options…
+          {t('settings.loading')}
         </div>
       )}
 
@@ -138,11 +142,12 @@ function SectionCard({
   onSave: (args: { key: string; value: string }) => void
   saving: boolean
 }) {
+  const { t } = useTranslation()
   return (
     <section className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-jelly)]">
       <header className="border-b border-[color:var(--border)] bg-[color:var(--bg2)]/50 px-6 py-4">
-        <h2 className="font-display text-base font-bold tracking-[-0.3px] text-[color:var(--title)]">{section.title}</h2>
-        {section.desc && <p className="mt-0.5 text-xs text-[color:var(--muted)]">{section.desc}</p>}
+        <h2 className="font-display text-base font-bold tracking-[-0.3px]">{t(section.titleKey)}</h2>
+        {section.descKey && <p className="mt-0.5 text-xs text-[color:var(--muted)]">{t(section.descKey)}</p>}
       </header>
       <div className="divide-y divide-[color:var(--border)]/60">
         {section.fields.map((f) => (
@@ -164,8 +169,15 @@ function FieldRow({
   onSave: (args: { key: string; value: string }) => void
   saving: boolean
 }) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState(value)
   const [savedFlash, setSavedFlash] = useState(false)
+  // Optimistic local state for bool fields: render from `boolDraft` so the
+  // toggle flips the moment the user clicks, instead of waiting for the
+  // mutation to finish and react-query to invalidate / refetch. If the
+  // server rejects or returns a different value, the useEffect below
+  // re-syncs from `value` (which is the canonical truth).
+  const [boolDraft, setBoolDraft] = useState(asBool(value))
 
   // Sync draft once when the server value arrives after an initial empty render.
   // Using useEffect instead of a render-body setState avoids clobbering user edits
@@ -179,31 +191,28 @@ function FieldRow({
     }
   }, [synced, field.kind, draft, value])
 
+  useEffect(() => {
+    if (field.kind === 'bool') setBoolDraft(asBool(value))
+  }, [field.kind, value])
+
   if (field.kind === 'bool') {
-    const on = asBool(value)
     return (
       <div className="grid grid-cols-[1fr_auto] items-center gap-4 px-6 py-4">
         <div className="min-w-0">
-          <div className="text-sm font-medium">{field.label}</div>
-          {field.hint && <div className="mt-0.5 text-xs text-[color:var(--muted)]">{field.hint}</div>}
+          <div className="text-sm font-medium">{t(field.labelKey)}</div>
+          {field.hintKey && <div className="mt-0.5 text-xs text-[color:var(--muted)]">{t(field.hintKey)}</div>}
           <div className="mt-1 font-mono text-[11px] uppercase tracking-[1.5px] text-[color:var(--muted)]/60">
             {field.key}
           </div>
         </div>
         <Toggle
-          checked={on}
+          checked={boolDraft}
           disabled={saving}
           onChange={(next) => {
+            setBoolDraft(next)
             onSave({ key: field.key, value: next ? 'true' : 'false' })
-            setSavedFlash(true)
-            setTimeout(() => setSavedFlash(false), 1200)
           }}
         />
-        {savedFlash && (
-          <span className="absolute right-20 mt-1 text-xs text-[color:var(--primary)]">
-            <Check className="inline h-3 w-3" />
-          </span>
-        )}
       </div>
     )
   }
@@ -212,8 +221,8 @@ function FieldRow({
   return (
     <div className="grid grid-cols-[260px_1fr_auto] items-center gap-4 px-6 py-4">
       <div className="min-w-0">
-        <div className="text-sm font-medium">{field.label}</div>
-        {field.hint && <div className="mt-0.5 text-xs text-[color:var(--muted)]">{field.hint}</div>}
+        <div className="text-sm font-medium">{t(field.labelKey)}</div>
+        {field.hintKey && <div className="mt-0.5 text-xs text-[color:var(--muted)]">{t(field.hintKey)}</div>}
         <div className="mt-1 font-mono text-[11px] uppercase tracking-[1.5px] text-[color:var(--muted)]/60">
           {field.key}
         </div>
@@ -221,11 +230,11 @@ function FieldRow({
       <input
         type={field.kind === 'number' ? 'number' : 'text'}
         value={draft}
-        placeholder={field.kind === 'text' ? field.placeholder : ''}
+        placeholder={field.kind === 'text' && field.placeholderKey ? t(field.placeholderKey) : ''}
         onChange={(e) => setDraft(e.target.value)}
         className={cn(
-          'w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 font-mono text-sm transition focus:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]/20',
-          dirty && 'border-[color:var(--primary)]/60',
+          'w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg2)] px-3 py-2 font-mono text-sm transition focus:border-[color:var(--cyan)] focus:outline-none focus:ring-2 focus:ring-[color:var(--cyan)]/20',
+          dirty && 'border-[color:var(--cyan)]/60',
         )}
       />
       <Button
@@ -240,7 +249,7 @@ function FieldRow({
         }}
       >
         {savedFlash ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
-        {savedFlash ? 'Saved' : 'Save'}
+        {savedFlash ? t('settings.saved') : t('settings.save')}
       </Button>
     </div>
   )
@@ -268,7 +277,7 @@ function Toggle({
       className={cn(
         'relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50',
         checked
-          ? 'border-transparent bg-gradient-to-r from-[#084D3E] to-[#0d6b53]'
+          ? 'border-transparent bg-gradient-to-r from-[color:var(--cyan)] to-[color:var(--mint)]'
           : 'border-[color:var(--border)] bg-[color:var(--bg2)]',
       )}
     >

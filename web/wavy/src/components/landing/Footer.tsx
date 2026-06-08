@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 export function Footer() {
@@ -19,7 +20,7 @@ export function Footer() {
           <a href="#">{t('footer.playground')}</a>
         </Col>
         <Col title={t('footer.dev')}>
-          <a href="#">{t('nav.docs')}</a>
+          <Link to="/docs">{t('nav.docs')}</Link>
           <a href="#">{t('footer.status')}</a>
           <a href="#">{t('footer.changelog')}</a>
         </Col>

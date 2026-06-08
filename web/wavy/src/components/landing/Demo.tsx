@@ -13,15 +13,15 @@ export function Demo() {
       {/* Ambient glows that the water-glass code panel refracts — slightly brighter so they read through the lighter glass */}
       <div
         className="pointer-events-none absolute right-[6%] top-1/2 z-0 h-[460px] w-[460px] -translate-y-1/2 rounded-full opacity-70 blur-[120px]"
-        style={{ background: 'radial-gradient(circle, #0d6b53 0%, transparent 65%)' }}
+        style={{ background: 'radial-gradient(circle, var(--mint) 0%, transparent 65%)' }}
       />
       <div
         className="pointer-events-none absolute right-[28%] top-[18%] z-0 h-[280px] w-[280px] rounded-full opacity-60 blur-[100px]"
-        style={{ background: 'radial-gradient(circle, #084D3E 0%, transparent 60%)' }}
+        style={{ background: 'radial-gradient(circle, var(--cyan) 0%, transparent 60%)' }}
       />
       <div
         className="pointer-events-none absolute right-0 bottom-[8%] z-0 h-[220px] w-[220px] rounded-full opacity-45 blur-[80px]"
-        style={{ background: 'radial-gradient(circle, #a4e58f 0%, transparent 60%)' }}
+        style={{ background: 'radial-gradient(circle, var(--glass) 0%, transparent 60%)' }}
       />
 
       <div className="relative z-10 mx-auto grid max-w-[1180px] items-center gap-14 md:grid-cols-2">
@@ -62,9 +62,9 @@ export function Demo() {
           />
 
           <div className="relative flex items-center gap-2 border-b border-white/10 px-[18px] py-3.5">
-            <i className="block h-[11px] w-[11px] rounded-full bg-[#F49BAB] shadow-[0_0_8px_rgba(244,155,171,0.5)]" />
-            <i className="block h-[11px] w-[11px] rounded-full bg-[#F5C26B] shadow-[0_0_8px_rgba(245,194,107,0.5)]" />
-            <i className="block h-[11px] w-[11px] rounded-full bg-[#0d6b53] shadow-[0_0_8px_rgba(78,212,220,0.5)]" />
+            <i className="block h-[11px] w-[11px] rounded-full bg-[color:var(--coral)] shadow-[0_0_8px_rgba(244,155,171,0.5)]" />
+            <i className="block h-[11px] w-[11px] rounded-full bg-[color:var(--gold)] shadow-[0_0_8px_rgba(245,194,107,0.5)]" />
+            <i className="block h-[11px] w-[11px] rounded-full bg-[color:var(--mint)] shadow-[0_0_8px_rgba(78,212,220,0.5)]" />
             <div className="ml-auto flex gap-1.5">
               {(['chat', 'image', 'video'] as Tab[]).map((id) => (
                 <button
@@ -72,9 +72,9 @@ export function Demo() {
                   type="button"
                   onClick={() => setTab(id)}
                   className={cn(
-                    'rounded-full border border-white/10 bg-white/[.03] px-3.5 py-1 font-mono text-xs tracking-[1px] text-[#9FBFCA] backdrop-blur-sm transition hover:text-[#EAFBFE]',
+                    'rounded-full border border-white/10 bg-white/[.03] px-3.5 py-1 font-mono text-xs tracking-[1px] text-[color:var(--muted-soft)] backdrop-blur-sm transition hover:text-[color:var(--text)]',
                     tab === id &&
-                      'border-transparent bg-gradient-to-r from-[#084D3E] to-[#0d6b53] font-bold text-[#0c0d0e] hover:text-[#0c0d0e]',
+                      'border-transparent bg-gradient-to-r from-[color:var(--cyan)] to-[color:var(--mint)] font-bold text-[color:var(--cta-ink)] hover:text-[color:var(--cta-ink)]',
                   )}
                 >
                   {t(`demo.tab.${id}`)}
@@ -82,7 +82,7 @@ export function Demo() {
               ))}
             </div>
           </div>
-          <div className="relative overflow-x-auto p-[22px] font-mono text-[0.84rem] leading-[1.75] text-[#EAFBFE]">
+          <div className="relative overflow-x-auto p-[22px] font-mono text-[0.84rem] leading-[1.75] text-[color:var(--text)]">
             {tab === 'chat' && <ChatCode />}
             {tab === 'image' && <ImageCode />}
             {tab === 'video' && <VideoCode />}
@@ -93,10 +93,10 @@ export function Demo() {
   )
 }
 
-const K = ({ children }: { children: React.ReactNode }) => <span className="text-[#a4e58f]">{children}</span>
-const S = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--primary-light)]">{children}</span>
+const K = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--glass)]">{children}</span>
+const S = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--cyan)]">{children}</span>
 const C = ({ children }: { children: React.ReactNode }) => <span className="text-[#7FA9B5]">{children}</span>
-const F = ({ children }: { children: React.ReactNode }) => <span className="text-[#F49BAB]">{children}</span>
+const F = ({ children }: { children: React.ReactNode }) => <span className="text-[color:var(--coral)]">{children}</span>
 
 function ChatCode() {
   return (

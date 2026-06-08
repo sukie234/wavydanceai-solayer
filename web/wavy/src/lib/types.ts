@@ -24,6 +24,7 @@ export interface User {
   group: string
   aff_code: string
   inviter_id: number
+  passkeys?: import('@/lib/services/passkey').PasskeyView[]
 }
 
 export const Role = {
@@ -75,6 +76,7 @@ export interface Channel {
   model_mapping: string | null
   priority: number | null
   config: string
+  system_prompt: string | null
 }
 
 export const LogType = {
@@ -147,4 +149,46 @@ export interface Redemption {
   created_time: number
   redeemed_time: number
   count?: number
+}
+
+// --- Topup (online recharge) ---
+
+/** One adapter the backend has registered for crypto payments. */
+export interface CryptoAdapterInfo {
+  name: string
+  display_name: string
+  assets: string[]
+}
+
+/** Configured purchasable amount tier returned by /topup/info. */
+export interface TopupAmountOption {
+  money: number // cents (CNY for EPay, USD for Stripe/crypto)
+  quota: number
+  display: string
+  discount?: string
+}
+
+/** Response of GET /api/user/topup/info. */
+export interface TopupInfo {
+  stripe_enabled: boolean
+  epay_enabled: boolean
+  crypto_adapters: CryptoAdapterInfo[]
+  amount_options: TopupAmountOption[]
+  return_url: string
+}
+
+/** One topup order row returned by /topup/self or admin list. */
+export interface Topup {
+  id: number
+  user_id: number
+  trade_no: string
+  gateway_trade_no: string
+  gateway: string // "stripe" | "epay" | "crypto:<adapter>"
+  pay_method: string
+  money: number // cents
+  currency: string
+  quota: number
+  status: 'pending' | 'success' | 'failed' | 'refunded'
+  created_at: number
+  completed_at: number
 }

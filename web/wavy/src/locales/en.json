@@ -14,10 +14,14 @@
       "overview": "Overview",
       "channels": "Channels",
       "models": "Models",
+      "playground": "Playground",
       "tokens": "API Keys",
       "logs": "Request Logs",
       "analytics": "Analytics",
       "billing": "Billing",
+      "topup": "Top up",
+      "docs": "Documentation",
+      "profile": "Profile",
       "users": "Users",
       "settings": "Settings"
     },
@@ -54,18 +58,204 @@
         "routing": "Priority routing enabled for Claude Opus 4.6",
         "routingMeta": "min-latency strategy · 3 fallback rules"
       }
+    },
+    "playground": {
+      "kicker": "Playground",
+      "title": "Playground",
+      "subtitle": "Try any model with your own quota — no SDK needed.",
+      "modality": {
+        "chat": "Chat",
+        "chatDesc": "Talk to LLMs with full parameter control.",
+        "image": "Image",
+        "imageDesc": "Generate images from text prompts.",
+        "video": "Video",
+        "videoDesc": "Generate short videos from prompts.",
+        "open": "Open",
+        "comingSoon": "Coming soon"
+      },
+      "chat": {
+        "title": "Chat Playground",
+        "back": "Back",
+        "newSession": "New chat",
+        "untitled": "Untitled",
+        "empty": "No conversations yet.",
+        "emptyMessages": "Send a message to get started.",
+        "send": "Send",
+        "stop": "Stop",
+        "placeholder": "Ask anything…",
+        "params": {
+          "model": "Model",
+          "temperature": "Temperature",
+          "maxTokens": "Max tokens",
+          "topP": "Top-p",
+          "system": "System prompt",
+          "systemPlaceholder": "You are a helpful assistant."
+        },
+        "quota": {
+          "remaining": "Remaining: {{quota}}",
+          "lastRequest": "Last: {{tokens}} tokens"
+        },
+        "loadingModels": "Loading available models…",
+        "error": {
+          "noModels": "No chat models available",
+          "noModelsHint": "Your group has no chat-capable models enabled yet. Ask an admin to add one.",
+          "backHome": "Back to console",
+          "topup": "Top up"
+        }
+      },
+      "image": {
+        "title": "Image Playground",
+        "newSession": "New image",
+        "empty": "No image sessions yet.",
+        "emptyResults": "Describe what you want to see.",
+        "emptyResultsHint": "Pick a model on the right, then send a prompt below.",
+        "generating": "Generating…",
+        "placeholder": "A misty harbour at dawn, watercolor on rough paper…",
+        "error": {
+          "noModels": "No image models available",
+          "noModelsHint": "Your group has no image-generation models enabled yet. Ask an admin to add one."
+        }
+      },
+      "video": {
+        "title": "Video Playground",
+        "newSession": "New video",
+        "empty": "No video sessions yet.",
+        "emptyResults": "Describe a short scene.",
+        "emptyResultsHint": "Pick a model on the right, then send a prompt below. Video generation can take 30s–2 min.",
+        "generating": "Rendering — this can take up to a minute…",
+        "placeholder": "A robot dog chasing a paper kite along a beach at sunset…",
+        "error": {
+          "noModels": "No video models available",
+          "noModelsHint": "Your group has no video-generation models enabled yet. Ask an admin to add one."
+        }
+      },
+      "status": {
+        "idle": "Idle",
+        "pending": "Generating",
+        "succeeded": "Done",
+        "failed": "Failed"
+      },
+      "field": {
+        "model": "Model",
+        "size": "Size",
+        "count": "Count",
+        "quality": "Quality",
+        "style": "Style",
+        "aspectRatio": "Aspect ratio",
+        "resolution": "Resolution",
+        "duration": "Duration (s)",
+        "sound": "Sound",
+        "cameraFixed": "Lock camera",
+        "specHint": "Spec: {{spec}}",
+        "gptImage2ResolutionHint": "Note: 1:1 aspect ratio cannot be rendered at 4K."
+      }
     }
   },
   "common": {
     "toggleTheme": "Toggle theme",
-    "language": "Language"
+    "language": "Language",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "create": "Create",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "or": "or"
+  },
+  "oauth": {
+    "workingTitle": "Signing you in…",
+    "workingBody": "Finishing the {{provider}} handshake. Hold tight.",
+    "failedTitle": "Sign-in failed",
+    "backToLogin": "Back to sign in"
+  },
+  "channelDialog": {
+    "kicker": "Channel",
+    "titleCreate": "Add channel",
+    "titleEdit": "Edit channel",
+    "field": {
+      "name": "Name",
+      "type": "Provider",
+      "key": "API key",
+      "keyEditPlaceholder": "Leave empty to keep current key",
+      "keyEditHint": "Only fill in to rotate the key.",
+      "baseUrl": "Base URL",
+      "baseUrlWarning": "Looks like a full endpoint — pass only the host (e.g. https://api.openai.com). The gateway appends /v1/chat/completions itself; saving as-is will produce a double path and 404 at request time.",
+      "models": "Models",
+      "modelsHint": "Comma-separated. Example: gpt-4o,gpt-4o-mini",
+      "group": "Group",
+      "priority": "Priority",
+      "priorityHint": "Higher routes earlier on ties.",
+      "modelMapping": "Model mapping",
+      "modelMappingHint": "JSON map of incoming → upstream names.",
+      "systemPrompt": "System prompt override"
+    },
+    "errors": { "keyRequired": "API key is required for new channels." }
+  },
+  "userDialog": {
+    "kicker": "User",
+    "title": "Edit user",
+    "role": { "user": "User", "admin": "Admin" },
+    "field": {
+      "username": "Username",
+      "usernameHint": "Username can't be changed.",
+      "displayName": "Display name",
+      "email": "Email",
+      "group": "Group",
+      "quota": "Quota",
+      "quotaHint": "Remaining balance in tokens.",
+      "role": "Role",
+      "roleHint": "Only root can promote a user to admin.",
+      "password": "New password",
+      "passwordHint": "Leave empty to keep the current password."
+    }
+  },
+  "profile": {
+    "kicker": "Account",
+    "title": "Profile",
+    "lead": "Update your display name and password.",
+    "personal": {
+      "title": "Personal info",
+      "desc": "Saved instantly. Username and email are read-only.",
+      "username": "Username",
+      "usernameHint": "Contact an admin to change it.",
+      "displayName": "Display name",
+      "email": "Email",
+      "emailHint": "Bound at registration."
+    },
+    "password": {
+      "title": "Change password",
+      "desc": "You'll stay signed in. Use at least 8 characters.",
+      "new": "New password",
+      "newHint": "Minimum 8 characters.",
+      "confirm": "Confirm password",
+      "submit": "Update password",
+      "errTooShort": "Password must be at least 8 characters.",
+      "errMismatch": "Passwords do not match."
+    },
+    "twofa": {
+      "title": "Two-factor authentication",
+      "desc": "Protect your account with a time-based code from an authenticator app (1Password, Google Authenticator, Authy…).",
+      "enable": "Enable 2FA",
+      "disable": "Disable 2FA",
+      "regenerate": "Regenerate backup codes",
+      "scanHint": "Scan the QR with your authenticator app, or paste the secret manually.",
+      "secretLabel": "Secret",
+      "backupLabel": "Backup codes",
+      "backupHint": "Save these now — they're shown only once. Each works in place of a code when you can't reach your app.",
+      "confirmCode": "Code from your app",
+      "confirmEnable": "Confirm and enable",
+      "confirmDisable": "Confirm and disable",
+      "disableHint": "Enter a current code (or a backup code) to confirm.",
+      "regenerateHint": "Generating new backup codes invalidates the old ones immediately.",
+      "enabled": "2FA is on · {{count}} backup codes left"
+    }
   },
   "hero": {
     "tag": "All systems flowing · 99.99% uptime",
     "title": "One Wave.",
     "title_grad": "Every Model.",
     "sub": "The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed at the speed of the current.",
-    "ctaPrimary": "Start Free — 1M tokens",
+    "ctaPrimary": "Start free",
     "ctaSecondary": "Read the Docs",
     "st1": "models, one API",
     "st2": "routing overhead",
@@ -129,7 +319,7 @@
     "title": "Pay for tokens, not seats.",
     "surf": {
       "per": "/ forever",
-      "f1": "1M free tokens / month",
+      "f1": "Trial credit on sign-up",
       "f2": "All open-weight models",
       "f3": "Community support",
       "cta": "Start free"
@@ -189,7 +379,88 @@
     "signIn": "Sign in",
     "failed": "Login failed",
     "helper": "Lost your way?",
-    "backHome": "Back to homepage"
+    "backHome": "Back to homepage",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "oauth": {
+      "google": "Continue with Google",
+      "github": "Continue with GitHub"
+    },
+    "twoFAHint": "Enter the 6-digit code from your authenticator app, or a backup code.",
+    "twoFACode": "Verification code",
+    "verifyCode": "Verify",
+    "signInWithPasskey": "Sign in with Passkey",
+    "usePasskey": "Use Passkey",
+    "useTotp": "Use authenticator app code",
+    "chooseFactor": "Choose a second factor",
+    "usernameRequired": "Username is required",
+    "forgotPassword": "Forgot password?"
+  },
+  "register": {
+    "kicker": "solayer.org · sign up",
+    "title": "Create your account",
+    "email": "Email",
+    "emailHint": "We'll use this for password recovery.",
+    "emailInvalid": "Enter a valid email address.",
+    "verificationCode": "Verification code",
+    "verificationCodeHint": "6-digit code from your email.",
+    "sendCode": "Send code",
+    "resendIn": "Resend in {{seconds}}s",
+    "codeSent": "Code sent to {{email}}. Check your inbox.",
+    "codeSendFailed": "Could not send verification code.",
+    "username": "Username",
+    "usernameHint": "3–12 characters.",
+    "username_too_short": "Username must be at least 3 characters.",
+    "username_too_long": "Username must be 12 characters or fewer.",
+    "username_invalid_chars": "Username may only contain letters, digits, underscores, and hyphens.",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "8–24 characters, with at least one letter and one digit.",
+    "passwordShort": "Password must be at least 8 characters.",
+    "password_too_short": "Password must be at least 8 characters.",
+    "password_too_long": "Password must be 24 characters or fewer.",
+    "password_needs_letter_and_digit": "Password must contain at least one letter and one digit.",
+    "confirmMismatch": "Passwords don't match.",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "failed": "Registration failed",
+    "oauth": {
+      "google": "Sign up with Google",
+      "github": "Sign up with GitHub"
+    }
+  },
+  "forgot": {
+    "kicker": "Account recovery",
+    "title": "Reset your password",
+    "lead": "Enter the email tied to your account. We'll send a reset link.",
+    "email": "Email",
+    "send": "Send reset link",
+    "sentTitle": "Check your email",
+    "sentBody": "We sent a reset link to {{email}}. The link is valid for 30 minutes.",
+    "resend": "Resend",
+    "resendIn": "Resend in {{seconds}}s",
+    "backToLogin": "Remembered it?",
+    "signIn": "Back to sign in",
+    "failed": "Could not send reset link"
+  },
+  "reset": {
+    "kicker": "Password reset",
+    "title": "Confirm reset",
+    "confirmLead": "Generate a new password for {{email}}. Once you continue, the old password stops working immediately.",
+    "confirm": "Generate new password",
+    "successTitle": "New password ready",
+    "successBody": "Copy it now — this is the only time it's shown. Sign in as {{email}} and change it from your profile.",
+    "newPasswordLabel": "Temporary password",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "changeReminder": "Change this immediately after signing in.",
+    "goSignIn": "Go to sign in",
+    "invalidTitle": "Link expired or invalid",
+    "invalidBody": "The reset link is missing required parameters or has already been used. Request a fresh one.",
+    "requestAgain": "Request a new link",
+    "backToLogin": "Back to sign in",
+    "failed": "Reset failed"
   },
   "users": {
     "kicker": "Account",
@@ -209,7 +480,45 @@
   "settings": {
     "kicker": "Root only",
     "title": "Settings",
-    "lead": "System-wide configuration. Changes take effect immediately."
+    "lead": "System-wide configuration. Changes take effect immediately.",
+    "loading": "Loading options…",
+    "save": "Save",
+    "saved": "Saved",
+    "sec": {
+      "auth": { "title": "Login & registration", "desc": "Control how users sign in to solayer.org." },
+      "channels": { "title": "Channels & routing", "desc": "How channels behave on failure and how usage is tracked." },
+      "display": { "title": "Display", "desc": "How quota and tokens are shown to users." },
+      "email": { "title": "Email domain restriction", "desc": "Restrict registration to specific email domains." },
+      "smtp": { "title": "SMTP", "desc": "Outgoing mail for verification and password reset." }
+    },
+    "field": {
+      "PasswordLoginEnabled": "Password login",
+      "PasswordRegisterEnabled": "Password registration",
+      "RegisterEnabled": "Open registration",
+      "RegisterEnabled_hint": "Allow new users to sign up.",
+      "EmailVerificationEnabled": "Email verification",
+      "GitHubOAuthEnabled": "GitHub OAuth",
+      "WeChatAuthEnabled": "WeChat OAuth",
+      "OidcEnabled": "OIDC SSO",
+      "TurnstileCheckEnabled": "Turnstile (Cloudflare bot check)",
+      "AutomaticDisableChannelEnabled": "Auto-disable failing channels",
+      "AutomaticEnableChannelEnabled": "Auto-enable recovered channels",
+      "ChannelDisableThreshold": "Disable threshold (sec)",
+      "ChannelDisableThreshold_hint": "Channels slower than this for too long get disabled.",
+      "ApproximateTokenEnabled": "Approximate token count",
+      "ApproximateTokenEnabled_hint": "Use a fast heuristic instead of running the tokenizer.",
+      "LogConsumeEnabled": "Log consumption events",
+      "DisplayInCurrencyEnabled": "Show quota as currency ($)",
+      "DisplayTokenStatEnabled": "Show token statistics in token list",
+      "EmailDomainRestrictionEnabled": "Enable domain whitelist",
+      "EmailDomainWhitelist": "Whitelist (comma-separated)",
+      "EmailDomainWhitelist_placeholder": "gmail.com,company.com",
+      "SMTPServer": "Server",
+      "SMTPPort": "Port",
+      "SMTPFrom": "From address",
+      "SMTPFrom_placeholder": "no-reply@solayer.org",
+      "SMTPAccount": "Account"
+    }
   },
   "models": {
     "kicker": "Catalog",
@@ -241,6 +550,72 @@
       "quota": "Quota"
     }
   },
+  "topup": {
+    "kicker": "Payments",
+    "title": "Top up balance",
+    "lead": "Add credit to this account via Stripe, Alipay/WeChat or crypto.",
+    "loading": "Checking available payment methods…",
+    "noGateways": "No payment gateways are enabled yet. Ask an admin to turn one on under Settings → Payments.",
+    "quotaUnit": "quota",
+    "errBelowMin": "Amount is below the minimum.",
+    "amount": {
+      "label": "Step 1",
+      "title": "Pick an amount",
+      "custom": "Or enter a custom amount",
+      "customPlaceholder": "e.g. 25.00"
+    },
+    "pay": {
+      "kicker": "Step 2",
+      "title": "Pay with…",
+      "pickFirst": "Choose an amount first.",
+      "summary": "You'll be redirected to complete a {{money}} payment."
+    },
+    "gw": {
+      "stripe": "Credit card (Stripe)",
+      "stripeHint": "Visa · Mastercard · Amex",
+      "epay": "Alipay / WeChat / QQ",
+      "epayHint": "via 易支付 / E-Pay"
+    },
+    "col": {
+      "created": "Created",
+      "gateway": "Gateway",
+      "money": "Paid",
+      "quota": "Quota",
+      "status": "Status",
+      "trade": "Order #",
+      "user": "User"
+    },
+    "history": {
+      "kicker": "Your activity",
+      "title": "Recent top-ups",
+      "empty": "No top-ups yet. Pick an amount above to get started."
+    },
+    "admin": {
+      "kicker": "Admin",
+      "title": "All top-up orders",
+      "allStatus": "All status",
+      "empty": "No orders match this filter.",
+      "complete": "Complete",
+      "completePrompt": "Reason for manual completion (kept in audit log):",
+      "completePlaceholder": "e.g. reconciled with bank statement #4421"
+    },
+    "result": {
+      "successTitle": "Payment received",
+      "successBody": "We credited {{quota}} quota for {{money}} {{currency}}. Thanks!",
+      "failedTitle": "Payment failed",
+      "failedBody": "The gateway reported a failure. Your balance was not charged.",
+      "processingTitle": "Processing…",
+      "processingBody": "We're waiting for the gateway to confirm. This usually takes a few seconds.",
+      "stillPendingTitle": "Still processing",
+      "stillPendingBody": "The gateway hasn't confirmed yet. You can safely close this page — your balance will update automatically once confirmed.",
+      "cancelled": "Payment cancelled",
+      "cancelledHint": "You closed the payment window before completing it. No charge was made.",
+      "missingTrade": "Missing order reference",
+      "missingTradeHint": "We can't find the order this page was opened for.",
+      "backToTopup": "Back to top up",
+      "dashboard": "Dashboard"
+    }
+  },
   "billing": {
     "kicker": "Wallet",
     "title": "Billing",
@@ -259,7 +634,17 @@
       "create": "New codes",
       "count": "Count",
       "empty": "No redemption codes issued yet.",
-      "col": { "name": "Name", "key": "Code", "quota": "Quota", "status": "Status" }
+      "col": { "name": "Name", "key": "Code", "quota": "Quota", "status": "Status" },
+      "deleteTitle": "Delete redemption",
+      "deleteConfirm": "Delete redemption \"{{name}}\"?",
+      "success": {
+        "title": "{{count}} code(s) created",
+        "lead": "Copy them now — they're shown only once. You can find them in the table afterwards, but only the first 8 characters are displayed.",
+        "copy": "Copy",
+        "copied": "Copied!",
+        "copyAll": "Copy all",
+        "close": "Done"
+      }
     }
   },
   "tk": {
@@ -269,6 +654,8 @@
     "newKey": "New key",
     "empty": "No API keys yet — click \"New key\" to create your first one.",
     "deleteConfirm": "Delete key \"{{name}}\"? This cannot be undone.",
+    "copyKey": "Copy full key",
+    "copied": "Copied!",
     "col": {
       "name": "Name",
       "status": "Status",
@@ -338,5 +725,127 @@
     "about": "About",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "docs": {
+    "topbar": { "kicker": "Docs" },
+    "sidebar": {
+      "searchPlaceholder": "Search models…",
+      "overview": "Get started",
+      "chat": "Chat models",
+      "image": "Image models",
+      "video": "Video models",
+      "items": {
+        "quickstart": "Quickstart",
+        "authentication": "Authentication",
+        "errors": "Errors",
+        "rateLimits": "Rate limits"
+      }
+    },
+    "toc": { "title": "On this page" },
+    "index": {
+      "kicker": "solayer.org · docs",
+      "title1": "One Wave.",
+      "title2": "Every API.",
+      "lead": "200+ models behind a single OpenAI-compatible endpoint. Pick a model, send a request, ship a feature. These docs cover the chat schema, the unified async-task API for image and video, and per-model parameter cheat sheets.",
+      "modality": { "chat": "Chat", "image": "Image", "video": "Video" },
+      "quickstart": { "kicker": "30-second quickstart", "title": "Three steps to your first response" },
+      "step1": { "t": "Get a key", "d": "Sign up and copy your sk-key from the console." },
+      "step2": { "t": "Point your SDK", "d": "Use https://api.solayer.org/v1 as base_url. Done." },
+      "step3": { "t": "Pick a model", "d": "Change the model string — same SDK, every provider." },
+      "tip": {
+        "kicker": "Tip",
+        "title": "Try it before you write a line of code.",
+        "body": "The console playground bills against your own quota and uses the exact relay path your SDK will hit in production. Use it to verify model behavior, copy the equivalent SDK snippet, and ship.",
+        "cta": "Open the playground"
+      }
+    },
+    "spec": {
+      "badge": "Live",
+      "intro": "{{model}} from {{family}} routed through the solayer.org gateway. OpenAI-compatible chat completions with streaming, multimodal input, tool calling and adjustable reasoning effort — change the model string in any OpenAI SDK and you're done.",
+      "tryInPlayground": "Try in playground",
+      "openapiSpec": "OpenAPI spec",
+      "toc": {
+        "overview": "Overview",
+        "features": "Features",
+        "tools": "Tools & tool_choice",
+        "parameters": "Request parameters",
+        "examples": "Code examples",
+        "responses": "Response & status codes"
+      },
+      "features": {
+        "multimodal": { "t": "Multimodal input", "d": "Text, vision and audio in the same messages array. Pass image_url or input_audio content items inline." },
+        "reasoning": { "t": "Reasoning control", "d": "Tune cost vs. quality with reasoning_effort — low, medium, high, xhigh — without swapping models." },
+        "tools": { "t": "Tools & web search", "d": "Function calling and built-in web search via the tools array. Mutually exclusive with each other." },
+        "unified": { "t": "Unified endpoint", "d": "Same /v1/chat/completions surface across every provider. One SDK, one bill, zero migration." }
+      },
+      "tools": {
+        "title": "Tools & tool_choice",
+        "sub": "Section",
+        "lead": "The model can either browse the web or call your functions in a single turn — never both. Pick the behavior that fits your job.",
+        "webSearch": {
+          "tag": "type: web_search",
+          "title": "Web search",
+          "body": "Lets the model fetch live results before answering. Useful for time-sensitive questions, citations and grounding."
+        },
+        "fn": {
+          "tag": "type: function",
+          "title": "Function calling",
+          "body": "Declare functions the model can invoke. Returned as tool_calls with JSON arguments — you execute and feed the result back."
+        }
+      },
+      "params": {
+        "title": "Request parameters",
+        "sub": "Schema"
+      },
+      "examples": {
+        "title": "Code examples",
+        "sub": "Quickstart"
+      },
+      "responses": {
+        "title": "Responses",
+        "sub": "Status codes"
+      },
+      "status": {
+        "200": "Success — single object or streamed events",
+        "400": "Bad request — schema or model id",
+        "401": "Unauthorized — missing or invalid key",
+        "429": "Rate limited — slow down or upgrade group",
+        "500": "Upstream / gateway error"
+      },
+      "next": {
+        "kicker": "Next",
+        "title": "Where to go from here",
+        "body": "Wire authentication and error handling first, then explore the rest of the chat catalog. Image and video models share a different async-task API documented in their respective sections.",
+        "quickstart": "Quickstart",
+        "auth": "Authentication"
+      }
+    },
+    "page": {
+      "quickstart": {
+        "title": "Quickstart",
+        "lead": "Get your first response from solayer.org in under a minute. Same request shape as the OpenAI SDK — only base_url and key change.",
+        "s1": { "h": "1. Make your first request", "p": "Replace WAVY_API_KEY with the sk-key you generated in the console. The response shape is identical to OpenAI." },
+        "s2": { "h": "2. Or use the OpenAI SDK", "p": "Point base_url at our gateway and keep using the SDK you already know. Switch providers by changing the model string." }
+      },
+      "auth": {
+        "title": "Authentication",
+        "lead": "Every request needs an Authorization: Bearer sk-key header. Keys are scoped to your account and obey your group quota.",
+        "s1": { "h": "Bearer token", "p": "Set the Authorization header on every request. Keys are listed and rotated in the console under API Keys." }
+      },
+      "errors": {
+        "title": "Errors",
+        "lead": "Errors follow the OpenAI error envelope. Look at error.type and error.code for programmatic handling; error.message is human-readable.",
+        "s1": { "h": "Error envelope", "p": "All 4xx and 5xx responses return a JSON body with a top-level error object — same shape across providers." }
+      },
+      "rate": {
+        "title": "Rate limits",
+        "lead": "Limits are enforced per group and surfaced on response headers so clients can back off without polling a separate endpoint.",
+        "s1": { "h": "Response headers", "p": "Inspect x-ratelimit-* headers on every response. The -reset header is a wall-clock duration to full restore." }
+      }
+    },
+    "taskStub": {
+      "body": "{{model}} runs on the unified async-task API at POST /v1/tasks. Send the prompt, receive results via webhook or polling. The full task schema docs are in progress — for now see the home page Demo panel for an example payload.",
+      "note": "Heads up: the spec page for task-based models lands together with the playground image / video tabs."
+    }
   }
 }

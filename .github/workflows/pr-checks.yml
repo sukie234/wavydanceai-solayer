@@ -42,3 +42,11 @@ jobs:
       - uses: wagoid/commitlint-github-action@v6
         with:
           configFile: commitlint.config.mjs
+          # Only lint the most recent commits authored on this branch.
+          # Sync-upstream PRs drag in the upstream's full history (e.g.
+          # "Feat/UI init (#8)" squash titles) which we don't own and
+          # can't rewrite. `firstParent` alone doesn't filter PR-listed
+          # commits coming from a merge; commitDepth caps lint to our
+          # own work. Bump this if a PR ever has more than 6 local
+          # commits before merge.
+          commitDepth: 6
