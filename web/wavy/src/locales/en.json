@@ -397,7 +397,7 @@
     "forgotPassword": "Forgot password?"
   },
   "register": {
-    "kicker": "wavydance.ai · sign up",
+    "kicker": "solayer.org · sign up",
     "title": "Create your account",
     "email": "Email",
     "emailHint": "We'll use this for password recovery.",
@@ -485,7 +485,7 @@
     "save": "Save",
     "saved": "Saved",
     "sec": {
-      "auth": { "title": "Login & registration", "desc": "Control how users sign in to wavydance.ai." },
+      "auth": { "title": "Login & registration", "desc": "Control how users sign in to solayer.org." },
       "channels": { "title": "Channels & routing", "desc": "How channels behave on failure and how usage is tracked." },
       "display": { "title": "Display", "desc": "How quota and tokens are shown to users." },
       "email": { "title": "Email domain restriction", "desc": "Restrict registration to specific email domains." },
@@ -516,7 +516,7 @@
       "SMTPServer": "Server",
       "SMTPPort": "Port",
       "SMTPFrom": "From address",
-      "SMTPFrom_placeholder": "no-reply@wavydance.ai",
+      "SMTPFrom_placeholder": "no-reply@solayer.org",
       "SMTPAccount": "Account"
     }
   },
@@ -743,14 +743,14 @@
     },
     "toc": { "title": "On this page" },
     "index": {
-      "kicker": "wavydance.ai · docs",
+      "kicker": "solayer.org · docs",
       "title1": "One Wave.",
       "title2": "Every API.",
       "lead": "200+ models behind a single OpenAI-compatible endpoint. Pick a model, send a request, ship a feature. These docs cover the chat schema, the unified async-task API for image and video, and per-model parameter cheat sheets.",
       "modality": { "chat": "Chat", "image": "Image", "video": "Video" },
       "quickstart": { "kicker": "30-second quickstart", "title": "Three steps to your first response" },
       "step1": { "t": "Get a key", "d": "Sign up and copy your sk-key from the console." },
-      "step2": { "t": "Point your SDK", "d": "Use https://api.wavydance.ai/v1 as base_url. Done." },
+      "step2": { "t": "Point your SDK", "d": "Use https://api.solayer.org/v1 as base_url. Done." },
       "step3": { "t": "Pick a model", "d": "Change the model string — same SDK, every provider." },
       "tip": {
         "kicker": "Tip",
@@ -761,7 +761,7 @@
     },
     "spec": {
       "badge": "Live",
-      "intro": "{{model}} from {{family}} routed through the wavydance.ai gateway. OpenAI-compatible chat completions with streaming, multimodal input, tool calling and adjustable reasoning effort — change the model string in any OpenAI SDK and you're done.",
+      "intro": "{{model}} from {{family}} routed through the solayer.org gateway. OpenAI-compatible chat completions with streaming, multimodal input, tool calling and adjustable reasoning effort — change the model string in any OpenAI SDK and you're done.",
       "tryInPlayground": "Try in playground",
       "openapiSpec": "OpenAPI spec",
       "toc": {
@@ -823,7 +823,7 @@
     "page": {
       "quickstart": {
         "title": "Quickstart",
-        "lead": "Get your first response from wavydance.ai in under a minute. Same request shape as the OpenAI SDK — only base_url and key change.",
+        "lead": "Get your first response from solayer.org in under a minute. Same request shape as the OpenAI SDK — only base_url and key change.",
         "s1": { "h": "1. Make your first request", "p": "Replace WAVY_API_KEY with the sk-key you generated in the console. The response shape is identical to OpenAI." },
         "s2": { "h": "2. Or use the OpenAI SDK", "p": "Point base_url at our gateway and keep using the SDK you already know. Switch providers by changing the model string." }
       },

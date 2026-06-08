@@ -102,7 +102,7 @@ function ChatCode() {
   return (
     <pre className="m-0 whitespace-pre-wrap">
       <K>from</K> openai <K>import</K> OpenAI{'\n\n'}
-      client = <F>OpenAI</F>({'\n'}    base_url=<S>"https://api.wavydance.ai/v1"</S>,{'\n'}    api_key=
+      client = <F>OpenAI</F>({'\n'}    base_url=<S>"https://api.solayer.org/v1"</S>,{'\n'}    api_key=
       <S>"wd-••••••••••••"</S>,{'\n'}
       ){'\n\n'}
       resp = client.chat.completions.<F>create</F>({'\n'}    model=<S>"claude-opus-4-6"</S>,  <C># or gpt-5.2, deepseek-v4…</C>

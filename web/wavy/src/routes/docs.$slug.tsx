@@ -56,7 +56,7 @@ const CONTENT: Record<string, Page> = {
         p: 'docs.page.quickstart.s1.p',
         lang: 'bash',
         code: `export WAVY_API_KEY="wd-•••••"
-curl https://api.wavydance.ai/v1/chat/completions \\
+curl https://api.solayer.org/v1/chat/completions \\
   -H "Authorization: Bearer $WAVY_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -69,7 +69,7 @@ curl https://api.wavydance.ai/v1/chat/completions \\
         p: 'docs.page.quickstart.s2.p',
         lang: 'python',
         code: `from openai import OpenAI
-client = OpenAI(base_url="https://api.wavydance.ai/v1", api_key="wd-•••")
+client = OpenAI(base_url="https://api.solayer.org/v1", api_key="wd-•••")
 r = client.chat.completions.create(
     model="claude-opus-4-6",
     messages=[{"role":"user","content":"hi"}],
@@ -86,7 +86,7 @@ r = client.chat.completions.create(
         p: 'docs.page.auth.s1.p',
         lang: 'http',
         code: `GET /v1/models HTTP/1.1
-Host: api.wavydance.ai
+Host: api.solayer.org
 Authorization: Bearer wd-•••••`,
       },
     ],

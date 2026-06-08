@@ -35,7 +35,7 @@ describe('resolveModelSpec', () => {
 
   it('strips vendor prefix before matching', () => {
     expect(resolveModelSpec('image', 'replicate/flux-schnell').id).toBe('flux')
-    expect(resolveModelSpec('video', 'wavydance/kling-v1-pro').id).toBe('kling')
+    expect(resolveModelSpec('video', 'solayer/kling-v1-pro').id).toBe('kling')
   })
 
   it('falls back to generic when modality has no match', () => {

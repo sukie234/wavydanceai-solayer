@@ -62,7 +62,7 @@ function DocsIndex() {
         </ol>
         <CodeBlock
           lang="bash"
-          code={`curl https://api.wavydance.ai/v1/chat/completions \\
+          code={`curl https://api.solayer.org/v1/chat/completions \\
   -H "Authorization: Bearer $WAVY_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{

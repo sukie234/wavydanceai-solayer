@@ -32,7 +32,7 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
           <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[0.82rem] text-[color:var(--muted)]">
             <Method method="POST" />
             <code className="rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-2 py-0.5 text-[color:var(--text)]">
-              https://api.wavydance.ai/v1/chat/completions
+              https://api.solayer.org/v1/chat/completions
             </code>
           </div>
           <p className="mt-5 max-w-prose text-[0.98rem] leading-[1.7] text-[color:var(--muted)]">
@@ -47,7 +47,7 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
               <ChevronRight className="h-4 w-4" />
             </Link>
             <a
-              href="https://github.com/wavydance-ai"
+              href="https://github.com/solayer-labs"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 rounded-[10px] border border-[color:var(--border)] px-4 py-2 text-[0.9rem] font-semibold text-[color:var(--text)] transition hover:border-[color:var(--cyan)]"
@@ -295,7 +295,7 @@ function ParamTable({ model }: { model: string }) {
 }
 
 const EXAMPLES: Record<CodeLang, (model: string) => string> = {
-  curl: (m) => `curl https://api.wavydance.ai/v1/chat/completions \\
+  curl: (m) => `curl https://api.solayer.org/v1/chat/completions \\
   -H "Authorization: Bearer $WAVY_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -309,7 +309,7 @@ const EXAMPLES: Record<CodeLang, (model: string) => string> = {
   python: (m) => `from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://api.wavydance.ai/v1",
+    base_url="https://api.solayer.org/v1",
     api_key="wd-••••••••••••",
 )
 
@@ -324,7 +324,7 @@ for chunk in resp:
   node: (m) => `import OpenAI from "openai";
 
 const client = new OpenAI({
-  baseURL: "https://api.wavydance.ai/v1",
+  baseURL: "https://api.solayer.org/v1",
   apiKey: process.env.WAVY_API_KEY,
 });
 
@@ -332,7 +332,7 @@ const stream = await client.chat.completions.create({
   model: "${m}",
   messages: [{ role: "user", content: "Hello, wave!" }],
   stream: true,
-  // @ts-expect-error — wavydance extension
+  // @ts-expect-error — solayer extension
   reasoning_effort: "medium",
 });
 
@@ -356,7 +356,7 @@ var body = """
 
 var client = HttpClient.newHttpClient();
 var req = HttpRequest.newBuilder()
-    .uri(URI.create("https://api.wavydance.ai/v1/chat/completions"))
+    .uri(URI.create("https://api.solayer.org/v1/chat/completions"))
     .header("Authorization", "Bearer " + System.getenv("WAVY_API_KEY"))
     .header("Content-Type", "application/json")
     .POST(BodyPublishers.ofString(body))

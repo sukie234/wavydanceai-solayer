@@ -397,7 +397,7 @@
     "forgotPassword": "忘记密码？"
   },
   "register": {
-    "kicker": "wavydance.ai · 注册",
+    "kicker": "solayer.org · 注册",
     "title": "创建账号",
     "email": "邮箱",
     "emailHint": "用于找回密码。",
@@ -485,7 +485,7 @@
     "save": "保存",
     "saved": "已保存",
     "sec": {
-      "auth": { "title": "登录与注册", "desc": "控制用户如何登录 wavydance.ai。" },
+      "auth": { "title": "登录与注册", "desc": "控制用户如何登录 solayer.org。" },
       "channels": { "title": "渠道与路由", "desc": "渠道失败时的行为以及用量记录策略。" },
       "display": { "title": "显示", "desc": "额度与 token 在用户界面的展示方式。" },
       "email": { "title": "邮箱域名限制", "desc": "限制注册仅来自指定邮箱域名。" },
@@ -516,7 +516,7 @@
       "SMTPServer": "服务器",
       "SMTPPort": "端口",
       "SMTPFrom": "发件人地址",
-      "SMTPFrom_placeholder": "no-reply@wavydance.ai",
+      "SMTPFrom_placeholder": "no-reply@solayer.org",
       "SMTPAccount": "账号"
     }
   },
@@ -743,14 +743,14 @@
     },
     "toc": { "title": "本页目录" },
     "index": {
-      "kicker": "wavydance.ai · 文档",
+      "kicker": "solayer.org · 文档",
       "title1": "一浪直达，",
       "title2": "万模归一。",
       "lead": "200+ 模型，一个 OpenAI 兼容入口。挑模型、发请求、交付功能。文档涵盖对话接口规格、图像 / 视频的统一异步任务接口，以及每个模型的参数速查。",
       "modality": { "chat": "对话", "image": "图像", "video": "视频" },
       "quickstart": { "kicker": "30 秒上手", "title": "三步拿到首个响应" },
       "step1": { "t": "拿到 Key", "d": "注册账号，从控制台复制 sk-key。" },
-      "step2": { "t": "指向网关", "d": "把 base_url 设为 https://api.wavydance.ai/v1，就这一行。" },
+      "step2": { "t": "指向网关", "d": "把 base_url 设为 https://api.solayer.org/v1，就这一行。" },
       "step3": { "t": "挑选模型", "d": "改 model 字符串即可切换提供商，SDK 不变。" },
       "tip": {
         "kicker": "提示",
@@ -761,7 +761,7 @@
     },
     "spec": {
       "badge": "在线",
-      "intro": "来自 {{family}} 的 {{model}}，经 wavydance.ai 网关路由。OpenAI 兼容的 Chat Completions 接口，支持流式、多模态输入、工具调用和可调推理强度——在任何 OpenAI SDK 里改一个 model 字符串即可切换。",
+      "intro": "来自 {{family}} 的 {{model}}，经 solayer.org 网关路由。OpenAI 兼容的 Chat Completions 接口，支持流式、多模态输入、工具调用和可调推理强度——在任何 OpenAI SDK 里改一个 model 字符串即可切换。",
       "tryInPlayground": "在演练场试用",
       "openapiSpec": "OpenAPI 规格",
       "toc": {
@@ -814,7 +814,7 @@
     "page": {
       "quickstart": {
         "title": "快速上手",
-        "lead": "1 分钟内从 wavydance.ai 拿到第一个响应。请求结构与 OpenAI SDK 完全一致——只换 base_url 和 Key。",
+        "lead": "1 分钟内从 solayer.org 拿到第一个响应。请求结构与 OpenAI SDK 完全一致——只换 base_url 和 Key。",
         "s1": { "h": "1. 发出第一个请求", "p": "把 WAVY_API_KEY 替换为你在控制台生成的 sk-key。响应结构与 OpenAI 完全一致。" },
         "s2": { "h": "2. 或直接用 OpenAI SDK", "p": "把 base_url 指向我们的网关，继续用熟悉的 SDK。改一个 model 字符串就能切换提供商。" }
       },
