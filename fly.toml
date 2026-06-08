@@ -1,0 +1,59 @@
+# Fly.io config for the staging deployment.
+#
+# Manual-trigger only: run `fly deploy` from your laptop when you want to
+# ship — there is no GitHub Action that auto-deploys on push.
+#
+# Region: syd (Sydney). Change `primary_region` and the volume's region in
+# tandem if you ever want to move.
+#
+# One-time setup is documented in .fly/SETUP.md.
+
+app             = "wavydance-staging"
+primary_region  = "syd"
+
+[build]
+  # Multi-stage Dockerfile already builds the wavy frontend + Go binary
+  # and embeds the SPA via go:embed. Nothing else to do at build time.
+  dockerfile = "Dockerfile"
+
+[env]
+  # Internal port the Go server listens on (matches Dockerfile's EXPOSE 3000).
+  PORT                  = "3000"
+  # Session cookie must be Secure on Fly — TLS is terminated at the edge
+  # so the app sees plain HTTP, but the browser-facing scheme is https.
+  SESSION_COOKIE_SECURE = "true"
+  TZ                    = "Australia/Sydney"
+  # Optional: surface SQL_DSN logging if a deploy goes sideways. Leave off
+  # by default — Postgres credentials appear in the log otherwise.
+  DEBUG_SQL             = "false"
+
+[http_service]
+  internal_port       = 3000
+  force_https         = true
+  # Scale-to-zero for staging — first request after idle costs ~3s cold
+  # start, but the machine sleeps the rest of the time.
+  auto_stop_machines  = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes           = ["app"]
+
+  [[http_service.checks]]
+    grace_period  = "30s"
+    interval      = "15s"
+    method        = "GET"
+    timeout       = "5s"
+    path          = "/api/status"
+
+[[vm]]
+  size       = "shared-cpu-1x"
+  memory     = "512mb"
+  cpu_kind   = "shared"
+  cpus       = 1
+
+# Persistent volume for app logs (`--log-dir /app/logs` in the entrypoint).
+# Sized small — staging logs rotate via the app's own rotator. Note that
+# Fly volumes are tied to a single machine; if you ever scale > 1 you'll
+# need shared storage or to drop the volume and ship logs elsewhere.
+[mounts]
+  source      = "wavy_logs"
+  destination = "/app/logs"
