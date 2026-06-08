@@ -51,7 +51,7 @@ export function Hero() {
 
         <div className="relative flex justify-center md:translate-x-0">
           <video
-            className="w-[min(95vw,864px)] rounded-[2rem] [mask-image:radial-gradient(ellipse_at_center,#000_10%,transparent_78%)]"
+            className="w-[min(95vw,1000px)] rounded-[2rem] [mask-image:radial-gradient(ellipse_at_center,#000_10%,transparent_78%)]"
             src="/card.mp4"
             autoPlay
             muted={true}
@@ -114,7 +114,7 @@ function HeroStats() {
 function Stat({ label, value, ticking }: { label: string; value: string; ticking?: boolean }) {
   return (
     <div>
-      <b className="flex items-center gap-2 font-display text-[1.7rem] tabular-nums text-current-ink">
+      <b className="flex items-center gap-2 font-display text-[1.45rem] tabular-nums text-current-ink">
         <span className="h-2 w-2 flex-none rounded-full bg-[color:var(--primary)] [animation:wavy-ping_2.2s_infinite]" />
         <span className={`transition-opacity duration-200 ${ticking ? 'opacity-50' : 'opacity-100'}`}>
           {value}
