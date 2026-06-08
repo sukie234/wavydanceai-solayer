@@ -130,6 +130,81 @@ func TestIsChatModel_AcceptsKnownChatModels(t *testing.T) {
 	}
 }
 
+func TestIsImageModel_AcceptsKnownImageModels(t *testing.T) {
+	cases := []string{
+		"dall-e-2",
+		"dall-e-3",
+		"gpt-image-1",
+		"gpt-image-2-text-to-image",
+		"gpt-image-2-image-to-image",
+		"wanx-v1",
+		"cogview-3",
+		"step-1x-medium",
+		"qwen-image-edit",
+		"black-forest-labs/flux-1.1-pro",
+		"black-forest-labs/flux-schnell",
+		"stability-ai/stable-diffusion-3.5-large",
+		"stability-ai/sdxl",
+		"midjourney-v6",
+		"imagen-3",
+		"recraft-v3",
+		"ideogram-v2",
+	}
+	for _, name := range cases {
+		require.True(t, isImageModel(name), "expected %q to be classified as an image model", name)
+	}
+}
+
+func TestIsImageModel_RejectsNonImage(t *testing.T) {
+	cases := []string{
+		"gpt-4o",
+		"claude-3-5-sonnet-20241022",
+		"text-embedding-3-large",
+		"sora-2",
+		"veo-3-video",
+		"kling-2.6/text-to-video",
+		"wan-2.2-image-to-video", // routes to video, not image
+	}
+	for _, name := range cases {
+		require.False(t, isImageModel(name), "expected %q to be rejected as an image model", name)
+	}
+}
+
+func TestIsVideoModel_AcceptsKnownVideoModels(t *testing.T) {
+	cases := []string{
+		"sora-1.0",
+		"sora-2",
+		"kling-2.6/text-to-video",
+		"kling-v1-pro",
+		"veo-3-video",
+		"veo-2",
+		"seedance-1.0-pro",
+		"vidu-2.0",
+		"hailuo-02",
+		"minimax-video-01",
+		"runway-gen-3",
+		"luma-dream-machine",
+		"pika-1.5",
+		"wan-2.2-image-to-video",
+	}
+	for _, name := range cases {
+		require.True(t, isVideoModel(name), "expected %q to be classified as a video model", name)
+	}
+}
+
+func TestIsVideoModel_RejectsNonVideo(t *testing.T) {
+	cases := []string{
+		"gpt-4o",
+		"claude-3-5-sonnet-20241022",
+		"dall-e-3",
+		"gpt-image-2-text-to-image",
+		"wanx-v1",
+	}
+	for _, name := range cases {
+		require.False(t, isVideoModel(name), "expected %q to be rejected as a video model", name)
+	}
+}
+
 func TestIsChatModel_RejectsNonChat(t *testing.T) {
 	cases := []string{
 		"text-embedding-3-large",

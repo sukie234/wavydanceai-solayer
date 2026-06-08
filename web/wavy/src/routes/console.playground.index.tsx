@@ -29,21 +29,23 @@ function PlaygroundIndex() {
           />
         </Link>
 
-        <ModalityCard
-          icon={ImageIcon}
-          title={t('console.playground.modality.image')}
-          description={t('console.playground.modality.imageDesc')}
-          cta={t('console.playground.modality.comingSoon')}
-          disabled
-        />
+        <Link to="/console/playground/image">
+          <ModalityCard
+            icon={ImageIcon}
+            title={t('console.playground.modality.image')}
+            description={t('console.playground.modality.imageDesc')}
+            cta={t('console.playground.modality.open')}
+          />
+        </Link>
 
-        <ModalityCard
-          icon={Video}
-          title={t('console.playground.modality.video')}
-          description={t('console.playground.modality.videoDesc')}
-          cta={t('console.playground.modality.comingSoon')}
-          disabled
-        />
+        <Link to="/console/playground/video">
+          <ModalityCard
+            icon={Video}
+            title={t('console.playground.modality.video')}
+            description={t('console.playground.modality.videoDesc')}
+            cta={t('console.playground.modality.open')}
+          />
+        </Link>
       </section>
     </div>
   )

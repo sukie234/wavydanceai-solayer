@@ -20,6 +20,7 @@
       "analytics": "Analytics",
       "billing": "Billing",
       "topup": "Top up",
+      "docs": "Documentation",
       "profile": "Profile",
       "users": "Users",
       "settings": "Settings"
@@ -101,6 +102,52 @@
           "backHome": "Back to console",
           "topup": "Top up"
         }
+      },
+      "image": {
+        "title": "Image Playground",
+        "newSession": "New image",
+        "empty": "No image sessions yet.",
+        "emptyResults": "Describe what you want to see.",
+        "emptyResultsHint": "Pick a model on the right, then send a prompt below.",
+        "generating": "Generating…",
+        "placeholder": "A misty harbour at dawn, watercolor on rough paper…",
+        "error": {
+          "noModels": "No image models available",
+          "noModelsHint": "Your group has no image-generation models enabled yet. Ask an admin to add one."
+        }
+      },
+      "video": {
+        "title": "Video Playground",
+        "newSession": "New video",
+        "empty": "No video sessions yet.",
+        "emptyResults": "Describe a short scene.",
+        "emptyResultsHint": "Pick a model on the right, then send a prompt below. Video generation can take 30s–2 min.",
+        "generating": "Rendering — this can take up to a minute…",
+        "placeholder": "A robot dog chasing a paper kite along a beach at sunset…",
+        "error": {
+          "noModels": "No video models available",
+          "noModelsHint": "Your group has no video-generation models enabled yet. Ask an admin to add one."
+        }
+      },
+      "status": {
+        "idle": "Idle",
+        "pending": "Generating",
+        "succeeded": "Done",
+        "failed": "Failed"
+      },
+      "field": {
+        "model": "Model",
+        "size": "Size",
+        "count": "Count",
+        "quality": "Quality",
+        "style": "Style",
+        "aspectRatio": "Aspect ratio",
+        "resolution": "Resolution",
+        "duration": "Duration (s)",
+        "sound": "Sound",
+        "cameraFixed": "Lock camera",
+        "specHint": "Spec: {{spec}}",
+        "gptImage2ResolutionHint": "Note: 1:1 aspect ratio cannot be rendered at 4K."
       }
     }
   },
@@ -111,6 +158,8 @@
     "save": "Save",
     "saved": "Saved",
     "create": "Create",
+    "confirm": "Confirm",
+    "delete": "Delete",
     "or": "or"
   },
   "oauth": {
@@ -206,7 +255,7 @@
     "title": "One Wave.",
     "title_grad": "Every Model.",
     "sub": "The unified gateway to every LLM API. One endpoint, one key, one bill — GPT, Claude, Gemini, DeepSeek, Qwen and 200+ models, routed at the speed of the current.",
-    "ctaPrimary": "Start Free — 1M tokens",
+    "ctaPrimary": "Start free",
     "ctaSecondary": "Read the Docs",
     "st1": "models, one API",
     "st2": "routing overhead",
@@ -270,7 +319,7 @@
     "title": "Pay for tokens, not seats.",
     "surf": {
       "per": "/ forever",
-      "f1": "1M free tokens / month",
+      "f1": "Trial credit on sign-up",
       "f2": "All open-weight models",
       "f3": "Community support",
       "cta": "Start free"

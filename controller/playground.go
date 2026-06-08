@@ -79,6 +79,104 @@ var chatModelExcludeSuffixes = []string{
 	"-image-edit",
 }
 
+// imageModelPrefixes / imageModelSubstrings classify image-generation models
+// from the user's group-allowed list. Substring matching is needed because
+// many image models embed the marker mid-name (e.g. "stability-ai/sdxl",
+// "qwen-image-edit", "black-forest-labs/flux-pro").
+var imageModelPrefixes = []string{
+	"dall-e",
+	"gpt-image",
+	"wanx",
+	"cogview",
+	"step-1x",
+}
+
+var imageModelSubstrings = []string{
+	"flux",
+	"stable-diffusion",
+	"stable_diffusion",
+	"sdxl",
+	"midjourney",
+	"imagen",
+	"-image",   // qwen-image, gemini-image, etc.
+	"image-",   // image-1, image-2
+	"recraft",
+	"ideogram",
+}
+
+// imageModelExcludeSubstrings strips non-image traffic that would otherwise
+// match (e.g. "claude-3-haiku" doesn't, but "video" models that mention
+// "image-to-video" or "qwen-image-edit-to-video" should not be classified as
+// pure image generators).
+var imageModelExcludeSubstrings = []string{
+	"to-video",
+	"-video",
+	"video-",
+}
+
+// videoModelPrefixes / videoModelSubstrings classify video-generation models.
+// Kept conservative — only model families we have a parameter spec for in
+// the playground are listed. Adding a new family means updating both this
+// list and the frontend modelSpecs.
+var videoModelPrefixes = []string{
+	"sora",
+	"kling",
+	"veo",
+	"seedance",
+	"vidu",
+	"hailuo",
+	"minimax-video",
+	"runway",
+	"luma",
+	"pika",
+	"wan-",
+	"wan2",
+}
+
+var videoModelSubstrings = []string{
+	"-video",
+	"video-",
+	"to-video",
+	"text-to-video",
+	"image-to-video",
+}
+
+func matchAny(name string, prefixes, substrings, excludes []string) bool {
+	lower := strings.ToLower(name)
+	if slash := strings.LastIndex(lower, "/"); slash >= 0 && slash < len(lower)-1 {
+		lower = lower[slash+1:]
+	}
+	for _, ex := range excludes {
+		if strings.Contains(lower, ex) {
+			return false
+		}
+	}
+	for _, p := range prefixes {
+		if strings.HasPrefix(lower, p) {
+			return true
+		}
+	}
+	for _, s := range substrings {
+		if strings.Contains(lower, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func isImageModel(name string) bool {
+	// Video classification wins over image when names like "image-to-video"
+	// would otherwise match both buckets — the user is generating a video.
+	if isVideoModel(name) {
+		return false
+	}
+	return matchAny(name, imageModelPrefixes, imageModelSubstrings, imageModelExcludeSubstrings)
+}
+
+func isVideoModel(name string) bool {
+	return matchAny(name, videoModelPrefixes, videoModelSubstrings, nil)
+}
+
 func isChatModel(name string) bool {
 	lower := strings.ToLower(name)
 	// Strip vendor prefix on slug-form names (openrouter, togetherai):
@@ -178,6 +276,22 @@ func GetPlaygroundToken(c *gin.Context) {
 // group-allowed models. Mirrors GetUserAvailableModels and then filters by
 // isChatModel.
 func GetPlaygroundChatModels(c *gin.Context) {
+	getPlaygroundModelsByModality(c, isChatModel)
+}
+
+// GetPlaygroundImageModels returns the image-generation subset of the user's
+// group-allowed models.
+func GetPlaygroundImageModels(c *gin.Context) {
+	getPlaygroundModelsByModality(c, isImageModel)
+}
+
+// GetPlaygroundVideoModels returns the video-generation subset of the user's
+// group-allowed models.
+func GetPlaygroundVideoModels(c *gin.Context) {
+	getPlaygroundModelsByModality(c, isVideoModel)
+}
+
+func getPlaygroundModelsByModality(c *gin.Context, match func(string) bool) {
 	ctx := c.Request.Context()
 	userId := c.GetInt(ctxkey.Id)
 	userGroup, err := model.CacheGetUserGroup(userId)
@@ -196,15 +310,15 @@ func GetPlaygroundChatModels(c *gin.Context) {
 		})
 		return
 	}
-	chatModels := make([]string, 0, len(allModels))
+	filtered := make([]string, 0, len(allModels))
 	for _, m := range allModels {
-		if isChatModel(m) {
-			chatModels = append(chatModels, m)
+		if match(m) {
+			filtered = append(filtered, m)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
-		"data":    chatModels,
+		"data":    filtered,
 	})
 }

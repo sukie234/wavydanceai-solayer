@@ -20,6 +20,7 @@
       "analytics": "用量分析",
       "billing": "账单",
       "topup": "充值",
+      "docs": "开发文档",
       "profile": "个人资料",
       "users": "用户",
       "settings": "系统设置"
@@ -101,6 +102,52 @@
           "backHome": "返回控制台",
           "topup": "去充值"
         }
+      },
+      "image": {
+        "title": "图像 Playground",
+        "newSession": "新建图像",
+        "empty": "暂无图像会话。",
+        "emptyResults": "描述你想看到的画面。",
+        "emptyResultsHint": "右侧选择模型后，在下方输入提示词。",
+        "generating": "生成中…",
+        "placeholder": "清晨薄雾笼罩的港口，水彩、糙面纸…",
+        "error": {
+          "noModels": "暂无可用图像模型",
+          "noModelsHint": "你所在的分组还没有启用图像模型。请联系管理员添加。"
+        }
+      },
+      "video": {
+        "title": "视频 Playground",
+        "newSession": "新建视频",
+        "empty": "暂无视频会话。",
+        "emptyResults": "描述一段短场景。",
+        "emptyResultsHint": "右侧选择模型后，在下方输入提示词。视频生成通常需要 30 秒到 2 分钟。",
+        "generating": "渲染中，可能需要一分钟…",
+        "placeholder": "夕阳沙滩上，机器狗追着风筝奔跑…",
+        "error": {
+          "noModels": "暂无可用视频模型",
+          "noModelsHint": "你所在的分组还没有启用视频模型。请联系管理员添加。"
+        }
+      },
+      "status": {
+        "idle": "空闲",
+        "pending": "生成中",
+        "succeeded": "完成",
+        "failed": "失败"
+      },
+      "field": {
+        "model": "模型",
+        "size": "尺寸",
+        "count": "数量",
+        "quality": "质量",
+        "style": "风格",
+        "aspectRatio": "宽高比",
+        "resolution": "分辨率",
+        "duration": "时长（秒）",
+        "sound": "声音",
+        "cameraFixed": "锁定镜头",
+        "specHint": "规范：{{spec}}",
+        "gptImage2ResolutionHint": "注意：1:1 比例不支持 4K。"
       }
     }
   },
@@ -111,6 +158,8 @@
     "save": "保存",
     "saved": "已保存",
     "create": "创建",
+    "confirm": "确认",
+    "delete": "删除",
     "or": "或"
   },
   "oauth": {
@@ -206,7 +255,7 @@
     "title": "一浪直达，",
     "title_grad": "万模归一。",
     "sub": "统一所有大模型 API 的中转网关。一个端点、一个密钥、一张账单 —— GPT、Claude、Gemini、DeepSeek、Qwen 等 200+ 模型，以洋流之速完成路由。",
-    "ctaPrimary": "免费开始 — 100 万 tokens",
+    "ctaPrimary": "免费开始",
     "ctaSecondary": "查看文档",
     "st1": "个模型 · 一个 API",
     "st2": "路由开销",
@@ -270,7 +319,7 @@
     "title": "按 token 付费，不按席位。",
     "surf": {
       "per": "/ 永久",
-      "f1": "每月 100 万免费 tokens",
+      "f1": "注册即送试用额度",
       "f2": "全部开源权重模型",
       "f3": "社区支持",
       "cta": "免费开始"

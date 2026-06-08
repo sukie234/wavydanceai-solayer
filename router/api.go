@@ -78,6 +78,8 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.GET("/available_models", controller.GetUserAvailableModels)
 				selfRoute.GET("/playground_token", controller.GetPlaygroundToken)
 				selfRoute.GET("/playground/chat_models", controller.GetPlaygroundChatModels)
+				selfRoute.GET("/playground/image_models", controller.GetPlaygroundImageModels)
+				selfRoute.GET("/playground/video_models", controller.GetPlaygroundVideoModels)
 			}
 
 			adminRoute := userRoute.Group("/")

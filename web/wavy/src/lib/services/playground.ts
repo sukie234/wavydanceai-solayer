@@ -27,4 +27,16 @@ export const playgroundService = {
     const res = await api.get<ApiResponse<string[]>>('/user/self/playground/chat_models')
     return unwrap(res) ?? []
   },
+
+  /** Image-generation subset of the user's group-allowed models. */
+  async listImageModels(): Promise<string[]> {
+    const res = await api.get<ApiResponse<string[]>>('/user/self/playground/image_models')
+    return unwrap(res) ?? []
+  },
+
+  /** Video-generation subset of the user's group-allowed models. */
+  async listVideoModels(): Promise<string[]> {
+    const res = await api.get<ApiResponse<string[]>>('/user/self/playground/video_models')
+    return unwrap(res) ?? []
+  },
 }
