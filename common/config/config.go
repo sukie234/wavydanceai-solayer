@@ -175,11 +175,18 @@ var TestPrompt = env.String("TEST_PROMPT", "Output only your specific model name
 // or per-adapter ConfigKey declarations, not here.
 
 // PaymentEnabled is the master switch. When false, all topup endpoints
-// return "payments disabled" regardless of per-gateway flags.
-var PaymentEnabled = false
+// return "payments disabled" regardless of per-gateway flags. Defaults on
+// so a fresh deployment surfaces the topup UI without requiring an admin
+// to toggle it first.
+var PaymentEnabled = true
 
 // StripeEnabled / EpayEnabled control the two baseline non-crypto gateways.
-var StripeEnabled = false
+// Stripe defaults on because we ship the Stripe SDK by default and the env
+// vars (STRIPE_API_SECRET_KEY / STRIPE_WEBHOOK_SECRET) are how real keys
+// are injected — the toggle just gates whether the gateway surfaces in the
+// /topup/info response. EPay stays opt-in because it requires merchant
+// credentials specific to the operator.
+var StripeEnabled = true
 var EpayEnabled = false
 
 // PaymentCallbackBaseURL is the public HTTPS origin our webhooks live on.
