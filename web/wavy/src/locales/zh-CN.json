@@ -374,7 +374,7 @@
   "login": {
     "kicker": "wavydance.ai · 登录",
     "title": "欢迎回来。",
-    "username": "用户名",
+    "username": "用户名或邮箱",
     "password": "密码",
     "signIn": "登录",
     "failed": "登录失败",
@@ -393,7 +393,7 @@
     "usePasskey": "使用 Passkey",
     "useTotp": "使用验证器代码",
     "chooseFactor": "选择二次验证方式",
-    "usernameRequired": "请输入用户名",
+    "usernameRequired": "请输入用户名或邮箱",
     "forgotPassword": "忘记密码？"
   },
   "register": {

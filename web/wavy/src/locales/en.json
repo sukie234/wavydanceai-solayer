@@ -374,7 +374,7 @@
   "login": {
     "kicker": "wavydance.ai · sign in",
     "title": "Welcome back.",
-    "username": "Username",
+    "username": "Username or email",
     "password": "Password",
     "signIn": "Sign in",
     "failed": "Login failed",
@@ -393,7 +393,7 @@
     "usePasskey": "Use Passkey",
     "useTotp": "Use authenticator app code",
     "chooseFactor": "Choose a second factor",
-    "usernameRequired": "Username is required",
+    "usernameRequired": "Username or email is required",
     "forgotPassword": "Forgot password?"
   },
   "register": {
