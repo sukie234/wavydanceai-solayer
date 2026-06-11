@@ -186,7 +186,7 @@ func applyTaskInfo(ctx context.Context, adaptor Adaptor, t *model.Task, info *Ta
 			"progress":    100,
 			"result_url":  info.Url,
 			"finish_time": helper.GetTimestamp(),
-			"data":        rawData,
+			"data":        model.NormalizeJSONColumn(rawData),
 		})
 		if err != nil {
 			logger.Error(ctx, fmt.Sprintf("task %s: failed to mark SUCCESS: %s", t.TaskId, err.Error()))

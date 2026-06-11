@@ -181,3 +181,25 @@ func mustMarshal(t *testing.T, v interface{}) string {
 	require.NoError(t, err)
 	return string(bytes)
 }
+
+func TestInsertTask_NormalizesBlankJSONColumns(t *testing.T) {
+	// Postgres rejects '' for json-typed columns (SQLSTATE 22P02); sqlite
+	// accepts anything, so this asserts the normalization itself.
+	setupTaskTestDB(t)
+	task := newQueuedTask(t) // inserted with all three json columns blank
+	stored, err := GetTaskByTaskId(task.TaskId)
+	require.NoError(t, err)
+	require.Equal(t, "{}", stored.Properties)
+	require.Equal(t, "{}", stored.PrivateData)
+	require.Equal(t, "{}", stored.Data)
+
+	pd, err := stored.GetPrivateData()
+	require.NoError(t, err)
+	require.Empty(t, pd.UpstreamTaskId, "normalized {} must read back as zero value")
+}
+
+func TestNormalizeJSONColumn(t *testing.T) {
+	require.Equal(t, "{}", NormalizeJSONColumn(""))
+	require.Equal(t, "{}", NormalizeJSONColumn("  \n"))
+	require.Equal(t, `{"a":1}`, NormalizeJSONColumn(`{"a":1}`))
+}

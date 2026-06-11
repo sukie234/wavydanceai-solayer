@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/songquanpeng/one-api/common/random"
 )
@@ -98,7 +99,21 @@ func (task *Task) SetPrivateData(data *TaskPrivateData) error {
 	return nil
 }
 
+// NormalizeJSONColumn coalesces a blank value to "{}". The task table's
+// Properties/PrivateData/Data columns are typed json; Postgres rejects the
+// empty string as invalid json (SQLITE accepts it, which is why tests alone
+// didn't catch this — found live, SQLSTATE 22P02).
+func NormalizeJSONColumn(s string) string {
+	if strings.TrimSpace(s) == "" {
+		return "{}"
+	}
+	return s
+}
+
 func InsertTask(task *Task) error {
+	task.Properties = NormalizeJSONColumn(task.Properties)
+	task.PrivateData = NormalizeJSONColumn(task.PrivateData)
+	task.Data = NormalizeJSONColumn(task.Data)
 	return DB.Create(task).Error
 }
 
