@@ -124,6 +124,10 @@
         "emptyResultsHint": "Pick a model on the right, then send a prompt below. Video generation can take 30s–2 min.",
         "generating": "Rendering — this can take up to a minute…",
         "placeholder": "A robot dog chasing a paper kite along a beach at sunset…",
+        "task": {
+          "queued": "Queued — waiting for the renderer…",
+          "inProgress": "Rendering… {{progress}}%"
+        },
         "error": {
           "noModels": "No video models available",
           "noModelsHint": "Your group has no video-generation models enabled yet. Ask an admin to add one."
@@ -146,6 +150,7 @@
         "duration": "Duration (s)",
         "sound": "Sound",
         "cameraFixed": "Lock camera",
+        "watermark": "Watermark",
         "specHint": "Spec: {{spec}}",
         "gptImage2ResolutionHint": "Note: 1:1 aspect ratio cannot be rendered at 4K."
       }
