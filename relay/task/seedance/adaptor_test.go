@@ -166,6 +166,14 @@ func TestDoResponse_UpstreamErrors(t *testing.T) {
 			`upstream exploded`,
 			"502", "", http.StatusBadGateway,
 		},
+		{
+			// worldrouter wraps the error in "detail" instead of "error";
+			// body observed live against inference-api.worldrouter.ai.
+			"worldrouter detail envelope",
+			http.StatusPaymentRequired,
+			`{"detail":{"code":"seedance_balance_too_low","message":"Insufficient team balance for Seedance use — please recharge.","required_available_nano":10000000000,"available_nano":999892001}}`,
+			"Insufficient team balance", "seedance_balance_too_low", http.StatusPaymentRequired,
+		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -218,6 +226,17 @@ func TestParseTaskResult_AllStatuses(t *testing.T) {
 		require.Equal(t, "https://ark-content.tos-cn-beijing.volces.com/cgt-1.mp4", info.Url)
 		require.EqualValues(t, 108900, info.TotalTokens)
 		require.Equal(t, 100, info.Progress)
+	})
+
+	t.Run("succeeded with worldrouter output_tokens", func(t *testing.T) {
+		// worldrouter reports usage.output_tokens instead of total_tokens.
+		body := `{"id":"cgt-1","status":"succeeded",` +
+			`"content":{"video_url":"https://cdn.worldrouter.ai/cgt-1.mp4"},` +
+			`"usage":{"output_tokens":108900}}`
+		info, err := a.ParseTaskResult([]byte(body))
+		require.NoError(t, err)
+		require.Equal(t, model.TaskStatusSuccess, info.Status)
+		require.EqualValues(t, 108900, info.TotalTokens)
 	})
 
 	t.Run("failed", func(t *testing.T) {

@@ -280,11 +280,17 @@ func (a *Adaptor) DoRequest(c *gin.Context, meta *meta.Meta, requestBody io.Read
 }
 
 // arkError is the Ark error envelope: {"error":{"code":"...","message":"..."}}.
+// worldrouter wraps the same fields in "detail" instead (observed live:
+// {"detail":{"code":"seedance_balance_too_low","message":"..."}}), so both
+// shapes are tried before falling back to a generic status-code message.
 type arkError struct {
-	Error struct {
-		Code    string `json:"code"`
-		Message string `json:"message"`
-	} `json:"error"`
+	Error  arkErrorBody `json:"error"`
+	Detail arkErrorBody `json:"detail"`
+}
+
+type arkErrorBody struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
 }
 
 // DoResponse parses the create response and returns the upstream task id
@@ -301,9 +307,14 @@ func (a *Adaptor) DoResponse(c *gin.Context, resp *http.Response, meta *meta.Met
 		message := fmt.Sprintf("上游返回状态码 %d", resp.StatusCode)
 		code := ""
 		var e arkError
-		if json.Unmarshal(body, &e) == nil && e.Error.Message != "" {
-			message = e.Error.Message
-			code = e.Error.Code
+		if json.Unmarshal(body, &e) == nil {
+			if e.Error.Message != "" {
+				message = e.Error.Message
+				code = e.Error.Code
+			} else if e.Detail.Message != "" {
+				message = e.Detail.Message
+				code = e.Detail.Code
+			}
 		}
 		return "", seedanceError(resp.StatusCode, code, message)
 	}
@@ -350,6 +361,9 @@ type arkTask struct {
 	} `json:"content"`
 	Usage struct {
 		TotalTokens int64 `json:"total_tokens"`
+		// worldrouter reports usage as output_tokens instead of total_tokens;
+		// for t2v there is no video input, so output equals total.
+		OutputTokens int64 `json:"output_tokens"`
 	} `json:"usage"`
 	Error struct {
 		Code    string `json:"code"`
@@ -379,6 +393,9 @@ func (a *Adaptor) ParseTaskResult(body []byte) (*task.TaskInfo, error) {
 		info.Status = model.TaskStatusSuccess
 		info.Url = t.Content.VideoUrl
 		info.TotalTokens = t.Usage.TotalTokens
+		if info.TotalTokens == 0 {
+			info.TotalTokens = t.Usage.OutputTokens
+		}
 		info.Progress = 100
 	case "failed", "cancelled", "expired":
 		info.Status = model.TaskStatusFailure
