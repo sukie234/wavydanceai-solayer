@@ -64,6 +64,7 @@ export const CHANNEL_TYPE: Record<number, string> = {
   36: 'DeepSeek',
   37: 'Cloudflare',
   39: 'Cohere',
+  40: 'Doubao (Volc Ark)',
   41: 'Replicate',
   42: 'VertexAI',
   43: 'Proxy',

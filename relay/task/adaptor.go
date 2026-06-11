@@ -89,20 +89,46 @@ func (BaseBilling) AdjustBillingOnComplete(*model.Task, *TaskInfo) (int64, bool)
 	return 0, false
 }
 
-// GetAdaptor returns the adaptor for a task platform, or nil if none is
-// registered.
-func GetAdaptor(platform string) Adaptor {
-	switch platform {
-	// Adaptors land in follow-up PRs (Seedance first); nothing is registered
-	// yet, so the framework stays dark until then.
-	default:
-		return nil
+var (
+	adaptorFactories = map[string]func() Adaptor{}
+	platformByModel  = map[string]string{}
+)
+
+// Register wires a platform's adaptor factory and the model names it serves
+// into GetAdaptor / GetPlatform. Adaptor packages call it from init(): they
+// import this package for the Adaptor interface, so this package cannot
+// import them back — main.go blank-imports each adaptor package to link it
+// in (the database/sql driver pattern). Like sql.Register it panics on a nil
+// factory or a duplicate platform/model registration: both are wiring bugs
+// that must surface at startup, not as silently re-routed billing. Not safe
+// for concurrent use; all registrations happen during package init.
+func Register(platform string, factory func() Adaptor, models ...string) {
+	if factory == nil {
+		panic("task: Register factory is nil for platform " + platform)
 	}
+	if _, dup := adaptorFactories[platform]; dup {
+		panic("task: Register called twice for platform " + platform)
+	}
+	adaptorFactories[platform] = factory
+	for _, m := range models {
+		if existing, dup := platformByModel[m]; dup {
+			panic("task: model " + m + " already registered to platform " + existing)
+		}
+		platformByModel[m] = platform
+	}
+}
+
+// GetAdaptor returns a fresh adaptor instance for a task platform (one
+// request = one instance), or nil if none is registered.
+func GetAdaptor(platform string) Adaptor {
+	if factory, ok := adaptorFactories[platform]; ok {
+		return factory()
+	}
+	return nil
 }
 
 // GetPlatform maps a requested model name to its task platform, or "" when
 // the model is not served by any registered task adaptor.
 func GetPlatform(modelName string) string {
-	// no task platforms registered yet (dark launch)
-	return ""
+	return platformByModel[modelName]
 }
