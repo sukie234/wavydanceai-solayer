@@ -38,6 +38,7 @@ const (
 	LogTypeManage
 	LogTypeSystem
 	LogTypeTest
+	LogTypeRefund // async task refund; kept separate from consume so the ledgers stay distinguishable
 )
 
 func recordLogHelper(ctx context.Context, log *Log) {
@@ -84,6 +85,13 @@ func RecordConsumeLog(ctx context.Context, log *Log) {
 	log.Username = GetUsernameById(log.UserId)
 	log.CreatedAt = helper.GetTimestamp()
 	log.Type = LogTypeConsume
+	recordLogHelper(ctx, log)
+}
+
+func RecordRefundLog(ctx context.Context, log *Log) {
+	log.Username = GetUsernameById(log.UserId)
+	log.CreatedAt = helper.GetTimestamp()
+	log.Type = LogTypeRefund
 	recordLogHelper(ctx, log)
 }
 

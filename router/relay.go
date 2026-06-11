@@ -17,9 +17,19 @@ func SetRelayRouter(router *gin.Engine) {
 		modelsRouter.GET("", controller.ListModels)
 		modelsRouter.GET("/:model", controller.RetrieveModel)
 	}
+	// task queries skip Distribute: there is no model in the request and the
+	// channel was pinned at submit time
+	videoTaskRouter := router.Group("/v1/videos")
+	videoTaskRouter.Use(middleware.RelayPanicRecover(), middleware.TokenAuth())
+	{
+		videoTaskRouter.GET("/:task_id", controller.GetVideoTask)
+		// TODO: GET /:task_id/content proxy download — upstream 24h direct
+		// links are sufficient for now
+	}
 	relayV1Router := router.Group("/v1")
 	relayV1Router.Use(middleware.RelayPanicRecover(), middleware.TokenAuth(), middleware.Distribute())
 	{
+		relayV1Router.POST("/videos", controller.RelayVideoSubmit)
 		relayV1Router.Any("/oneapi/proxy/:channelid/*target", controller.Relay)
 		relayV1Router.POST("/completions", controller.Relay)
 		relayV1Router.POST("/chat/completions", controller.Relay)
