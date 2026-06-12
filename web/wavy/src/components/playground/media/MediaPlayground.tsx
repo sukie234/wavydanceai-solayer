@@ -79,7 +79,7 @@ export function MediaPlayground({ modality }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [models.join('|'), active?.id])
 
-  const { busy, error, generate, abort } = useMediaGenerate()
+  const { busy, error, task, generate, abort } = useMediaGenerate()
 
   const persist = useCallback(
     (next: MediaSession) => {
@@ -133,6 +133,18 @@ export function MediaPlayground({ modality }: Props) {
     }
     updateActive(optimistic)
 
+    // Patch the job record in the freshest copy of the session — the closure's
+    // `active` goes stale across the await.
+    const patchJob = (patch: Partial<MediaSession['jobs'][number]>) => {
+      const current = mediaSessionStore.list(modality).find((s) => s.id === active.id)
+      if (!current) return
+      const idx = current.jobs.findIndex((j) => j.id === job.id)
+      if (idx < 0) return
+      const updated = [...current.jobs]
+      updated[idx] = { ...updated[idx], ...patch, updatedAt: Date.now() }
+      updateActive({ ...current, jobs: updated })
+    }
+
     try {
       const results = await generate({
         apiKey: token,
@@ -140,27 +152,16 @@ export function MediaPlayground({ modality }: Props) {
         model: active.model,
         prompt,
         params: active.params,
+        // Persist the relay task id so the job survives a refresh with a
+        // pointer back to GET /v1/videos/:id.
+        onTask: (taskId) => patchJob({ taskId }),
       })
-      const current = mediaSessionStore.list(modality).find((s) => s.id === active.id)
-      if (!current) return
-      const idx = current.jobs.findIndex((j) => j.id === job.id)
-      if (idx < 0) return
-      const updated = [...current.jobs]
-      updated[idx] = { ...updated[idx], status: 'succeeded', results, updatedAt: Date.now() }
-      updateActive({ ...current, jobs: updated })
+      patchJob({ status: 'succeeded', results })
     } catch (e) {
-      const current = mediaSessionStore.list(modality).find((s) => s.id === active.id)
-      if (!current) return
-      const idx = current.jobs.findIndex((j) => j.id === job.id)
-      if (idx < 0) return
-      const updated = [...current.jobs]
-      updated[idx] = {
-        ...updated[idx],
+      patchJob({
         status: 'failed',
         error: e instanceof Error ? e.message : String(e),
-        updatedAt: Date.now(),
-      }
-      updateActive({ ...current, jobs: updated })
+      })
     } finally {
       qc.invalidateQueries({ queryKey: ['self'] })
     }
@@ -238,7 +239,7 @@ export function MediaPlayground({ modality }: Props) {
           <div className="flex min-w-0 flex-col">
             {active ? (
               <>
-                <ResultGallery modality={modality} jobs={active.jobs} />
+                <ResultGallery modality={modality} jobs={active.jobs} activeTask={task} />
                 <PromptComposer
                   busy={busy}
                   disabled={!token || !active.model}

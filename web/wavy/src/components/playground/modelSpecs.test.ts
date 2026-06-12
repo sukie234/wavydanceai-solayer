@@ -26,6 +26,10 @@ describe('resolveModelSpec', () => {
     ['kling-2.6/text-to-video', 'kling'],
     ['veo-3-video', 'veo'],
     ['seedance-1.0-pro', 'seedance'],
+    ['seedance-2.0', 'seedance'],
+    ['seedance-2.0-fast', 'seedance-fast'],
+    ['doubao-seedance-2-0-260128', 'seedance'],
+    ['doubao-seedance-2-0-fast-260128', 'seedance-fast'],
     ['hailuo-02', 'hailuo'],
     ['minimax-video-01', 'hailuo'],
     ['unknown-video-model', 'generic-video'],
@@ -101,5 +105,50 @@ describe('buildRequestBody', () => {
       bogus: 'ignored',
     })
     expect(body).not.toHaveProperty('bogus')
+  })
+})
+
+describe('seedance video spec (POST /v1/videos)', () => {
+  it('targets the OpenAI Video endpoint with a flat body', () => {
+    const spec = resolveModelSpec('video', 'seedance-2.0')
+    expect(spec.endpoint).toBe('/v1/videos')
+    expect(spec.bodyShape).toBe('openai-flat')
+  })
+
+  it('seeds backend-matching defaults', () => {
+    const spec = resolveModelSpec('video', 'seedance-2.0')
+    expect(defaultParamsFor(spec)).toEqual({
+      resolution: '720p',
+      ratio: 'adaptive',
+      seconds: 5,
+      watermark: false,
+    })
+  })
+
+  it('serializes seconds as a string — the backend parses it via strconv.Atoi', () => {
+    const spec = resolveModelSpec('video', 'seedance-2.0')
+    const body = buildRequestBody(spec, 'seedance-2.0', 'a corgi on the beach', {
+      resolution: '1080p',
+      ratio: '16:9',
+      seconds: 10,
+      watermark: false,
+    })
+    expect(body).toEqual({
+      model: 'seedance-2.0',
+      prompt: 'a corgi on the beach',
+      resolution: '1080p',
+      ratio: '16:9',
+      seconds: '10',
+      watermark: false,
+    })
+  })
+
+  it('caps the fast tier at 720p — the backend rejects fast + 1080p', () => {
+    const fast = resolveModelSpec('video', 'seedance-2.0-fast')
+    const resolutionField = fast.fields.find((f) => f.key === 'resolution')
+    expect(resolutionField?.spec).toEqual({
+      kind: 'enum',
+      options: [{ value: '480p' }, { value: '720p' }],
+    })
   })
 })

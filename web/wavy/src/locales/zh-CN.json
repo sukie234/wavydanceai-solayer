@@ -124,6 +124,10 @@
         "emptyResultsHint": "右侧选择模型后，在下方输入提示词。视频生成通常需要 30 秒到 2 分钟。",
         "generating": "渲染中，可能需要一分钟…",
         "placeholder": "夕阳沙滩上，机器狗追着风筝奔跑…",
+        "task": {
+          "queued": "排队中，等待渲染…",
+          "inProgress": "渲染中… {{progress}}%"
+        },
         "error": {
           "noModels": "暂无可用视频模型",
           "noModelsHint": "你所在的分组还没有启用视频模型。请联系管理员添加。"
@@ -146,6 +150,7 @@
         "duration": "时长（秒）",
         "sound": "声音",
         "cameraFixed": "锁定镜头",
+        "watermark": "水印",
         "specHint": "规范：{{spec}}",
         "gptImage2ResolutionHint": "注意：1:1 比例不支持 4K。"
       }
@@ -375,7 +380,7 @@
   "login": {
     "kicker": "solayer.org · 登录",
     "title": "欢迎回来。",
-    "username": "用户名",
+    "username": "用户名或邮箱",
     "password": "密码",
     "signIn": "登录",
     "failed": "登录失败",
@@ -394,7 +399,7 @@
     "usePasskey": "使用 Passkey",
     "useTotp": "使用验证器代码",
     "chooseFactor": "选择二次验证方式",
-    "usernameRequired": "请输入用户名",
+    "usernameRequired": "请输入用户名或邮箱",
     "forgotPassword": "忘记密码？"
   },
   "register": {
