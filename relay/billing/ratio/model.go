@@ -273,6 +273,18 @@ var ModelRatio = map[string]float64{
 	"hunyuan-turbo-vision":      0.08 * RMB,
 	"hunyuan-vision":            0.018 * RMB,
 	"hunyuan-embedding":         0.0007 * RMB,
+	// Seedance video generation (async task billing by video tokens:
+	// tokens = duration(s) × width × height × 24fps ÷ 1024).
+	// https://www.volcengine.com/docs/82379/1544106
+	// Official price: Seedance 2.0 $7.00 / 1M tokens (480p/720p; 1080p is
+	// $7.70 but we keep the single 480p/720p rate per model), 2.0-fast
+	// $5.60 / 1M. Ratio basis 1.0 = $0.002 / 1K = $2 / 1M tokens, so
+	// $7.00/M → 3.5 and $5.60/M → 2.8. worldrouter naming and Volcano Ark
+	// naming are the same model at the same price.
+	"seedance-2.0":                    3.5,
+	"seedance-2.0-fast":               2.8,
+	"doubao-seedance-2-0-260128":      3.5,
+	"doubao-seedance-2-0-fast-260128": 2.8,
 	// https://platform.moonshot.cn/pricing
 	"moonshot-v1-8k":   0.012 * RMB,
 	"moonshot-v1-32k":  0.024 * RMB,

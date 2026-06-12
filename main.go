@@ -21,6 +21,8 @@ import (
 	"github.com/songquanpeng/one-api/middleware"
 	"github.com/songquanpeng/one-api/model"
 	"github.com/songquanpeng/one-api/relay/adaptor/openai"
+	relaytask "github.com/songquanpeng/one-api/relay/task"
+	_ "github.com/songquanpeng/one-api/relay/task/seedance" // registers the seedance task adaptor
 	"github.com/songquanpeng/one-api/router"
 	passkey_setting "github.com/songquanpeng/one-api/setting/passkey"
 )
@@ -98,6 +100,10 @@ func main() {
 	}
 	openai.InitTokenEncoders()
 	client.Init()
+
+	// async task polling (video generation etc.); CAS on terminal status
+	// transitions keeps this safe when multiple instances poll
+	go relaytask.StartPolling()
 
 	// Initialize i18n
 	if err := i18n.Init(); err != nil {
