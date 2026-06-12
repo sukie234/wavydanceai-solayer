@@ -1,0 +1,1171 @@
+openapi: 3.0.3
+info:
+  title: WavyDance Platform API
+  version: "1.0.0"
+  description: |
+    Management / console API used by the web frontend — user accounts, tokens,
+    channels, redemptions, logs, billing and top-ups.
+
+    This is **not** the LLM relay API (`/v1/chat/completions`, `/v1/images/...`,
+    `/v1/videos`). For that, end users call the OpenAI-compatible endpoints with
+    an `sk-` token.
+
+    ## Response envelope
+    Every `/api/**` endpoint returns `{ success, message, data }`. Most business
+    errors return HTTP 200 with `success: false` — always check `success`, not
+    just the status code. The two `dashboard/billing/*` endpoints are the
+    exception and return an OpenAI-compatible object directly (no envelope).
+
+    ## Auth
+    - **Session cookie** — set by `POST /api/user/login`; the browser uses it for
+      everything. Same-origin "Try it out" in this UI sends the cookie
+      automatically.
+    - **Access token** — from `GET /api/user/token`, sent in the `Authorization`
+      header **verbatim** (no `Bearer` prefix). Use the `AccessToken` scheme below.
+    - **`sk-` relay token** — only for the `dashboard/billing/*` endpoints.
+
+servers:
+  - url: /
+    description: Same origin as this UI
+
+tags:
+  - name: Auth
+    description: Registration, login, 2FA, password reset
+  - name: Self
+    description: The current user's own account
+  - name: 2FA
+    description: TOTP two-factor authentication
+  - name: Passkeys
+    description: WebAuthn credentials and passkey login
+  - name: Tokens
+    description: Relay (sk-) API keys
+  - name: Channels
+    description: Upstream provider connections (admin)
+  - name: Redemptions
+    description: Gift / redemption codes (admin)
+  - name: Logs
+  - name: TopUp
+    description: Top-up and billing
+  - name: Checkin
+  - name: AdminUsers
+    description: User administration
+  - name: System
+    description: Groups, options, models, status
+  - name: Playground
+
+security:
+  - AccessToken: []
+
+components:
+  securitySchemes:
+    AccessToken:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: >
+        Personal access token from `GET /api/user/token`, sent verbatim (no
+        `Bearer` prefix). Session-cookie auth also works same-origin without
+        this.
+    RelayToken:
+      type: http
+      scheme: bearer
+      description: An `sk-` relay token. Only used by the dashboard/billing endpoints.
+
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        data: {}
+      required: [success, message]
+    EnvelopeEmpty:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+      required: [success, message]
+
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        username: { type: string }
+        display_name: { type: string }
+        role: { type: integer, description: "1 common · 10 admin · 100 root" }
+        status: { type: integer, description: "1 enabled · 2 disabled" }
+        email: { type: string }
+        quota: { type: integer, format: int64 }
+        used_quota: { type: integer, format: int64 }
+        request_count: { type: integer }
+        group: { type: string }
+        aff_code: { type: string }
+        inviter_id: { type: integer }
+        two_fa_enabled: { type: boolean }
+
+    Token:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        key: { type: string, description: "the sk- value (clients send sk-<key>)" }
+        name: { type: string }
+        status: { type: integer, description: "1 enabled · 2 disabled · 3 expired · 4 exhausted" }
+        created_time: { type: integer, format: int64 }
+        accessed_time: { type: integer, format: int64 }
+        expired_time: { type: integer, format: int64, description: "-1 = never" }
+        remain_quota: { type: integer, format: int64 }
+        unlimited_quota: { type: boolean }
+        used_quota: { type: integer, format: int64 }
+        models: { type: string, nullable: true, description: "comma-separated allow-list; null = all" }
+        subnet: { type: string, nullable: true, description: "CIDR allow-list; null = any IP" }
+
+    Channel:
+      type: object
+      properties:
+        id: { type: integer }
+        type: { type: integer, description: "provider/adaptor type id" }
+        key: { type: string }
+        name: { type: string }
+        status: { type: integer, description: "1 enabled · 2 manually disabled · 3 auto-disabled" }
+        weight: { type: integer, nullable: true }
+        priority: { type: integer, format: int64, nullable: true }
+        base_url: { type: string, nullable: true }
+        models: { type: string, description: "comma-separated supported models" }
+        group: { type: string, default: "default" }
+        model_mapping: { type: string, nullable: true, description: "JSON map of model aliases" }
+        config: { type: string, description: "JSON adaptor config" }
+        system_prompt: { type: string, nullable: true }
+        balance: { type: number, format: double }
+        balance_updated_time: { type: integer, format: int64 }
+        response_time: { type: integer, description: "last test latency (ms)" }
+        used_quota: { type: integer, format: int64 }
+        created_time: { type: integer, format: int64 }
+
+    Redemption:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        key: { type: string }
+        name: { type: string }
+        status: { type: integer, description: "1 enabled · 2 disabled · 3 used" }
+        quota: { type: integer, format: int64 }
+        created_time: { type: integer, format: int64 }
+        redeemed_time: { type: integer, format: int64 }
+
+    Log:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        created_at: { type: integer, format: int64 }
+        type: { type: integer }
+        content: { type: string }
+        username: { type: string }
+        token_name: { type: string }
+        model_name: { type: string }
+        quota: { type: integer }
+        prompt_tokens: { type: integer }
+        completion_tokens: { type: integer }
+        channel: { type: integer }
+        request_id: { type: string }
+        elapsed_time: { type: integer, format: int64, description: "ms" }
+        is_stream: { type: boolean }
+        system_prompt_reset: { type: boolean }
+
+  parameters:
+    Page:
+      name: p
+      in: query
+      schema: { type: integer }
+      description: Page number
+    Keyword:
+      name: keyword
+      in: query
+      required: true
+      schema: { type: string }
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+
+paths:
+  # ---------------------------------------------------------------- Auth
+  /api/user/register:
+    post:
+      tags: [Auth]
+      summary: Register a new account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, description: "3–12 chars, alphanumeric/_/-" }
+                password: { type: string, description: "8–24 chars, complexity checked" }
+                email: { type: string }
+                verification_code: { type: string, description: "required when email verification is on" }
+                aff_code: { type: string, description: "inviter referral code" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/login:
+    post:
+      tags: [Auth]
+      summary: Password login (may trigger 2FA)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+      responses:
+        "200":
+          description: "User object, or { two_factor_required, methods }"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Envelope" }
+  /api/user/login/2fa:
+    post:
+      tags: [Auth]
+      summary: Complete 2FA at login with TOTP or backup code
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/logout:
+    get:
+      tags: [Auth]
+      summary: Clear session
+      security: []
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/verification:
+    get:
+      tags: [Auth]
+      summary: Send email verification code
+      security: []
+      parameters:
+        - { name: email, in: query, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/reset_password:
+    get:
+      tags: [Auth]
+      summary: Send password-reset email
+      security: []
+      parameters:
+        - { name: email, in: query, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/reset:
+    post:
+      tags: [Auth]
+      summary: Reset password with emailed token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, token]
+              properties:
+                email: { type: string }
+                token: { type: string }
+      responses:
+        "200":
+          description: "data: { password } (temporary)"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/oauth/email/bind:
+    get:
+      tags: [Auth]
+      summary: Bind an email to the current account
+      parameters:
+        - { name: email, in: query, required: true, schema: { type: string } }
+        - { name: code, in: query, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+
+  # ---------------------------------------------------------------- Self
+  /api/user/self:
+    get:
+      tags: [Self]
+      summary: Get current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties: { data: { $ref: "#/components/schemas/User" } }
+    put:
+      tags: [Self]
+      summary: Update own username / password / display name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: { type: string }
+                password: { type: string, description: "8–24 chars if provided" }
+                display_name: { type: string, description: "≤ 20 chars" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+    delete:
+      tags: [Self]
+      summary: Delete own account
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/dashboard:
+    get:
+      tags: [Self]
+      summary: 7-day usage by model
+      responses:
+        "200":
+          description: "data: [{ model, day, count, tokens }]"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/token:
+    get:
+      tags: [Self]
+      summary: Generate / rotate personal access token
+      responses:
+        "200":
+          description: "data: { access_token }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/aff:
+    get:
+      tags: [Self]
+      summary: Get referral (affiliate) code
+      responses:
+        "200":
+          description: "data: { aff_code }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/available_models:
+    get:
+      tags: [Self]
+      summary: Models available to this user
+      responses:
+        "200":
+          description: "data: string[]"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+
+  # ---------------------------------------------------------------- 2FA
+  /api/user/2fa/status:
+    get:
+      tags: [2FA]
+      summary: 2FA status
+      responses:
+        "200":
+          description: "data: { enabled, backup_codes_remaining }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/2fa/setup:
+    post:
+      tags: [2FA]
+      summary: Begin 2FA setup (returns secret + QR)
+      responses:
+        "200":
+          description: "data: { secret, otpauth_url, qr_png_b64, backup_codes[] }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/2fa/enable:
+    post:
+      tags: [2FA]
+      summary: Enable 2FA with a valid TOTP code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [code], properties: { code: { type: string } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/2fa/disable:
+    post:
+      tags: [2FA]
+      summary: Disable 2FA (TOTP or backup code)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [code], properties: { code: { type: string } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/2fa/backup-codes:
+    post:
+      tags: [2FA]
+      summary: Regenerate backup codes (TOTP or backup code)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [code], properties: { code: { type: string } } }
+      responses:
+        "200":
+          description: "data: { backup_codes[] }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+
+  # ---------------------------------------------------------------- Passkeys
+  /api/user/passkey/credentials:
+    get:
+      tags: [Passkeys]
+      summary: List my passkeys
+      responses:
+        "200":
+          description: "data: [{ id, name, transports, created_at, last_used_at }]"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/passkey/credentials/register/begin:
+    post:
+      tags: [Passkeys]
+      summary: Begin passkey registration (WebAuthn creation options)
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { name: { type: string, maxLength: 64 } } }
+      responses:
+        "200": { description: "WebAuthn CredentialCreationOptions", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/passkey/credentials/register/finish:
+    post:
+      tags: [Passkeys]
+      summary: Finish passkey registration (raw attestation JSON)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        "200": { description: "data: { id, name, transports, created_at }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/passkey/credentials/{id}:
+    patch:
+      tags: [Passkeys]
+      summary: Rename a passkey
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [name], properties: { name: { type: string, maxLength: 64 } } } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+    delete:
+      tags: [Passkeys]
+      summary: Delete a passkey
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/login/passkey/begin:
+    post:
+      tags: [Passkeys]
+      summary: Begin passkey login (WebAuthn request options)
+      security: []
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [username], properties: { username: { type: string } } } } }
+      responses:
+        "200": { description: "WebAuthn CredentialRequestOptions", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/login/passkey/finish:
+    post:
+      tags: [Passkeys]
+      summary: Finish passkey login (raw assertion JSON)
+      security: []
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        "200": { description: "data: User", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/login/2fa/passkey/begin:
+    post:
+      tags: [Passkeys]
+      summary: Begin passkey second factor (after password login flagged 2FA)
+      security: []
+      responses:
+        "200": { description: "WebAuthn CredentialRequestOptions", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/login/2fa/passkey/finish:
+    post:
+      tags: [Passkeys]
+      summary: Finish passkey second factor (raw assertion JSON)
+      security: []
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        "200": { description: "data: User", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+
+  # ---------------------------------------------------------------- Tokens
+  /api/token:
+    get:
+      tags: [Tokens]
+      summary: List own tokens
+      parameters:
+        - { $ref: "#/components/parameters/Page" }
+        - { name: order, in: query, schema: { type: string, enum: [remain_quota, used_quota] } }
+      responses:
+        "200":
+          description: "data: Token[]"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties: { data: { type: array, items: { $ref: "#/components/schemas/Token" } } }
+    post:
+      tags: [Tokens]
+      summary: Create a token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                expired_time: { type: integer, format: int64 }
+                remain_quota: { type: integer, format: int64 }
+                unlimited_quota: { type: boolean }
+                models: { type: string }
+                subnet: { type: string }
+      responses:
+        "200": { description: "data: Token (with generated key)", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    put:
+      tags: [Tokens]
+      summary: Update a token
+      parameters:
+        - { name: status_only, in: query, schema: { type: string }, description: "if present, only status is updated" }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/Token" } } }
+      responses:
+        "200": { description: "data: Token", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/token/search:
+    get:
+      tags: [Tokens]
+      summary: Search own tokens
+      parameters: [{ $ref: "#/components/parameters/Keyword" }]
+      responses:
+        "200": { description: "data: Token[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/token/{id}:
+    get:
+      tags: [Tokens]
+      summary: Get a token
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: "data: Token", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    delete:
+      tags: [Tokens]
+      summary: Delete a token
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+
+  # ---------------------------------------------------------------- Channels
+  /api/channel:
+    get:
+      tags: [Channels]
+      summary: List channels (admin)
+      parameters: [{ $ref: "#/components/parameters/Page" }]
+      responses:
+        "200":
+          description: "data: Channel[]"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties: { data: { type: array, items: { $ref: "#/components/schemas/Channel" } } }
+    post:
+      tags: [Channels]
+      summary: Create channel(s) — multi-key, split `key` on newlines (admin)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/Channel" } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+    put:
+      tags: [Channels]
+      summary: Update channel (admin)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/Channel" } } }
+      responses:
+        "200": { description: "data: Channel", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/channel/search:
+    get:
+      tags: [Channels]
+      summary: Search channels (admin)
+      parameters: [{ $ref: "#/components/parameters/Keyword" }]
+      responses:
+        "200": { description: "data: Channel[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/channel/models:
+    get:
+      tags: [Channels]
+      summary: All known models as OpenAI model objects (admin)
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/channel/test:
+    get:
+      tags: [Channels]
+      summary: Test all channels (admin)
+      parameters:
+        - { name: scope, in: query, schema: { type: string, enum: [all, disabled], default: all } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/channel/test/{id}:
+    get:
+      tags: [Channels]
+      summary: Test one channel (admin)
+      parameters:
+        - { $ref: "#/components/parameters/IdPath" }
+        - { name: model, in: query, schema: { type: string } }
+      responses:
+        "200": { description: "{ success, message, time (s), modelName }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/channel/update_balance:
+    get:
+      tags: [Channels]
+      summary: Refresh balance for all channels (admin)
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/channel/update_balance/{id}:
+    get:
+      tags: [Channels]
+      summary: Refresh balance for one channel (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: "data: { balance }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/channel/disabled:
+    delete:
+      tags: [Channels]
+      summary: Delete all disabled channels (admin)
+      responses:
+        "200": { description: "data: { rows }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/channel/{id}:
+    get:
+      tags: [Channels]
+      summary: Get a channel (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: "data: Channel", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    delete:
+      tags: [Channels]
+      summary: Delete a channel (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+
+  # ---------------------------------------------------------------- Redemptions
+  /api/redemption:
+    get:
+      tags: [Redemptions]
+      summary: List redemptions (admin)
+      parameters: [{ $ref: "#/components/parameters/Page" }]
+      responses:
+        "200":
+          description: "data: Redemption[]"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties: { data: { type: array, items: { $ref: "#/components/schemas/Redemption" } } }
+    post:
+      tags: [Redemptions]
+      summary: Create a batch of codes (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, count, quota]
+              properties:
+                name: { type: string, description: "1–20 chars" }
+                count: { type: integer, description: "1–100" }
+                quota: { type: integer, format: int64 }
+      responses:
+        "200": { description: "data: string[] (generated keys)", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    put:
+      tags: [Redemptions]
+      summary: Update a redemption (admin)
+      parameters:
+        - { name: status_only, in: query, schema: { type: string } }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/Redemption" } } }
+      responses:
+        "200": { description: "data: Redemption", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/redemption/search:
+    get:
+      tags: [Redemptions]
+      summary: Search redemptions (admin)
+      parameters: [{ $ref: "#/components/parameters/Keyword" }]
+      responses:
+        "200": { description: "data: Redemption[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/redemption/{id}:
+    get:
+      tags: [Redemptions]
+      summary: Get a redemption (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: "data: Redemption", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    delete:
+      tags: [Redemptions]
+      summary: Delete a redemption (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+
+  # ---------------------------------------------------------------- Logs
+  /api/log:
+    get:
+      tags: [Logs]
+      summary: All logs (admin)
+      parameters:
+        - { $ref: "#/components/parameters/Page" }
+        - { name: type, in: query, schema: { type: integer } }
+        - { name: username, in: query, schema: { type: string } }
+        - { name: token_name, in: query, schema: { type: string } }
+        - { name: model_name, in: query, schema: { type: string } }
+        - { name: start_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: end_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: channel, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: "data: Log[]"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties: { data: { type: array, items: { $ref: "#/components/schemas/Log" } } }
+    delete:
+      tags: [Logs]
+      summary: Delete logs before target_timestamp (admin)
+      parameters:
+        - { name: target_timestamp, in: query, schema: { type: integer, format: int64 } }
+      responses:
+        "200": { description: "data: deleted count", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/log/stat:
+    get:
+      tags: [Logs]
+      summary: Quota sum for a filter (admin)
+      parameters:
+        - { name: type, in: query, schema: { type: integer } }
+        - { name: start_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: end_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: token_name, in: query, schema: { type: string } }
+        - { name: username, in: query, schema: { type: string } }
+        - { name: model_name, in: query, schema: { type: string } }
+        - { name: channel, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: "data: { quota }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/log/search:
+    get:
+      tags: [Logs]
+      summary: Keyword search all logs (admin)
+      parameters: [{ $ref: "#/components/parameters/Keyword" }]
+      responses:
+        "200": { description: "data: Log[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/log/self:
+    get:
+      tags: [Logs]
+      summary: Own logs
+      parameters:
+        - { $ref: "#/components/parameters/Page" }
+        - { name: type, in: query, schema: { type: integer } }
+        - { name: token_name, in: query, schema: { type: string } }
+        - { name: model_name, in: query, schema: { type: string } }
+        - { name: start_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: end_timestamp, in: query, schema: { type: integer, format: int64 } }
+      responses:
+        "200": { description: "data: Log[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/log/self/stat:
+    get:
+      tags: [Logs]
+      summary: Own quota sum
+      parameters:
+        - { name: type, in: query, schema: { type: integer } }
+        - { name: start_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: end_timestamp, in: query, schema: { type: integer, format: int64 } }
+        - { name: token_name, in: query, schema: { type: string } }
+        - { name: model_name, in: query, schema: { type: string } }
+        - { name: channel, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: "data: { quota }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/log/self/search:
+    get:
+      tags: [Logs]
+      summary: Own keyword search
+      parameters: [{ $ref: "#/components/parameters/Keyword" }]
+      responses:
+        "200": { description: "data: Log[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+
+  # ---------------------------------------------------------------- TopUp
+  /api/user/topup:
+    post:
+      tags: [TopUp]
+      summary: Redeem a code
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [key], properties: { key: { type: string } } } } }
+      responses:
+        "200": { description: "data: { quota }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    get:
+      tags: [TopUp]
+      summary: Admin top-up list
+      parameters:
+        - { name: p, in: query, schema: { type: integer } }
+        - { name: size, in: query, schema: { type: integer } }
+        - { name: user_id, in: query, schema: { type: integer } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: gateway, in: query, schema: { type: string } }
+        - { name: start, in: query, schema: { type: integer, format: int64 } }
+        - { name: end, in: query, schema: { type: integer, format: int64 } }
+      responses:
+        "200": { description: "data: Topup[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/topup/complete:
+    post:
+      tags: [TopUp]
+      summary: Admin settle a pending top-up
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [trade_no], properties: { trade_no: { type: string }, note: { type: string } } } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/topup/info:
+    get:
+      tags: [TopUp]
+      summary: Top-up gateway config
+      responses:
+        "200":
+          description: "{ stripe_enabled, epay_enabled, crypto_adapters[], amount_options[], return_url }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/topup/self:
+    get:
+      tags: [TopUp]
+      summary: Own top-up history
+      parameters:
+        - { name: p, in: query, schema: { type: integer, default: 1 } }
+        - { name: size, in: query, schema: { type: integer, default: 20 } }
+      responses:
+        "200": { description: "data: Topup[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/topup/amount:
+    post:
+      tags: [TopUp]
+      summary: Preview money → quota conversion
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [money], properties: { money: { type: integer, format: int64, description: "cents" } } } } }
+      responses:
+        "200": { description: "data: { money, quota }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/topup/stripe:
+    post:
+      tags: [TopUp]
+      summary: Create a Stripe payment
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [money], properties: { money: { type: integer, format: int64, description: "cents, ≥100" } } } } }
+      responses:
+        "200": { description: "data: { trade_no, pay_url }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/topup/epay:
+    post:
+      tags: [TopUp]
+      summary: Create an EPay payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [money]
+              properties:
+                money: { type: integer, format: int64, description: "cents, ≥100" }
+                pay_method: { type: string, enum: [alipay, wxpay, qqpay] }
+      responses:
+        "200": { description: "data: { trade_no, pay_url }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/topup/crypto/{adapter}:
+    post:
+      tags: [TopUp]
+      summary: Create a crypto payment
+      parameters:
+        - { name: adapter, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [money], properties: { money: { type: integer, format: int64, description: "cents, ≥100" } } } } }
+      responses:
+        "200": { description: "data: { trade_no, pay_url }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/topup:
+    post:
+      tags: [TopUp]
+      summary: Admin manual credit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, quota]
+              properties:
+                user_id: { type: integer }
+                quota: { type: integer }
+                remark: { type: string }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /dashboard/billing/subscription:
+    get:
+      tags: [TopUp]
+      summary: OpenAI-compatible subscription (sk- token, no envelope)
+      security: [{ RelayToken: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object: { type: string }
+                  has_payment_method: { type: boolean }
+                  soft_limit_usd: { type: number }
+                  hard_limit_usd: { type: number }
+                  system_hard_limit_usd: { type: number }
+                  access_until: { type: integer, format: int64 }
+  /dashboard/billing/usage:
+    get:
+      tags: [TopUp]
+      summary: OpenAI-compatible usage (sk- token, no envelope)
+      security: [{ RelayToken: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object: { type: string }
+                  total_usage: { type: number, description: "0.01-dollar units" }
+
+  # ---------------------------------------------------------------- Checkin
+  /api/user/checkin/info:
+    get:
+      tags: [Checkin]
+      summary: Check-in info
+      responses:
+        "200":
+          description: "{ enabled, checked_today, current_streak, today_reward, base_quota, streak_bonus, streak_cap, last_checkin_date? }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+  /api/user/checkin:
+    post:
+      tags: [Checkin]
+      summary: Perform daily check-in
+      responses:
+        "200":
+          description: "{ already_checked, reward, streak, date, info }"
+          content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } }
+
+  # ---------------------------------------------------------------- AdminUsers
+  /api/user:
+    get:
+      tags: [AdminUsers]
+      summary: List users (admin)
+      parameters:
+        - { $ref: "#/components/parameters/Page" }
+        - { name: order, in: query, schema: { type: string, enum: [quota, used_quota, request_count] } }
+      responses:
+        "200":
+          description: "data: User[]"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties: { data: { type: array, items: { $ref: "#/components/schemas/User" } } }
+    post:
+      tags: [AdminUsers]
+      summary: Create a user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+                display_name: { type: string }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+    put:
+      tags: [AdminUsers]
+      summary: Update a user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: integer }
+                username: { type: string }
+                password: { type: string }
+                display_name: { type: string }
+                role: { type: integer }
+                status: { type: integer }
+                quota: { type: integer, format: int64 }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/search:
+    get:
+      tags: [AdminUsers]
+      summary: Search users (admin)
+      parameters: [{ $ref: "#/components/parameters/Keyword" }]
+      responses:
+        "200": { description: "data: User[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/manage:
+    post:
+      tags: [AdminUsers]
+      summary: Enable/disable/promote/demote/delete a user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, action]
+              properties:
+                username: { type: string }
+                action: { type: string, enum: [disable, enable, delete, promote, demote] }
+      responses:
+        "200": { description: "data: { role, status }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/{id}:
+    get:
+      tags: [AdminUsers]
+      summary: Get a user incl. SSO links and passkeys (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: "data: User (extended)", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    delete:
+      tags: [AdminUsers]
+      summary: Delete a user (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/{id}/passkeys:
+    delete:
+      tags: [AdminUsers]
+      summary: Clear all passkeys of a user (admin)
+      parameters: [{ $ref: "#/components/parameters/IdPath" }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/user/{id}/passkeys/{credId}:
+    delete:
+      tags: [AdminUsers]
+      summary: Delete one passkey of a user (admin)
+      parameters:
+        - { $ref: "#/components/parameters/IdPath" }
+        - { name: credId, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+
+  # ---------------------------------------------------------------- System
+  /api/group:
+    get:
+      tags: [System]
+      summary: Billing group names (admin)
+      responses:
+        "200": { description: "data: string[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/option:
+    get:
+      tags: [System]
+      summary: All system options (root); keys ending in Token/Secret omitted
+      responses:
+        "200": { description: "data: [{ key, value }]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+    put:
+      tags: [System]
+      summary: Update one option (root)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [key, value], properties: { key: { type: string }, value: { type: string } } } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/EnvelopeEmpty" } } } }
+  /api/models:
+    get:
+      tags: [System]
+      summary: Models per channel type
+      responses:
+        "200": { description: "data: { [channelType]: string[] }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/status:
+    get:
+      tags: [System]
+      summary: Server config & feature flags
+      security: []
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/notice:
+    get:
+      tags: [System]
+      summary: Notice string
+      security: []
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/about:
+    get:
+      tags: [System]
+      summary: About string
+      security: []
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/home_page_content:
+    get:
+      tags: [System]
+      summary: Home-page content string
+      security: []
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+
+  # ---------------------------------------------------------------- Playground
+  /api/user/playground_token:
+    get:
+      tags: [Playground]
+      summary: Scoped playground key (frontend prepends sk-)
+      responses:
+        "200": { description: "data: { key }", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/playground/chat_models:
+    get:
+      tags: [Playground]
+      summary: Playground chat models
+      responses:
+        "200": { description: "data: string[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/playground/image_models:
+    get:
+      tags: [Playground]
+      summary: Playground image models
+      responses:
+        "200": { description: "data: string[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }
+  /api/user/playground/video_models:
+    get:
+      tags: [Playground]
+      summary: Playground video models
+      responses:
+        "200": { description: "data: string[]", content: { application/json: { schema: { $ref: "#/components/schemas/Envelope" } } } }

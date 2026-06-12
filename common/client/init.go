@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/songquanpeng/one-api/common/config"
 	"github.com/songquanpeng/one-api/common/logger"
+	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -28,7 +29,17 @@ func Init() {
 			Timeout:   time.Second * time.Duration(config.UserContentRequestTimeout),
 		}
 	} else {
-		UserContentRequestHTTPClient = &http.Client{}
+		// No egress proxy configured: guard direct dials against SSRF so a
+		// user-supplied URL (e.g. a vision-model image link) cannot reach
+		// loopback / private / link-local / cloud-metadata addresses. When a
+		// proxy IS configured above the admin has opted into that egress path,
+		// so the guard does not apply there.
+		UserContentRequestHTTPClient = &http.Client{
+			Timeout: time.Second * time.Duration(config.UserContentRequestTimeout),
+			Transport: &http.Transport{
+				DialContext: (&net.Dialer{Control: ssrfDialControl}).DialContext,
+			},
+		}
 	}
 	var transport http.RoundTripper
 	if config.RelayProxy != "" {

@@ -631,6 +631,73 @@ var ModelRatio = map[string]float64{
 	"x-ai/grok-beta":                                  7.5,
 	"x-ai/grok-vision-beta":                           7.5,
 	"xwin-lm/xwin-lm-70b":                             1.875,
+
+	// worldrouter channel — live-tested billing prices, 2026-06-13 (cost basis:
+	// ratios reflect what worldrouter actually charges us; operator margin goes
+	// on the group ratio, not baked in here). ratio = (input $/M) / 2.
+	"claude-fable-5":                 3.5,    // $7/M in, $35/M out
+	"claude-opus-4-8":                1.75,   // $3.5/M in, $17.5/M out
+	"claude-opus-4-7":                1.75,   // $3.5/M in, $17.5/M out
+	"claude-opus-4-6":                1.75,   // $3.5/M in, $17.5/M out
+	"claude-sonnet-4-6":              1.05,   // $2.1/M in, $10.5/M out
+	"claude-haiku-4-5":               0.35,   // $0.7/M in, $3.5/M out
+	"gpt-5.5":                        1.75,   // $3.5/M in, $21/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"gpt-5.4":                        0.875,  // $1.75/M in, $10.5/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"gpt-5.4-mini":                   0.2625, // $0.525/M in, $3.15/M out
+	"gpt-oss-120b":                   0.0195, // $0.039/M in, $0.19/M out
+	"gpt-oss-20b":                    0.015,  // $0.03/M in, $0.14/M out
+	"gemini-3.1-pro-preview":         0.7,    // $1.4/M in, $8.4/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"gemini-3.1-flash-lite-preview":  0.0875, // $0.175/M in, $1.05/M out
+	"grok-4.20":                      1,      // $2/M in, $6/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"deepseek-v4-pro":                0.609,  // $1.218/M in, $2.436/M out
+	"deepseek-v4-flash":              0.049,  // $0.098/M in, $0.196/M out
+	"deepseek-v3.2-exp":              0.135,  // $0.27/M in, $0.41/M out
+	"deepseek-v3.1-terminus":         0.105,  // $0.21/M in, $0.79/M out
+	"deepseek-chat-v3.1":             0.075,  // $0.15/M in, $0.75/M out
+	"deepseek-chat-v3-0324":          0.1,    // $0.2/M in, $0.77/M out
+	"glm-5.1":                        0.385,  // $0.77/M in, $2.42/M out
+	"glm-5":                          0.275,  // $0.55/M in, $1.76/M out
+	"glm-4.7":                        0.2,    // $0.4/M in, $1.75/M out
+	"glm-4.7-flash":                  0.03,   // $0.06/M in, $0.4/M out
+	"glm-4.6":                        0.195,  // $0.39/M in, $1.9/M out
+	"glm-4.5-air":                    0.065,  // $0.13/M in, $0.85/M out
+	"kimi-k2.6":                      0.3325, // $0.665/M in, $2.8/M out
+	"kimi-k2.5":                      0.21,   // $0.42/M in, $2.1/M out
+	"MiniMax-M2.7":                   0.105,  // $0.21/M in, $0.84/M out
+	"MiniMax-M2.5":                   0.105,  // $0.21/M in, $0.84/M out
+	"qwen3.5-plus":                   0.0403, // $0.0805/M in, $0.4816/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"qwen3.5-plus-02-15":             0.2,    // $0.4/M in, $2.4/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"qwen3.6-plus":                   0.0966, // $0.1932/M in, $1.1557/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"qwen3.5-flash":                  0.0102, // $0.0203/M in, $0.2009/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"qwen3.5-flash-02-23":            0.05,   // $0.1/M in, $0.4/M out
+	"qwen3-coder-plus":               0.2009, // $0.4018/M in, $1.6058/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"qwen3-coder-next":               0.07,   // $0.14/M in, $0.8/M out
+	"qwen3-coder":                    0.11,   // $0.22/M in, $1.8/M out
+	"qwen3.5-397b-a17b":              0.195,  // $0.39/M in, $2.34/M out
+	"qwen3.5-35b-a3b":                0.125,  // $0.25/M in, $2/M out
+	"qwen3.5-27b":                    0.15,   // $0.3/M in, $2.4/M out
+	"qwen3.5-9b":                     0.05,   // $0.1/M in, $0.15/M out
+	"qwen3-vl-235b-a22b-instruct":    0.1,    // $0.2/M in, $0.88/M out
+	"qwen3-235b-a22b-2507":           0.05,   // $0.1/M in, $0.6/M out
+	"qwen3-next-80b-a3b-instruct":    0.045,  // $0.09/M in, $1.1/M out
+	"qwen3-30b-a3b-instruct-2507":    0.045,  // $0.09/M in, $0.3/M out
+	"qwen3-32b":                      0.04,   // $0.08/M in, $0.24/M out
+	"mimo-v2.5-pro":                  0.5,    // $1/M in, $3/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"mimo-v2.5":                      0.2,    // $0.4/M in, $2/M out; long-context tiers cost more (single ratio can't express; billed at tier 1)
+	"mimo-v2-flash":                  0.045,  // $0.09/M in, $0.29/M out
+	"step-3.5-flash":                 0.05,   // $0.1/M in, $0.3/M out
+	"gemma-4-31b-it":                 0.065,  // $0.13/M in, $0.38/M out
+	"gemma-4-26b-a4b-it":             0.065,  // $0.13/M in, $0.4/M out
+	"gemma-3-27b-it":                 0.04,   // $0.08/M in, $0.16/M out
+	"gemma-3-12b-it":                 0.02,   // $0.04/M in, $0.13/M out
+	"mistral-nemo":                   0.01,   // $0.02/M in, $0.04/M out
+	"mistral-small-3.2-24b-instruct": 0.0375, // $0.075/M in, $0.2/M out
+	"llama-4-maverick":               0.075,  // $0.15/M in, $0.6/M out
+	"llama-3.3-70b-instruct":         0.05,   // $0.1/M in, $0.32/M out
+	"llama-3.1-70b-instruct":         0.2,    // $0.4/M in, $0.4/M out
+	"llama-3.1-8b-instruct":          0.01,   // $0.02/M in, $0.05/M out
+	"nemotron-3-super-120b-a12b":     0.045,  // $0.09/M in, $0.45/M out
+	"nemotron-3-nano-30b-a3b":        0.025,  // $0.05/M in, $0.2/M out
 }
 
 var CompletionRatio = map[string]float64{
@@ -642,6 +709,71 @@ var CompletionRatio = map[string]float64{
 	// deepseek
 	"deepseek-chat":     0.28 / 0.14,
 	"deepseek-reasoner": 2.19 / 0.55,
+
+	// worldrouter channel — output/input price ratio, live-tested 2026-06-13
+	"claude-fable-5":                 5,
+	"claude-opus-4-8":                5,
+	"claude-opus-4-7":                5,
+	"claude-opus-4-6":                5,
+	"claude-sonnet-4-6":              5,
+	"claude-haiku-4-5":               5,
+	"gpt-5.5":                        6,
+	"gpt-5.4":                        6,
+	"gpt-5.4-mini":                   6,
+	"gpt-oss-120b":                   4.87,
+	"gpt-oss-20b":                    4.67,
+	"gemini-3.1-pro-preview":         6,
+	"gemini-3.1-flash-lite-preview":  6,
+	"grok-4.20":                      3,
+	"deepseek-v4-pro":                2,
+	"deepseek-v4-flash":              2,
+	"deepseek-v3.2-exp":              1.52,
+	"deepseek-v3.1-terminus":         3.76,
+	"deepseek-chat-v3.1":             5,
+	"deepseek-chat-v3-0324":          3.85,
+	"glm-5.1":                        3.14,
+	"glm-5":                          3.2,
+	"glm-4.7":                        4.375,
+	"glm-4.7-flash":                  6.67,
+	"glm-4.6":                        4.87,
+	"glm-4.5-air":                    6.54,
+	"kimi-k2.6":                      4.21,
+	"kimi-k2.5":                      5,
+	"MiniMax-M2.7":                   4,
+	"MiniMax-M2.5":                   4,
+	"qwen3.5-plus":                   6,
+	"qwen3.5-plus-02-15":             6,
+	"qwen3.6-plus":                   6,
+	"qwen3.5-flash":                  9.9,
+	"qwen3.5-flash-02-23":            4,
+	"qwen3-coder-plus":               4,
+	"qwen3-coder-next":               5.71,
+	"qwen3-coder":                    8.18,
+	"qwen3.5-397b-a17b":              6,
+	"qwen3.5-35b-a3b":                8,
+	"qwen3.5-27b":                    8,
+	"qwen3.5-9b":                     1.5,
+	"qwen3-vl-235b-a22b-instruct":    4.4,
+	"qwen3-235b-a22b-2507":           6,
+	"qwen3-next-80b-a3b-instruct":    12.22,
+	"qwen3-30b-a3b-instruct-2507":    3.33,
+	"qwen3-32b":                      3,
+	"mimo-v2.5-pro":                  3,
+	"mimo-v2.5":                      5,
+	"mimo-v2-flash":                  3.22,
+	"step-3.5-flash":                 3,
+	"gemma-4-31b-it":                 2.92,
+	"gemma-4-26b-a4b-it":             3.08,
+	"gemma-3-27b-it":                 2,
+	"gemma-3-12b-it":                 3.25,
+	"mistral-nemo":                   2,
+	"mistral-small-3.2-24b-instruct": 2.67,
+	"llama-4-maverick":               4,
+	"llama-3.3-70b-instruct":         3.2,
+	"llama-3.1-70b-instruct":         1,
+	"llama-3.1-8b-instruct":          2.5,
+	"nemotron-3-super-120b-a12b":     5,
+	"nemotron-3-nano-30b-a3b":        4,
 }
 
 var (

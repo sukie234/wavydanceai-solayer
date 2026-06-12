@@ -30,14 +30,21 @@ export const authService = {
    * enables email verification, callers must also pass `email` +
    * `verification_code`.
    */
-  async register(input: {
-    username: string
-    password: string
-    email?: string
-    verification_code?: string
-    aff_code?: string
-  }): Promise<void> {
-    const res = await api.post<ApiResponse>('/user/register', input)
+  async register(
+    input: {
+      username: string
+      password: string
+      email?: string
+      verification_code?: string
+      aff_code?: string
+    },
+    turnstileToken?: string,
+  ): Promise<void> {
+    // The Turnstile middleware reads the token from the query string even on
+    // POST routes, hence `params` rather than the JSON body.
+    const res = await api.post<ApiResponse>('/user/register', input, {
+      params: turnstileToken ? { turnstile: turnstileToken } : undefined,
+    })
     unwrap(res)
   },
 
@@ -69,16 +76,20 @@ export const authService = {
    *  backend (a) checks domain whitelist + already-taken, (b) stores the code
    *  in Redis keyed by email, (c) sends via configured SMTP. Throws on
    *  validation / SMTP failure with a human-readable message. */
-  async sendVerificationCode(email: string): Promise<void> {
-    const res = await api.get<ApiResponse>('/verification', { params: { email } })
+  async sendVerificationCode(email: string, turnstileToken?: string): Promise<void> {
+    const res = await api.get<ApiResponse>('/verification', {
+      params: { email, ...(turnstileToken ? { turnstile: turnstileToken } : {}) },
+    })
     unwrap(res)
   },
 
   /** Send a password-reset link to the given email. Backend mails a one-time
    *  token; the link points at /reset-password?email=...&token=... which is
    *  handled by the corresponding route. */
-  async sendPasswordResetEmail(email: string): Promise<void> {
-    const res = await api.get<ApiResponse>('/reset_password', { params: { email } })
+  async sendPasswordResetEmail(email: string, turnstileToken?: string): Promise<void> {
+    const res = await api.get<ApiResponse>('/reset_password', {
+      params: { email, ...(turnstileToken ? { turnstile: turnstileToken } : {}) },
+    })
     unwrap(res)
   },
 

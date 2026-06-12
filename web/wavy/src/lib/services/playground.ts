@@ -17,26 +17,26 @@ export const playgroundService = {
    * The backend lazily creates it on first call and reuses it thereafter.
    */
   async getToken(): Promise<string> {
-    const res = await api.get<ApiResponse<PlaygroundTokenResponse>>('/user/self/playground_token')
+    const res = await api.get<ApiResponse<PlaygroundTokenResponse>>('/user/playground_token')
     const data = unwrap(res)
     return data?.key ?? ''
   },
 
   /** Chat-capable subset of the user's group-allowed models. */
   async listChatModels(): Promise<string[]> {
-    const res = await api.get<ApiResponse<string[]>>('/user/self/playground/chat_models')
+    const res = await api.get<ApiResponse<string[]>>('/user/playground/chat_models')
     return unwrap(res) ?? []
   },
 
   /** Image-generation subset of the user's group-allowed models. */
   async listImageModels(): Promise<string[]> {
-    const res = await api.get<ApiResponse<string[]>>('/user/self/playground/image_models')
+    const res = await api.get<ApiResponse<string[]>>('/user/playground/image_models')
     return unwrap(res) ?? []
   },
 
   /** Video-generation subset of the user's group-allowed models. */
   async listVideoModels(): Promise<string[]> {
-    const res = await api.get<ApiResponse<string[]>>('/user/self/playground/video_models')
+    const res = await api.get<ApiResponse<string[]>>('/user/playground/video_models')
     return unwrap(res) ?? []
   },
 }

@@ -1,3 +1,4 @@
+import { queryClient } from '@/lib/queryClient'
 import { authService } from '@/lib/services/auth'
 import type { User } from '@/lib/types'
 
@@ -13,8 +14,16 @@ export async function getSession(force = false): Promise<User | null> {
   return user
 }
 
+/**
+ * Drops every cached trace of the current identity. Called on login, logout,
+ * registration and password change. Clearing the React Query cache here is
+ * load-bearing: queries like ['self'] (staleTime 30s) and the playground
+ * token (staleTime Infinity) would otherwise survive an account switch and
+ * show — or bill — the previous user.
+ */
 export function clearSessionCache() {
   cached = null
+  queryClient.clear()
 }
 
 export function isAdmin(u: User | null | undefined): boolean {

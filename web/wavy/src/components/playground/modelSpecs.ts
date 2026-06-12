@@ -352,12 +352,12 @@ const GENERIC_IMAGE: ModelSpec = {
 const SORA: ModelSpec = {
   id: 'sora',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 4000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -366,7 +366,7 @@ const SORA: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '10',
       spec: {
@@ -394,12 +394,12 @@ const SORA: ModelSpec = {
 const KLING: ModelSpec = {
   id: 'kling',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 1000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -409,7 +409,7 @@ const KLING: ModelSpec = {
       required: true,
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '5',
       spec: {
@@ -431,12 +431,12 @@ const KLING: ModelSpec = {
 const VEO: ModelSpec = {
   id: 'veo',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 4000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -445,7 +445,7 @@ const VEO: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '8',
       spec: {
@@ -524,12 +524,12 @@ const SEEDANCE_FAST = seedanceSpec('seedance-fast', ['480p', '720p'])
 const HAILUO: ModelSpec = {
   id: 'hailuo',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 2000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -538,7 +538,7 @@ const HAILUO: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '6',
       spec: {
@@ -552,12 +552,12 @@ const HAILUO: ModelSpec = {
 const GENERIC_VIDEO: ModelSpec = {
   id: 'generic-video',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 2000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -570,7 +570,7 @@ const GENERIC_VIDEO: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '5',
       spec: {
