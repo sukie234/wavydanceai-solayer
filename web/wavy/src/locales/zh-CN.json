@@ -452,6 +452,9 @@
     "signIn": "返回登录",
     "failed": "重置链接发送失败"
   },
+  "turnstile": {
+    "hint": "请完成上方人机验证后继续。"
+  },
   "reset": {
     "kicker": "密码重置",
     "title": "确认重置",

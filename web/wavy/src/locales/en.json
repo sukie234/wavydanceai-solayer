@@ -452,6 +452,9 @@
     "signIn": "Back to sign in",
     "failed": "Could not send reset link"
   },
+  "turnstile": {
+    "hint": "Complete the verification above to continue."
+  },
   "reset": {
     "kicker": "Password reset",
     "title": "Confirm reset",
