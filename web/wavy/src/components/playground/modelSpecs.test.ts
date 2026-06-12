@@ -152,3 +152,16 @@ describe('seedance video spec (POST /v1/videos)', () => {
     })
   })
 })
+
+describe('every video spec targets the real async endpoint', () => {
+  // Guards against specs pointing at routes the backend never registered
+  // (the kie-style /v1/videos/generations 404 fixed alongside this test).
+  it.each(['sora-2', 'kling-v2-master', 'veo-3', 'hailuo-02', 'totally-unknown-video-model'])(
+    '%s → POST /v1/videos (openai-flat)',
+    (model) => {
+      const spec = resolveModelSpec('video', model)
+      expect(spec.endpoint).toBe('/v1/videos')
+      expect(spec.bodyShape).toBe('openai-flat')
+    },
+  )
+})
