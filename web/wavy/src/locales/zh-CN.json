@@ -23,6 +23,7 @@
       "docs": "开发文档",
       "profile": "个人资料",
       "users": "用户",
+      "pricing": "模型计费",
       "settings": "系统设置"
     },
     "searchPlaceholder": "搜索渠道、模型、请求…",
@@ -529,6 +530,54 @@
       "SMTPFrom": "发件人地址",
       "SMTPFrom_placeholder": "no-reply@wavydance.ai",
       "SMTPAccount": "账号"
+    }
+  },
+  "ratios": {
+    "kicker": "仅 Root",
+    "title": "模型计费",
+    "lead": "全站计费倍率，保存后对新请求立即生效。",
+    "loading": "正在加载计费配置…",
+    "loadError": "服务器返回的计费配置无法解析，请先通过 option API 修复后再在此编辑。",
+    "fetchError": "计费配置加载失败，请刷新页面重试。",
+    "rawMode": "Raw JSON",
+    "tableMode": "表格",
+    "save": "保存",
+    "saved": "已保存",
+    "saveFailed": "保存失败",
+    "delete": "删除",
+    "invalid": "请先修正标红的数值再保存。",
+    "confirmTitle": "确认应用计费修改？",
+    "confirmMessage": "保存后立即影响全站所有用户的计费，填错会造成真实资金损失。",
+    "confirmApply": "应用",
+    "discardTitle": "放弃未保存的修改？",
+    "discardMessage": "切换编辑模式会重置未保存的修改。",
+    "discardConfirm": "放弃",
+    "groups": {
+      "title": "分组倍率",
+      "desc": "分组倍率统一加在所有模型成本价上，1.3 = 30% 毛利。",
+      "add": "添加分组",
+      "colGroup": "分组",
+      "colRatio": "倍率"
+    },
+    "models": {
+      "title": "模型倍率",
+      "desc": "ModelRatio 1.0 = $2 / 百万输入 token。倍率与美元价双向编辑、自动换算。",
+      "add": "添加模型",
+      "search": "搜索模型…",
+      "count": "{{shown}} / {{total}} 个模型",
+      "empty": "没有匹配的模型。",
+      "colModel": "模型",
+      "colRatio": "倍率",
+      "colInput": "输入价 $/M",
+      "colCompletion": "输出/输入比",
+      "colOutput": "输出价 $/M",
+      "default": "默认"
+    },
+    "raw": {
+      "GroupRatio": "用户组 → 加成倍率，统一乘在所有模型价格上。",
+      "ModelRatio": "模型名 → 倍率，1.0 = $2 / 百万输入 token。",
+      "CompletionRatio": "模型名 → 输出/输入价比。稀疏表——缺失的模型走后端默认值。",
+      "invalid": "JSON 无效：必须是「名称 → 非负数」的对象。"
     }
   },
   "models": {
