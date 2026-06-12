@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net"
+	netmail "net/mail"
 	"net/smtp"
 	"strconv"
 	"strings"
@@ -19,9 +20,31 @@ func shouldAuth() bool {
 	return config.SMTPAccount != "" || config.SMTPToken != ""
 }
 
+// parseRecipients splits a ";"-separated receiver list and validates each
+// entry with net/mail.ParseAddress, returning the canonical addresses. It
+// rejects CR/LF-bearing entries (which could inject extra SMTP commands or mail
+// headers, e.g. a hidden Bcc) as well as empty / blank entries.
+func parseRecipients(receiver string) ([]string, error) {
+	var recipients []string
+	for _, raw := range strings.Split(receiver, ";") {
+		parsed, err := netmail.ParseAddress(strings.TrimSpace(raw))
+		if err != nil {
+			return nil, fmt.Errorf("invalid email recipient %q: %w", raw, err)
+		}
+		recipients = append(recipients, parsed.Address)
+	}
+	return recipients, nil
+}
+
 func SendEmail(subject string, receiver string, content string) error {
 	if receiver == "" {
 		return fmt.Errorf("receiver is empty")
+	}
+	// Validate and canonicalize recipients once. The parsed forms are reused for
+	// the envelope below so the raw string is never re-split.
+	recipients, err := parseRecipients(receiver)
+	if err != nil {
+		return err
 	}
 	if config.SMTPFrom == "" { // for compatibility
 		config.SMTPFrom = config.SMTPAccount
@@ -36,7 +59,7 @@ func SendEmail(subject string, receiver string, content string) error {
 	}
 	// Generate a unique Message-ID
 	buf := make([]byte, 16)
-	_, err := rand.Read(buf)
+	_, err = rand.Read(buf)
 	if err != nil {
 		return err
 	}
@@ -54,7 +77,7 @@ func SendEmail(subject string, receiver string, content string) error {
 	// net.JoinHostPort brackets IPv6 hosts ([::1]:25); plain "%s:%d" produces
 	// invalid addresses like "::1:25" that net.Dial rejects.
 	addr := net.JoinHostPort(config.SMTPServer, strconv.Itoa(config.SMTPPort))
-	to := strings.Split(receiver, ";")
+	to := recipients
 
 	if config.SMTPPort == 465 || !shouldAuth() {
 		// need advanced client
@@ -62,7 +85,7 @@ func SendEmail(subject string, receiver string, content string) error {
 		var err error
 		if config.SMTPPort == 465 {
 			tlsConfig := &tls.Config{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: config.SMTPSSLInsecureSkipVerify,
 				ServerName:         config.SMTPServer,
 			}
 			conn, err = tls.Dial("tcp", addr, tlsConfig)
@@ -85,9 +108,8 @@ func SendEmail(subject string, receiver string, content string) error {
 		if err = client.Mail(config.SMTPFrom); err != nil {
 			return err
 		}
-		receiverEmails := strings.Split(receiver, ";")
-		for _, receiver := range receiverEmails {
-			if err = client.Rcpt(receiver); err != nil {
+		for _, recipient := range recipients {
+			if err = client.Rcpt(recipient); err != nil {
 				return err
 			}
 		}
