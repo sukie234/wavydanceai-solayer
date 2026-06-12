@@ -253,6 +253,9 @@
       "disableHint": "Enter a current code (or a backup code) to confirm.",
       "regenerateHint": "Generating new backup codes invalidates the old ones immediately.",
       "enabled": "2FA is on · {{count}} backup codes left"
+    },
+    "passkey": {
+      "disabled": "Passkey login is not enabled on this server."
     }
   },
   "hero": {

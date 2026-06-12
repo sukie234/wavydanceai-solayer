@@ -19,11 +19,17 @@ vi.mock('./passkey-ceremonies', () => ({
   isWebAuthnSupported: vi.fn(() => true),
 }))
 
+vi.mock('@/lib/services/status', () => ({
+  statusService: { get: vi.fn() },
+}))
+
 import { passkeyService } from '@/lib/services/passkey'
+import { statusService } from '@/lib/services/status'
 import { isWebAuthnSupported } from './passkey-ceremonies'
 
 const mockList = passkeyService.list as ReturnType<typeof vi.fn>
 const mockRegister = passkeyService.register as ReturnType<typeof vi.fn>
+const mockStatus = statusService.get as ReturnType<typeof vi.fn>
 const mockIsSupported = isWebAuthnSupported as ReturnType<typeof vi.fn>
 
 /** Minimal inline wrapper — no shared helper file per TESTING.md conventions. */
@@ -44,9 +50,22 @@ function renderWithQuery(ui: React.ReactElement) {
 beforeEach(() => {
   vi.clearAllMocks()
   mockIsSupported.mockReturnValue(true)
+  // Feature flag on by default — individual tests flip it off.
+  mockStatus.mockResolvedValue({ passkey_login: true })
 })
 
 describe('<PasskeyCard>', () => {
+  it('renders nothing when the passkey feature flag is off', async () => {
+    mockStatus.mockResolvedValue({ passkey_login: false })
+    mockList.mockResolvedValue([])
+
+    const { container } = renderWithQuery(<PasskeyCard />)
+
+    await waitFor(() => expect(mockStatus).toHaveBeenCalled())
+    expect(container).toBeEmptyDOMElement()
+    expect(mockList).not.toHaveBeenCalled()
+  })
+
   it('renders empty state when list resolves to []', async () => {
     mockList.mockResolvedValue([])
 
@@ -69,13 +88,14 @@ describe('<PasskeyCard>', () => {
     expect(screen.getByText(/never/)).toBeInTheDocument()
   })
 
-  it('shows Loading… while the query is pending', () => {
+  it('shows Loading… while the query is pending', async () => {
     // Never-resolving promise keeps the component in loading state
     mockList.mockReturnValue(new Promise(() => {}))
 
     renderWithQuery(<PasskeyCard />)
 
-    expect(screen.getByText('Loading…')).toBeInTheDocument()
+    // findBy: the section only mounts once the status query resolves.
+    expect(await screen.findByText('Loading…')).toBeInTheDocument()
   })
 
   it('disables "Add passkey" button with title when WebAuthn is unsupported', async () => {

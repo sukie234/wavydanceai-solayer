@@ -253,6 +253,9 @@
       "disableHint": "请输入当前验证码或备份码以确认。",
       "regenerateHint": "生成新的备份码后，旧的备份码将立即失效。",
       "enabled": "已开启 · 剩余 {{count}} 个备份码"
+    },
+    "passkey": {
+      "disabled": "Passkey 登录未启用。"
     }
   },
   "hero": {
