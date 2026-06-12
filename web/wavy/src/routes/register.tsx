@@ -10,6 +10,7 @@ import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { checkPassword, PASSWORD_MAX } from '@/lib/password'
 import { checkUsername, USERNAME_MAX } from '@/lib/username'
 import { AuthShell } from '@/components/auth/AuthShell'
+import { TurnstileWidget, useTurnstile } from '@/components/auth/Turnstile'
 import { statusService } from '@/lib/services/status'
 
 export const Route = createFileRoute('/register')({
@@ -41,6 +42,11 @@ function RegisterPage() {
     statusService.get().then((s) => setEmailRequired(!!s.email_verification)).catch(() => {})
   }, [])
 
+  // Cloudflare Turnstile gates /verification and /user/register when the
+  // admin switch is on. `ready` is true when the switch is off or a token
+  // has been solved.
+  const turnstile = useTurnstile()
+
   // Cooldown for the "Send code" button so users can't spam SMTP.
   const [sendingCode, setSendingCode] = useState(false)
   const [cooldown, setCooldown] = useState(0)
@@ -68,6 +74,7 @@ function RegisterPage() {
     !mismatch &&
     emailOk &&
     codeOk &&
+    turnstile.ready &&
     !loading
 
   async function onSendCode() {
@@ -79,11 +86,14 @@ function RegisterPage() {
     }
     setSendingCode(true)
     try {
-      await authService.sendVerificationCode(email)
+      await authService.sendVerificationCode(email, turnstile.token ?? undefined)
       setInfo(t('register.codeSent', { email }))
       setCooldown(60)
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : t('register.codeSendFailed'))
+      // Tokens are single-use — siteverify consumed it even though the request
+      // failed, so fetch a fresh one before the user retries.
+      turnstile.reset()
     } finally {
       setSendingCode(false)
     }
@@ -96,12 +106,15 @@ function RegisterPage() {
     if (mismatch || pwIssue !== null || !emailValid) return
     setLoading(true)
     try {
-      await authService.register({
-        username,
-        password,
-        ...(email ? { email } : {}),
-        ...(emailRequired ? { verification_code: verificationCode.trim() } : {}),
-      })
+      await authService.register(
+        {
+          username,
+          password,
+          ...(email ? { email } : {}),
+          ...(emailRequired ? { verification_code: verificationCode.trim() } : {}),
+        },
+        turnstile.token ?? undefined,
+      )
       // Backend creates the account but doesn't log us in. Hop through the
       // login endpoint so the session cookie lands without forcing the user
       // to retype credentials.
@@ -110,6 +123,8 @@ function RegisterPage() {
       navigate({ to: '/console' })
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : t('register.failed'))
+      // Single-use token was consumed; get a fresh one for the retry.
+      turnstile.reset()
     } finally {
       setLoading(false)
     }
@@ -153,7 +168,7 @@ function RegisterPage() {
                   variant="ghost"
                   size="sm"
                   onClick={onSendCode}
-                  disabled={!email || !emailValid || sendingCode || cooldown > 0}
+                  disabled={!email || !emailValid || sendingCode || cooldown > 0 || !turnstile.ready}
                   className="shrink-0"
                 >
                   {sendingCode ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
@@ -200,6 +215,8 @@ function RegisterPage() {
             hint={mismatch ? t('register.confirmMismatch') : undefined}
             tone={mismatch ? 'warn' : 'muted'}
           />
+
+          <TurnstileWidget state={turnstile} />
 
           {info && (
             <div className="mt-4 rounded-lg border border-[color:var(--cyan)]/30 bg-[color:var(--cyan)]/8 px-3 py-2 text-sm text-[color:var(--cyan)]">

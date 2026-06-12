@@ -1,21 +1,32 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Loader2, Plus, Trash2, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { passkeyService } from '@/lib/services/passkey'
+import { statusService } from '@/lib/services/status'
 import { useConfirm, usePrompt } from '@/components/ui/AppDialogs'
 import { isWebAuthnSupported } from './passkey-ceremonies'
 
 export function PasskeyCard() {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const [error, setError] = useState<string | null>(null)
   const supported = isWebAuthnSupported()
   const promptDialog = usePrompt()
   const confirmDialog = useConfirm()
 
+  const { data: status } = useQuery({
+    queryKey: ['public-status'],
+    queryFn: () => statusService.get(),
+    staleTime: 60_000,
+  })
+  const passkeyLoginEnabled = status?.passkey_login === true
+
   const { data, isLoading } = useQuery({
     queryKey: ['passkeys'],
     queryFn: () => passkeyService.list(),
+    enabled: passkeyLoginEnabled,
   })
 
   const add = useMutation({
@@ -24,7 +35,12 @@ export function PasskeyCard() {
       setError(null)
       qc.invalidateQueries({ queryKey: ['passkeys'] })
     },
-    onError: e => setError((e as Error).message),
+    // The backend rejects every /passkey/* call with "passkey disabled" while
+    // the feature flag is off — show the translated copy for that one message.
+    onError: e => {
+      const msg = (e as Error).message
+      setError(msg === 'passkey disabled' ? t('profile.passkey.disabled') : msg)
+    },
   })
 
   const rename = useMutation({
@@ -36,6 +52,10 @@ export function PasskeyCard() {
     mutationFn: (id: number) => passkeyService.remove(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['passkeys'] }),
   })
+
+  // Feature flag off (or status still loading) — hide the whole section, same
+  // as OAuthButtons does for disabled providers.
+  if (!passkeyLoginEnabled) return null
 
   return (
     <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-7 shadow-[var(--shadow-jelly)]">

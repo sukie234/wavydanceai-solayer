@@ -456,7 +456,7 @@ func updateUserUsedQuota(id int, quota int64) {
 	}
 }
 
-func updateUserRequestCount(id int, count int) {
+func updateUserRequestCount(id int, count int64) {
 	err := DB.Model(&User{}).Where("id = ?", id).Update("request_count", gorm.Expr("request_count + ?", count)).Error
 	if err != nil {
 		logger.SysError("failed to update user request count: " + err.Error())

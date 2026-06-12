@@ -18,6 +18,7 @@ export interface StatusInfo {
   email_verification: boolean
   turnstile_check: boolean
   turnstile_site_key: string
+  passkey_login?: boolean
 
   // OAuth providers
   github_oauth: boolean

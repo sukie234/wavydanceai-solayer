@@ -13,6 +13,7 @@ import {
   Receipt,
   Wallet,
   Users,
+  CircleDollarSign,
   Settings,
   UserCircle,
   Sparkles,
@@ -47,6 +48,7 @@ const ACCOUNT: NavItem[] = [
   // Profile is for every signed-in user — no role gate.
   { to: '/console/profile', icon: UserCircle, i18n: 'console.nav.profile' },
   { to: '/console/users', icon: Users, i18n: 'console.nav.users', minRole: Role.AdminUser },
+  { to: '/console/pricing', icon: CircleDollarSign, i18n: 'console.nav.pricing', minRole: Role.RootUser },
   { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings', minRole: Role.RootUser },
 ]
 

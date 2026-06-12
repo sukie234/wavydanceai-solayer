@@ -8,7 +8,6 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
-	"net/http"
 	"regexp"
 	"strings"
 	"sync"
@@ -61,7 +60,9 @@ func GetImageFromUrl(url string) (mimeType string, data string, err error) {
 	if !isImage {
 		return
 	}
-	resp, err := http.Get(url)
+	// Use the SSRF-guarded user-content client (not net/http.Get) so a
+	// caller-supplied image URL cannot make us fetch private/metadata hosts.
+	resp, err := client.UserContentRequestHTTPClient.Get(url)
 	if err != nil {
 		return
 	}

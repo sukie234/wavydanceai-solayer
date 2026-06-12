@@ -23,6 +23,7 @@
       "docs": "Documentation",
       "profile": "Profile",
       "users": "Users",
+      "pricing": "Pricing",
       "settings": "Settings"
     },
     "searchPlaceholder": "Search channels, models, requests…",
@@ -253,6 +254,9 @@
       "disableHint": "Enter a current code (or a backup code) to confirm.",
       "regenerateHint": "Generating new backup codes invalidates the old ones immediately.",
       "enabled": "2FA is on · {{count}} backup codes left"
+    },
+    "passkey": {
+      "disabled": "Passkey login is not enabled on this server."
     }
   },
   "hero": {
@@ -450,6 +454,9 @@
     "signIn": "Back to sign in",
     "failed": "Could not send reset link"
   },
+  "turnstile": {
+    "hint": "Complete the verification above to continue."
+  },
   "reset": {
     "kicker": "Password reset",
     "title": "Confirm reset",
@@ -524,6 +531,54 @@
       "SMTPFrom": "From address",
       "SMTPFrom_placeholder": "no-reply@solayer.org",
       "SMTPAccount": "Account"
+    }
+  },
+  "ratios": {
+    "kicker": "Root only",
+    "title": "Model pricing",
+    "lead": "Live billing multipliers for the whole site. Saved changes apply to new requests immediately.",
+    "loading": "Loading pricing…",
+    "loadError": "The pricing options returned by the server could not be parsed. Fix them via the option API before editing here.",
+    "fetchError": "Failed to load pricing options. Refresh the page to retry.",
+    "rawMode": "Raw JSON",
+    "tableMode": "Table",
+    "save": "Save",
+    "saved": "Saved",
+    "saveFailed": "Save failed",
+    "delete": "Delete",
+    "invalid": "Fix the highlighted values before saving.",
+    "confirmTitle": "Apply billing changes?",
+    "confirmMessage": "This updates live billing for every user immediately. Wrong values have real money impact.",
+    "confirmApply": "Apply",
+    "discardTitle": "Discard unsaved changes?",
+    "discardMessage": "Switching the editing mode resets any unsaved edits.",
+    "discardConfirm": "Discard",
+    "groups": {
+      "title": "Group ratios",
+      "desc": "Group ratio multiplies on top of every model's cost price — 1.3 = 30% gross margin.",
+      "add": "Add group",
+      "colGroup": "Group",
+      "colRatio": "Ratio"
+    },
+    "models": {
+      "title": "Model ratios",
+      "desc": "ModelRatio 1.0 = $2 per million input tokens. Edit either the ratio or the dollar price — they stay in sync.",
+      "add": "Add model",
+      "search": "Search models…",
+      "count": "{{shown}} of {{total}} models",
+      "empty": "No models match.",
+      "colModel": "Model",
+      "colRatio": "Ratio",
+      "colInput": "Input $/M",
+      "colCompletion": "Compl. ratio",
+      "colOutput": "Output $/M",
+      "default": "default"
+    },
+    "raw": {
+      "GroupRatio": "User group → multiplier. Applied on top of every model price.",
+      "ModelRatio": "Model name → ratio. 1.0 = $2 per million input tokens.",
+      "CompletionRatio": "Model name → output/input price multiplier. Sparse — missing models use the backend default.",
+      "invalid": "Invalid JSON: must be an object of name → non-negative number."
     }
   },
   "models": {
