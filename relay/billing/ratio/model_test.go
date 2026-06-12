@@ -201,7 +201,7 @@ func TestGetCompletionRatio_SwitchCases(t *testing.T) {
 		want float64
 	}{
 		{"llama2-70b-4096", 0.8 / 0.64},
-		{"llama3-8b-8192", 2},        // channel 0 misses channel-typed key, hits switch
+		{"llama3-8b-8192", 2},            // channel 0 misses channel-typed key, hits switch
 		{"llama3-70b-8192", 0.79 / 0.59}, // same
 		{"command", 2},
 		{"command-light", 2},
@@ -269,5 +269,39 @@ func TestUpdateCompletionRatioByJSONString_InvalidErrors(t *testing.T) {
 	snapshotModelRatios(t)
 	if err := UpdateCompletionRatioByJSONString("nope"); err == nil {
 		t.Fatal("expected error for invalid JSON, got nil")
+	}
+}
+
+// Worldrouter live-tested prices (2026-06-13). Pins a few representative
+// entries so a future table edit can't silently revert to the 30x fallback
+// that over-billed claude-haiku-4-5 by 86x in staging.
+func TestGetModelRatio_WorldrouterEntries(t *testing.T) {
+	snapshotModelRatios(t)
+	cases := map[string]float64{
+		"claude-haiku-4-5":  0.35,   // $0.70/M in — the 86x incident model
+		"claude-fable-5":    3.5,    // $7/M in
+		"gpt-5.4":           0.875,  // $1.75/M in
+		"deepseek-v4-flash": 0.049,  // $0.098/M in
+		"qwen3.5-flash":     0.0102, // $0.0203/M in
+		"glm-5":             0.275,  // $0.55/M in
+	}
+	for model, want := range cases {
+		if got := GetModelRatio(model, 0); got != want {
+			t.Errorf("GetModelRatio(%q) = %v, want %v", model, got, want)
+		}
+	}
+}
+
+func TestGetCompletionRatio_WorldrouterEntries(t *testing.T) {
+	snapshotModelRatios(t)
+	cases := map[string]float64{
+		"claude-haiku-4-5":       5,   // explicit entry, not the claude- prefix fallback (3)
+		"qwen3.5-flash":          9.9, // $0.2009 out / $0.0203 in
+		"llama-3.1-70b-instruct": 1,
+	}
+	for model, want := range cases {
+		if got := GetCompletionRatio(model, 0); got != want {
+			t.Errorf("GetCompletionRatio(%q) = %v, want %v", model, got, want)
+		}
 	}
 }
