@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { authService } from '@/lib/services/auth'
 import { ApiError } from '@/lib/api'
 import { AuthShell } from '@/components/auth/AuthShell'
+import { TurnstileWidget, useTurnstile } from '@/components/auth/Turnstile'
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordPage,
@@ -25,8 +26,11 @@ function ForgotPasswordPage() {
     return () => window.clearTimeout(t)
   }, [cooldown])
 
+  // Cloudflare Turnstile gates /reset_password when the admin switch is on.
+  const turnstile = useTurnstile()
+
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const canSubmit = emailValid && !loading && cooldown === 0
+  const canSubmit = emailValid && !loading && cooldown === 0 && turnstile.ready
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -34,11 +38,14 @@ function ForgotPasswordPage() {
     if (!canSubmit) return
     setLoading(true)
     try {
-      await authService.sendPasswordResetEmail(email)
+      await authService.sendPasswordResetEmail(email, turnstile.token ?? undefined)
       setSent(true)
       setCooldown(60)
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : t('forgot.failed'))
+      // Tokens are single-use — siteverify consumed it even though the request
+      // failed, so fetch a fresh one before the user retries.
+      turnstile.reset()
     } finally {
       setLoading(false)
     }
@@ -98,6 +105,10 @@ function ForgotPasswordPage() {
               </Button>
             </>
           )}
+
+          {/* Kept outside the sent/unsent branches so the solved token (and
+              the server-side session mark) survives into the resend view. */}
+          <TurnstileWidget state={turnstile} className="mt-4" />
 
           <p className="mt-5 text-center text-xs text-[color:var(--muted)]">
             {t('forgot.backToLogin')}{' '}

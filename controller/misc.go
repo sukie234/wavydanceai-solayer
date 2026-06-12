@@ -3,7 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/songquanpeng/one-api/common"
@@ -12,6 +14,7 @@ import (
 	"github.com/songquanpeng/one-api/common/message"
 	"github.com/songquanpeng/one-api/model"
 	"github.com/songquanpeng/one-api/setting/auth_setting"
+	"github.com/songquanpeng/one-api/setting/passkey"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,6 +50,7 @@ func GetStatus(c *gin.Context) {
 			"oidc_userinfo_endpoint":      config.OidcUserinfoEndpoint,
 			"google_oauth":                auth_setting.GetGoogleSetting().Enabled,
 			"google_client_id":            auth_setting.GetGoogleSetting().ClientId,
+			"passkey_login":               passkey.GetPasskeySetting().Enabled,
 		},
 	})
 	return
@@ -119,16 +123,15 @@ func SendEmailVerification(c *gin.Context) {
 	}
 	code := common.GenerateVerificationCode(6)
 	common.RegisterVerificationCodeWithKey(email, code, common.EmailVerificationPurpose)
-	subject := fmt.Sprintf("%s 邮箱验证邮件", config.SystemName)
+	subject := fmt.Sprintf("Verify your email for %s", config.SystemName)
 	content := message.EmailTemplate(
-		subject,
+		"Verify your email",
 		fmt.Sprintf(`
-			<p>您好！</p>
-			<p>您正在进行 %s 邮箱验证。</p>
-			<p>您的验证码为：</p>
-			<p style="font-size: 24px; font-weight: bold; color: #333; background-color: #f8f8f8; padding: 10px; text-align: center; border-radius: 4px;">%s</p>
-			<p style="color: #666;">验证码 %d 分钟内有效，如果不是本人操作，请忽略。</p>
-		`, config.SystemName, code, common.VerificationValidMinutes),
+			<p>Hi,</p>
+			<p>Use the code below to verify your email address for %s:</p>
+			<p style="font-size: 28px; font-weight: bold; letter-spacing: 6px; color: #084d3e; background-color: #edf6ed; border: 1px solid #eef0ef; padding: 14px; text-align: center; border-radius: 8px;">%s</p>
+			<p style="color: #3e4040;">This code expires in %d minutes. If you didn't request it, you can safely ignore this email.</p>
+		`, html.EscapeString(config.SystemName), code, common.VerificationValidMinutes),
 	)
 	err := message.SendEmail(subject, email, content)
 	if err != nil {
@@ -163,21 +166,22 @@ func SendPasswordResetEmail(c *gin.Context) {
 	}
 	code := common.GenerateVerificationCode(0)
 	common.RegisterVerificationCodeWithKey(email, code, common.PasswordResetPurpose)
-	link := fmt.Sprintf("%s/reset-password?email=%s&token=%s", config.ServerAddress, email, code)
-	subject := fmt.Sprintf("%s 密码重置", config.SystemName)
+	link := fmt.Sprintf("%s/reset-password?email=%s&token=%s",
+		config.ServerAddress, url.QueryEscape(email), url.QueryEscape(code))
+	safeLink := html.EscapeString(link)
+	subject := fmt.Sprintf("Reset your %s password", config.SystemName)
 	content := message.EmailTemplate(
-		subject,
+		"Reset your password",
 		fmt.Sprintf(`
-			<p>您好！</p>
-			<p>您正在进行 %s 密码重置。</p>
-			<p>请点击下面的按钮进行密码重置：</p>
+			<p>Hi,</p>
+			<p>We received a request to reset your %s password. Click the button below to choose a new one:</p>
 			<p style="text-align: center; margin: 30px 0;">
-				<a href="%s" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">重置密码</a>
+				<a href="%s" style="background-color: #084d3e; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">Reset password</a>
 			</p>
-			<p style="color: #666;">如果按钮无法点击，请复制以下链接到浏览器中打开：</p>
-			<p style="background-color: #f8f8f8; padding: 10px; border-radius: 4px; word-break: break-all;">%s</p>
-			<p style="color: #666;">重置链接 %d 分钟内有效，如果不是本人操作，请忽略。</p>
-		`, config.SystemName, link, link, common.VerificationValidMinutes),
+			<p style="color: #3e4040;">If the button doesn't work, copy and paste this link into your browser:</p>
+			<p style="background-color: #edf6ed; border: 1px solid #eef0ef; padding: 10px; border-radius: 8px; word-break: break-all; font-size: 14px;">%s</p>
+			<p style="color: #3e4040;">This link expires in %d minutes. If you didn't request a reset, you can safely ignore this email.</p>
+		`, html.EscapeString(config.SystemName), safeLink, safeLink, common.VerificationValidMinutes),
 	)
 	err := message.SendEmail(subject, email, content)
 	if err != nil {

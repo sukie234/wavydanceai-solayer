@@ -1,14 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import type { Modality } from '../modelSpecs'
+import type { TaskState } from './useMediaGenerate'
 import type { MediaJob } from './types'
 
 type Props = {
   modality: Modality
   jobs: MediaJob[]
+  /** Live state of the in-flight async video task, if any. */
+  activeTask?: TaskState | null
 }
 
-export function ResultGallery({ modality, jobs }: Props) {
+export function ResultGallery({ modality, jobs, activeTask }: Props) {
   const { t } = useTranslation()
 
   if (jobs.length === 0) {
@@ -26,15 +29,24 @@ export function ResultGallery({ modality, jobs }: Props) {
     <div className="flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-4xl flex-col gap-6">
         {jobs.map((job) => (
-          <JobCard key={job.id} job={job} modality={modality} />
+          <JobCard key={job.id} job={job} modality={modality} activeTask={activeTask} />
         ))}
       </div>
     </div>
   )
 }
 
-function JobCard({ job, modality }: { job: MediaJob; modality: Modality }) {
+function JobCard({
+  job,
+  modality,
+  activeTask,
+}: {
+  job: MediaJob
+  modality: Modality
+  activeTask?: TaskState | null
+}) {
   const { t } = useTranslation()
+  const liveTask = activeTask && job.taskId === activeTask.id ? activeTask : null
 
   return (
     <article className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5">
@@ -56,7 +68,11 @@ function JobCard({ job, modality }: { job: MediaJob; modality: Modality }) {
       {job.status === 'pending' && (
         <div className="flex items-center gap-2 rounded-xl border border-dashed border-[color:var(--border)] bg-[color:var(--bg2)] p-6 text-sm text-[color:var(--muted)]">
           <Loader2 className="h-3.5 w-3.5 animate-spin text-[color:var(--cyan)]" />
-          {t(`console.playground.${modality}.generating`)}
+          {liveTask
+            ? liveTask.status === 'in_progress'
+              ? t('console.playground.video.task.inProgress', { progress: liveTask.progress })
+              : t('console.playground.video.task.queued')
+            : t(`console.playground.${modality}.generating`)}
         </div>
       )}
 

@@ -66,6 +66,14 @@ var SMTPAccount = ""
 var SMTPFrom = ""
 var SMTPToken = ""
 
+// SMTPSSLInsecureSkipVerify disables SMTP server certificate verification on
+// the implicit-TLS (465) path. Operator-only env escape hatch for self-signed
+// mail servers — defaults to false so production verifies certs. It is read
+// only from this env var and is never wired into model.updateOptionMap, so the
+// /option admin APIs cannot flip TLS verification at runtime: a TLS-downgrade
+// toggle must not be reachable from the web admin UI.
+var SMTPSSLInsecureSkipVerify = strings.ToLower(os.Getenv("SMTP_INSECURE_SKIP_VERIFY")) == "true"
+
 var GitHubClientId = ""
 var GitHubClientSecret = ""
 

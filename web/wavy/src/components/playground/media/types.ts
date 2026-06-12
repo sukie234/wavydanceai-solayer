@@ -18,6 +18,8 @@ export interface MediaJob {
   /** Wire params snapshot — what we actually sent. */
   params: Record<string, unknown>
   status: MediaJobStatus
+  /** Relay task id for async video jobs (`POST /v1/videos`). */
+  taskId?: string
   /** Populated when status === 'succeeded'. */
   results: MediaResult[]
   /** Populated when status === 'failed'. */

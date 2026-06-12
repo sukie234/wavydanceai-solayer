@@ -68,7 +68,7 @@ func batchUpdate() {
 			case BatchUpdateTypeUsedQuota:
 				updateUserUsedQuota(key, value)
 			case BatchUpdateTypeRequestCount:
-				updateUserRequestCount(key, int(value))
+				updateUserRequestCount(key, value)
 			case BatchUpdateTypeChannelUsedQuota:
 				updateChannelUsedQuota(key, value)
 			}

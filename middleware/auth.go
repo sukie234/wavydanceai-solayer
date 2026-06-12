@@ -163,5 +163,9 @@ func shouldCheckModel(c *gin.Context) bool {
 	if strings.HasPrefix(c.Request.URL.Path, "/v1/audio") {
 		return true
 	}
+	// only submissions carry a model; GET /v1/videos/:task_id has no body
+	if strings.HasPrefix(c.Request.URL.Path, "/v1/videos") && c.Request.Method == http.MethodPost {
+		return true
+	}
 	return false
 }

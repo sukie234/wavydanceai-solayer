@@ -35,6 +35,11 @@ export interface ParamField {
   spec: ParamFieldType
   /** Optional short hint rendered under the field — i18n key. */
   hintKey?: string
+  /**
+   * Serialize the value as a string on the wire. The OpenAI Video API's
+   * `seconds` field is a string ("5"), but a number input is nicer UX.
+   */
+  asString?: boolean
 }
 
 /**
@@ -347,12 +352,12 @@ const GENERIC_IMAGE: ModelSpec = {
 const SORA: ModelSpec = {
   id: 'sora',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 4000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -361,7 +366,7 @@ const SORA: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '10',
       spec: {
@@ -389,12 +394,12 @@ const SORA: ModelSpec = {
 const KLING: ModelSpec = {
   id: 'kling',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 1000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -404,7 +409,7 @@ const KLING: ModelSpec = {
       required: true,
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '5',
       spec: {
@@ -426,12 +431,12 @@ const KLING: ModelSpec = {
 const VEO: ModelSpec = {
   id: 'veo',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 4000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -440,7 +445,7 @@ const VEO: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '8',
       spec: {
@@ -460,65 +465,71 @@ const VEO: ModelSpec = {
   ],
 }
 
-const SEEDANCE: ModelSpec = {
-  id: 'seedance',
-  modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
-  promptMaxLength: 4000,
-  fields: [
-    {
-      key: 'aspect_ratio',
-      labelKey: 'aspectRatio',
-      default: '16:9',
-      spec: {
-        kind: 'enum',
-        options: [
-          { value: '16:9' },
-          { value: '9:16' },
-          { value: '1:1' },
-          { value: '4:3' },
-          { value: '3:4' },
-          { value: '21:9' },
-        ],
+/**
+ * Seedance 2.0 speaks the OpenAI Video async API (`POST /v1/videos` →
+ * `GET /v1/videos/:id` polling). Field names follow the backend adaptor
+ * (relay/task/seedance): `seconds` is the OpenAI duration field — a string
+ * on the wire — while `resolution` / `ratio` / `watermark` pass through to
+ * Ark. The fast tier rejects 1080p at validation, so its spec drops the
+ * option up front.
+ */
+function seedanceSpec(id: string, resolutions: string[]): ModelSpec {
+  return {
+    id,
+    modality: 'video',
+    bodyShape: 'openai-flat',
+    endpoint: '/v1/videos',
+    promptMaxLength: 4000,
+    fields: [
+      {
+        key: 'resolution',
+        labelKey: 'resolution',
+        default: '720p',
+        spec: { kind: 'enum', options: resolutions.map((value) => ({ value })) },
       },
-    },
-    {
-      key: 'duration',
-      labelKey: 'duration',
-      default: '5',
-      spec: {
-        kind: 'enum',
-        options: [{ value: '5' }, { value: '10' }],
+      {
+        key: 'ratio',
+        labelKey: 'aspectRatio',
+        default: 'adaptive',
+        spec: {
+          kind: 'enum',
+          options: [
+            { value: 'adaptive' },
+            { value: '16:9' },
+            { value: '9:16' },
+            { value: '1:1' },
+          ],
+        },
       },
-    },
-    {
-      key: 'resolution',
-      labelKey: 'resolution',
-      default: '720p',
-      spec: {
-        kind: 'enum',
-        options: [{ value: '480p' }, { value: '720p' }, { value: '1080p' }],
+      {
+        key: 'seconds',
+        labelKey: 'duration',
+        default: 5,
+        asString: true,
+        spec: { kind: 'number', min: 4, max: 15, step: 1 },
       },
-    },
-    {
-      key: 'camera_fixed',
-      labelKey: 'cameraFixed',
-      default: false,
-      spec: { kind: 'toggle' },
-    },
-  ],
+      {
+        key: 'watermark',
+        labelKey: 'watermark',
+        default: false,
+        spec: { kind: 'toggle' },
+      },
+    ],
+  }
 }
+
+const SEEDANCE = seedanceSpec('seedance', ['480p', '720p', '1080p'])
+const SEEDANCE_FAST = seedanceSpec('seedance-fast', ['480p', '720p'])
 
 const HAILUO: ModelSpec = {
   id: 'hailuo',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 2000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -527,7 +538,7 @@ const HAILUO: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '6',
       spec: {
@@ -541,12 +552,12 @@ const HAILUO: ModelSpec = {
 const GENERIC_VIDEO: ModelSpec = {
   id: 'generic-video',
   modality: 'video',
-  bodyShape: 'kie-nested',
-  endpoint: '/v1/videos/generations',
+  bodyShape: 'openai-flat',
+  endpoint: '/v1/videos',
   promptMaxLength: 2000,
   fields: [
     {
-      key: 'aspect_ratio',
+      key: 'ratio',
       labelKey: 'aspectRatio',
       default: '16:9',
       spec: {
@@ -559,7 +570,7 @@ const GENERIC_VIDEO: ModelSpec = {
       },
     },
     {
-      key: 'duration',
+      key: 'seconds',
       labelKey: 'duration',
       default: '5',
       spec: {
@@ -593,6 +604,9 @@ const VIDEO_MATCHERS: Matcher[] = [
   { test: /^sora/, spec: SORA },
   { test: /kling/, spec: KLING },
   { test: /^veo/, spec: VEO },
+  // fast first: "seedance-2.0-fast" / "doubao-seedance-2-0-fast-260128"
+  // must not fall through to the spec that offers 1080p.
+  { test: /seedance.*fast/, spec: SEEDANCE_FAST },
   { test: /seedance/, spec: SEEDANCE },
   { test: /hailuo|minimax-video/, spec: HAILUO },
 ]
@@ -641,10 +655,12 @@ export function buildRequestBody(
   params: Record<string, unknown>,
   extras?: { inputUrls?: string[] },
 ): Record<string, unknown> {
-  const allowed = new Set(spec.fields.map((f) => f.key))
+  const fieldByKey = new Map(spec.fields.map((f) => [f.key, f]))
   const filtered: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(params)) {
-    if (allowed.has(k)) filtered[k] = v
+    const field = fieldByKey.get(k)
+    if (!field) continue
+    filtered[k] = field.asString ? String(v) : v
   }
 
   if (spec.bodyShape === 'openai-flat') {

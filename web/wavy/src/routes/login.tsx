@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, Link, redirect, useNavigate, useSearch } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { twofaService } from '@/lib/services/twofa'
 import { clearSessionCache, getSession } from '@/lib/session'
 import { ApiError } from '@/lib/api'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
+import { statusService } from '@/lib/services/status'
 import { passkeyService } from '@/lib/services/passkey'
 import { isWebAuthnSupported } from '@/components/passkey/passkey-ceremonies'
 import { AuthShell } from '@/components/auth/AuthShell'
@@ -41,6 +43,12 @@ function LoginPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { next } = useSearch({ from: '/login' })
+  const { data: status } = useQuery({
+    queryKey: ['public-status'],
+    queryFn: () => statusService.get(),
+    staleTime: 60_000,
+  })
+  const passkeyLoginEnabled = status?.passkey_login === true
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -221,8 +229,9 @@ function LoginPage() {
             </Button>
           )}
 
-          {/* Passwordless passkey button — shown on the initial login form only */}
-          {isWebAuthnSupported() && !twoFAPending && (
+          {/* Passwordless passkey button — only when the deployment has passkey
+              login enabled and the browser supports WebAuthn */}
+          {passkeyLoginEnabled && isWebAuthnSupported() && !twoFAPending && (
             <button
               type="button"
               className="mt-3 w-full text-center text-sm text-[color:var(--cyan)] hover:underline"

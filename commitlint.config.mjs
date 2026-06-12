@@ -19,5 +19,17 @@ export default {
       return !CONVENTIONAL_HEADER.test(subject);
     },
   ],
+  // Relax the stylistic rules that upstream's (conventionally-prefixed) commits
+  // routinely violate — e.g. "feat(seedance): Seedance video adaptor…" trips
+  // subject-case (capitalized proper noun), and upstream bodies exceed the
+  // 100-char line cap. These commits pass the `ignores` filter because they DO
+  // carry a valid type prefix, so disable the cosmetic rules here. The
+  // structural rules that keep messages parseable (type-enum, type-empty,
+  // subject-empty) stay enforced for our own commits.
+  rules: {
+    "subject-case": [0],
+    "body-max-line-length": [0],
+    "footer-max-line-length": [0],
+  },
 };
 
