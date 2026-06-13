@@ -5,6 +5,7 @@ import (
 	"github.com/songquanpeng/one-api/common/logger"
 	billingratio "github.com/songquanpeng/one-api/relay/billing/ratio"
 	settingconfig "github.com/songquanpeng/one-api/setting/config"
+	"gorm.io/gorm"
 	"strconv"
 	"strings"
 	"time"
@@ -140,6 +141,44 @@ func UpdateOption(key string, value string) error {
 	DB.Save(&option)
 	// Update OptionMap
 	return updateOptionMap(key, value)
+}
+
+// UpdateOptions persists several options atomically: the DB writes run inside a
+// single transaction, so either every key is written or none is. The in-memory
+// OptionMap is only updated after the transaction commits, so a failed batch
+// leaves no partial state visible to readers. This closes the split-brain
+// window where, e.g., ModelRatio could be saved but CompletionRatio not.
+func UpdateOptions(options map[string]string) error {
+	if len(options) == 0 {
+		return nil
+	}
+	err := DB.Transaction(func(tx *gorm.DB) error {
+		for key, value := range options {
+			option := Option{Key: key}
+			if err := tx.FirstOrCreate(&option, Option{Key: key}).Error; err != nil {
+				return err
+			}
+			option.Value = value
+			if err := tx.Save(&option).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	// DB committed — now reflect the new values in the in-memory OptionMap.
+	for key, value := range options {
+		if err := updateOptionMap(key, value); err != nil {
+			// The DB already holds the full batch, but in-memory application is
+			// now partial. Resync the whole OptionMap from the committed DB
+			// state so readers never see a half-applied batch.
+			loadOptionsFromDatabase()
+			return err
+		}
+	}
+	return nil
 }
 
 func updateOptionMap(key string, value string) (err error) {

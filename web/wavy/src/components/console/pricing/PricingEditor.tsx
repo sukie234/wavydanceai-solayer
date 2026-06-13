@@ -17,6 +17,9 @@ type Props = {
   modelRatio: RatioMap
   completionRatio: RatioMap
   onSave: (key: RatioKey, value: string) => Promise<void>
+  /** Persist several ratio keys atomically (used for the model section, which
+   *  saves ModelRatio + CompletionRatio together). */
+  onSaveBatch: (keys: Partial<Record<RatioKey, string>>) => Promise<void>
 }
 
 const PAGE_SIZE = 50
@@ -108,7 +111,7 @@ function dupNames(names: string[]): Set<string> {
 
 const pretty = (map: RatioMap) => JSON.stringify(map, null, 2)
 
-export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave }: Props) {
+export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave, onSaveBatch }: Props) {
   const { t } = useTranslation()
   const confirm = useConfirm()
 
@@ -236,15 +239,12 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave 
         const name = r.name.trim()
         if (r.completion.trim() !== '') completionMap[name] = parseRatio(r.completion)!
       }
-      await onSave('ModelRatio', JSON.stringify(modelMap))
-      try {
-        await onSave('CompletionRatio', JSON.stringify(completionMap))
-      } catch (e) {
-        // ModelRatio is already persisted — record it so dirty tracking
-        // compares against server state and a retry only re-sends the rest.
-        setSaved((s) => ({ ...s, model: modelMap }))
-        throw e
-      }
+      // Persist both maps in one atomic call so a mid-save failure can never
+      // leave ModelRatio saved without CompletionRatio (or vice versa).
+      await onSaveBatch({
+        ModelRatio: JSON.stringify(modelMap),
+        CompletionRatio: JSON.stringify(completionMap),
+      })
       setSaved((s) => ({ ...s, model: modelMap, completion: completionMap }))
     })
   }
