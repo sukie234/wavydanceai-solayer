@@ -101,7 +101,8 @@
           "noModels": "暂无可用对话模型",
           "noModelsHint": "你所在的分组还没有启用对话模型。请联系管理员添加。",
           "backHome": "返回控制台",
-          "topup": "去充值"
+          "topup": "去充值",
+          "token": "无法获取 Playground API 令牌 —— 请刷新页面重试。"
         }
       },
       "image": {
@@ -496,6 +497,7 @@
     "loading": "正在加载配置…",
     "save": "保存",
     "saved": "已保存",
+    "saveFailed": "保存失败",
     "sec": {
       "auth": { "title": "登录与注册", "desc": "控制用户如何登录 wavydance.ai。" },
       "channels": { "title": "渠道与路由", "desc": "渠道失败时的行为以及用量记录策略。" },
@@ -697,6 +699,7 @@
       "col": { "name": "名称", "key": "码值", "quota": "配额", "status": "状态" },
       "deleteTitle": "删除兑换码",
       "deleteConfirm": "确定删除兑换码 \"{{name}}\" 吗？",
+      "deleteFailed": "删除失败",
       "success": {
         "title": "已生成 {{count}} 个兑换码",
         "lead": "请立即复制——此处只显示这一次。之后在表格里只能看到前 8 位。",
@@ -714,6 +717,7 @@
     "newKey": "新建密钥",
     "empty": "还没有密钥 —— 点击「新建密钥」创建第一把。",
     "deleteConfirm": "删除密钥「{{name}}」？此操作不可撤销。",
+    "actionFailed": "操作失败",
     "copyKey": "复制完整密钥",
     "copied": "已复制！",
     "col": {
@@ -743,6 +747,7 @@
     "todoAdd": "新增渠道 UI 尚未实现 —— 暂时请用 API 或旧主题。",
     "empty": "尚未配置渠道。",
     "deleteConfirm": "删除渠道「{{name}}」？",
+    "actionFailed": "操作失败",
     "col": {
       "name": "渠道",
       "group": "分组",

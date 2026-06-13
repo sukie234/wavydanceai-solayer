@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PasskeyCard } from './PasskeyCard'
 import { AppDialogsProvider } from '@/components/ui/AppDialogs'
 import type { PasskeyView } from '@/lib/services/passkey'
+import '@/lib/i18n'
 
 vi.mock('@/lib/services/passkey', () => ({
   passkeyService: {
@@ -29,6 +30,8 @@ import { isWebAuthnSupported } from './passkey-ceremonies'
 
 const mockList = passkeyService.list as ReturnType<typeof vi.fn>
 const mockRegister = passkeyService.register as ReturnType<typeof vi.fn>
+const mockRename = passkeyService.rename as ReturnType<typeof vi.fn>
+const mockRemove = passkeyService.remove as ReturnType<typeof vi.fn>
 const mockStatus = statusService.get as ReturnType<typeof vi.fn>
 const mockIsSupported = isWebAuthnSupported as ReturnType<typeof vi.fn>
 
@@ -154,5 +157,41 @@ describe('<PasskeyCard>', () => {
     await waitFor(() => {
       expect(screen.getByText('YubiKey')).toBeInTheDocument()
     })
+  })
+
+  it('surfaces the error when renaming a passkey fails', async () => {
+    const passkey: PasskeyView = {
+      id: 1, name: 'MacBook', transports: 'usb', created_at: 1_700_000_000, last_used_at: 0,
+    }
+    mockList.mockResolvedValue([passkey])
+    mockRename.mockRejectedValue(new Error('rename rejected by server'))
+
+    renderWithQuery(<PasskeyCard />)
+    await screen.findByText('MacBook')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Rename' }))
+    const input = await screen.findByPlaceholderText('New name')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'Laptop')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByText('rename rejected by server')).toBeInTheDocument()
+  })
+
+  it('surfaces the error when deleting a passkey fails', async () => {
+    const passkey: PasskeyView = {
+      id: 1, name: 'MacBook', transports: 'usb', created_at: 1_700_000_000, last_used_at: 0,
+    }
+    mockList.mockResolvedValue([passkey])
+    mockRemove.mockRejectedValue(new Error('delete rejected by server'))
+
+    renderWithQuery(<PasskeyCard />)
+    await screen.findByText('MacBook')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    const dialog = await screen.findByRole('dialog')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Delete' }))
+
+    expect(await screen.findByText('delete rejected by server')).toBeInTheDocument()
   })
 })

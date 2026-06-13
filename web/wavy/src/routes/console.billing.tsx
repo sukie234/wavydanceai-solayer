@@ -185,6 +185,7 @@ function RedemptionsAdminSection() {
   const qc = useQueryClient()
   const confirmDialog = useConfirm()
   const [showCreate, setShowCreate] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
   const { data, isLoading } = useQuery({
     queryKey: ['redemptions'],
     queryFn: () => billingService.listRedemptions(0),
@@ -192,7 +193,11 @@ function RedemptionsAdminSection() {
 
   const remove = useMutation({
     mutationFn: (id: number) => billingService.deleteRedemption(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['redemptions'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['redemptions'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('billing.redemption.deleteFailed')),
   })
 
   const cols: Column<Redemption>[] = [
@@ -267,6 +272,12 @@ function RedemptionsAdminSection() {
           {t('billing.redemption.create')}
         </Button>
       </div>
+
+      {err && (
+        <div className="mb-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-sm text-[color:var(--coral)]">
+          {err}
+        </div>
+      )}
 
       <DataTable
         columns={cols}
