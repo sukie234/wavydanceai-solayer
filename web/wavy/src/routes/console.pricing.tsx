@@ -70,6 +70,10 @@ function PricingPage() {
             await optionsService.update(key, value)
             await qc.invalidateQueries({ queryKey: ['options'] })
           }}
+          onSaveBatch={async (keys: Partial<Record<RatioKey, string>>) => {
+            await optionsService.updateBatch(keys)
+            await qc.invalidateQueries({ queryKey: ['options'] })
+          }}
         />
       )}
     </div>

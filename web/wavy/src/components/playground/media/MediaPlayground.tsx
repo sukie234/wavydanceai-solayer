@@ -30,7 +30,7 @@ export function MediaPlayground({ modality }: Props) {
   const { t } = useTranslation()
   const qc = useQueryClient()
 
-  const { data: token } = useQuery({
+  const { data: token, isError: tokenError } = useQuery({
     queryKey: ['playground', 'token'],
     queryFn: () => playgroundService.getToken(),
     staleTime: Infinity,
@@ -201,6 +201,13 @@ export function MediaPlayground({ modality }: Props) {
           <Link to="/console/topup" className="ml-auto text-[color:var(--cyan)] hover:underline">
             {t('console.playground.chat.error.topup')}
           </Link>
+        </div>
+      )}
+
+      {tokenError && (
+        <div className="flex items-center gap-2 border-b border-[color:var(--border)] bg-[color:var(--bg2)] px-6 py-2 text-xs text-[color:var(--text)]">
+          <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+          <span className="flex-1 break-words">{t('console.playground.chat.error.token')}</span>
         </div>
       )}
 

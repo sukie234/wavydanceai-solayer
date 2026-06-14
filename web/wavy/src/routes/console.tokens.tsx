@@ -9,6 +9,7 @@ import { DataTable, Pager, StatusPill, type Column } from '@/components/console/
 import { tokensService } from '@/lib/services/tokens'
 import { Dialog } from '@/components/console/Dialog'
 import { useConfirm } from '@/components/ui/AppDialogs'
+import { ApiError } from '@/lib/api'
 import { TokenStatus, type Token } from '@/lib/types'
 
 export const Route = createFileRoute('/console/tokens')({
@@ -23,6 +24,7 @@ function TokensPage() {
   const confirmDialog = useConfirm()
   const [p, setP] = useState(0)
   const [showCreate, setShowCreate] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['tokens', p],
@@ -31,12 +33,20 @@ function TokensPage() {
 
   const remove = useMutation({
     mutationFn: tokensService.remove,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['tokens'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['tokens'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('tk.actionFailed')),
   })
 
   const update = useMutation({
     mutationFn: tokensService.update,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['tokens'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['tokens'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('tk.actionFailed')),
   })
 
   const columns: Column<Token>[] = [
@@ -152,6 +162,11 @@ function TokensPage() {
           </Button>
         }
       />
+      {err && (
+        <div className="mb-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-sm text-[color:var(--coral)]">
+          {err}
+        </div>
+      )}
       <DataTable
         columns={columns}
         rows={data}

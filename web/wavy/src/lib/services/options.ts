@@ -16,6 +16,14 @@ export const optionsService = {
     const res = await api.put<ApiResponse>('/option/', { key, value })
     unwrap(res)
   },
+
+  /** Persist several options atomically — the backend writes all keys in one
+   *  transaction or none, so related values (e.g. ModelRatio + CompletionRatio)
+   *  can never end up half-saved. */
+  async updateBatch(keys: Record<string, string>): Promise<void> {
+    const res = await api.put<ApiResponse>('/option/batch', { keys })
+    unwrap(res)
+  },
 }
 
 /** Map raw option key → bool */
