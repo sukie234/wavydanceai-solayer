@@ -41,7 +41,7 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/console/playground"
-              className="inline-flex items-center gap-1.5 rounded-[10px] bg-current-grad px-4 py-2 text-[0.9rem] font-semibold text-[color:var(--cta-ink)] transition hover:-translate-y-px hover:brightness-110"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-current-grad px-4 py-2 text-[0.9rem] font-semibold text-[color:var(--cta-ink)] transition hover:-translate-y-px hover:brightness-110"
             >
               {t('docs.spec.tryInPlayground')}
               <ChevronRight className="h-4 w-4" />
@@ -50,7 +50,7 @@ export function ChatModelSpec({ model }: { model: DocItem }) {
               href="https://github.com/solayer-labs"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-[10px] border border-[color:var(--border)] px-4 py-2 text-[0.9rem] font-semibold text-[color:var(--text)] transition hover:border-[color:var(--cyan)]"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--border)] px-4 py-2 text-[0.9rem] font-semibold text-[color:var(--text)] transition hover:border-[color:var(--cyan)]"
             >
               {t('docs.spec.openapiSpec')}
               <ExternalLink className="h-3.5 w-3.5" />

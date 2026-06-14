@@ -7,6 +7,7 @@ import '@/lib/i18n'
 
 function renderEditor(overrides?: Partial<Parameters<typeof PricingEditor>[0]>) {
   const onSave = vi.fn().mockResolvedValue(undefined)
+  const onSaveBatch = vi.fn().mockResolvedValue(undefined)
   render(
     <AppDialogsProvider>
       <PricingEditor
@@ -14,11 +15,12 @@ function renderEditor(overrides?: Partial<Parameters<typeof PricingEditor>[0]>) 
         modelRatio={{ 'gpt-4o': 1.25, 'claude-3-haiku': 0.35 }}
         completionRatio={{ 'gpt-4o': 4 }}
         onSave={onSave}
+        onSaveBatch={onSaveBatch}
         {...overrides}
       />
     </AppDialogsProvider>,
   )
-  return { onSave }
+  return { onSave, onSaveBatch }
 }
 
 function modelsSection() {
@@ -105,20 +107,20 @@ describe('<PricingEditor> dirty state and save', () => {
     expect(save).toBeEnabled()
   })
 
-  it('saving the model section PUTs ModelRatio and CompletionRatio after confirm', async () => {
-    const { onSave } = renderEditor()
+  it('saving the model section PUTs ModelRatio and CompletionRatio atomically after confirm', async () => {
+    const { onSave, onSaveBatch } = renderEditor()
     const ratio = screen.getByLabelText('claude-3-haiku model ratio')
     await userEvent.clear(ratio)
     await userEvent.type(ratio, '0.5')
     await userEvent.click(modelsSection().getByRole('button', { name: 'Save' }))
     await confirmApply()
 
-    expect(onSave).toHaveBeenCalledTimes(2)
-    const [modelCall, completionCall] = onSave.mock.calls
-    expect(modelCall[0]).toBe('ModelRatio')
-    expect(JSON.parse(modelCall[1] as string)).toEqual({ 'gpt-4o': 1.25, 'claude-3-haiku': 0.5 })
-    expect(completionCall[0]).toBe('CompletionRatio')
-    expect(JSON.parse(completionCall[1] as string)).toEqual({ 'gpt-4o': 4 })
+    // One atomic batch call carries both maps — never two separate PUTs.
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onSaveBatch).toHaveBeenCalledTimes(1)
+    const [keys] = onSaveBatch.mock.calls[0]
+    expect(JSON.parse(keys.ModelRatio as string)).toEqual({ 'gpt-4o': 1.25, 'claude-3-haiku': 0.5 })
+    expect(JSON.parse(keys.CompletionRatio as string)).toEqual({ 'gpt-4o': 4 })
   })
 
   it('saving the group section PUTs GroupRatio', async () => {
@@ -169,36 +171,33 @@ describe('<PricingEditor> free models and orphan completion keys', () => {
   })
 
   it('preserves an orphan CompletionRatio key that no table row claims', async () => {
-    const { onSave } = renderEditor({ completionRatio: { 'gpt-4o': 4, 'o1-mini': 3 } })
+    const { onSaveBatch } = renderEditor({ completionRatio: { 'gpt-4o': 4, 'o1-mini': 3 } })
     const ratio = screen.getByLabelText('claude-3-haiku model ratio')
     await userEvent.clear(ratio)
     await userEvent.type(ratio, '0.5')
     await userEvent.click(modelsSection().getByRole('button', { name: 'Save' }))
     await confirmApply()
 
-    const completionCall = onSave.mock.calls[1]
-    expect(JSON.parse(completionCall[1] as string)).toEqual({ 'gpt-4o': 4, 'o1-mini': 3 })
+    const [keys] = onSaveBatch.mock.calls[0]
+    expect(JSON.parse(keys.CompletionRatio as string)).toEqual({ 'gpt-4o': 4, 'o1-mini': 3 })
   })
 
   it('a newly added row takes over its orphan completion key instead of inheriting it', async () => {
-    const { onSave } = renderEditor({ completionRatio: { 'gpt-4o': 4, 'o1-mini': 3 } })
+    const { onSaveBatch } = renderEditor({ completionRatio: { 'gpt-4o': 4, 'o1-mini': 3 } })
     await userEvent.click(screen.getByRole('button', { name: /Add model/ }))
     await userEvent.type(screen.getByLabelText('new model name'), 'o1-mini')
     await userEvent.type(screen.getByLabelText('o1-mini model ratio'), '1')
     await userEvent.click(modelsSection().getByRole('button', { name: 'Save' }))
     await confirmApply()
 
-    const completionCall = onSave.mock.calls[1]
+    const [keys] = onSaveBatch.mock.calls[0]
     // completion left blank → backend default, the stale orphan value must not survive
-    expect(JSON.parse(completionCall[1] as string)).toEqual({ 'gpt-4o': 4 })
+    expect(JSON.parse(keys.CompletionRatio as string)).toEqual({ 'gpt-4o': 4 })
   })
 
-  it('a CompletionRatio save failure surfaces the error and keeps the section dirty for retry', async () => {
-    const onSave = vi
-      .fn()
-      .mockResolvedValueOnce(undefined) // ModelRatio
-      .mockRejectedValueOnce(new Error('boom')) // CompletionRatio
-    renderEditor({ onSave })
+  it('an atomic save failure surfaces the error and keeps the section dirty for retry', async () => {
+    const onSaveBatch = vi.fn().mockRejectedValue(new Error('boom'))
+    renderEditor({ onSaveBatch })
     const completion = screen.getByLabelText('gpt-4o completion ratio')
     await userEvent.clear(completion)
     await userEvent.type(completion, '5')

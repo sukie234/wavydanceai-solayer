@@ -10,6 +10,7 @@ import { ChannelDialog } from '@/components/console/ChannelDialog'
 import { CHANNEL_TYPE, channelsService } from '@/lib/services/channels'
 import { useConfirm } from '@/components/ui/AppDialogs'
 import { getSession, isAdmin } from '@/lib/session'
+import { ApiError } from '@/lib/api'
 import type { Channel } from '@/lib/types'
 
 type DialogState = { kind: 'create' } | { kind: 'edit'; id: number } | null
@@ -30,6 +31,7 @@ function ChannelsPage() {
   const confirmDialog = useConfirm()
   const [p, setP] = useState(0)
   const [dialog, setDialog] = useState<DialogState>(null)
+  const [err, setErr] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['channels', p],
@@ -38,17 +40,29 @@ function ChannelsPage() {
 
   const update = useMutation({
     mutationFn: channelsService.update,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['channels'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['channels'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('ch.actionFailed')),
   })
 
   const remove = useMutation({
     mutationFn: channelsService.remove,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['channels'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['channels'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('ch.actionFailed')),
   })
 
   const test = useMutation({
     mutationFn: (id: number) => channelsService.test(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['channels'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['channels'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('ch.actionFailed')),
   })
 
   const columns: Column<Channel>[] = [
@@ -164,6 +178,11 @@ function ChannelsPage() {
           </Button>
         }
       />
+      {err && (
+        <div className="mb-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-sm text-[color:var(--coral)]">
+          {err}
+        </div>
+      )}
       <DataTable columns={columns} rows={data} rowKey={(r) => r.id} loading={isLoading} minRows={10} emptyHint={t('ch.empty')} />
       <Pager p={p} onP={setP} hasMore={(data?.length ?? 0) >= PAGE_SIZE} />
 

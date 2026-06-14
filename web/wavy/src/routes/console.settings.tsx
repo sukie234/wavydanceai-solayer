@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/console/PageHeader'
 import { asBool, optionsService, optionsToMap } from '@/lib/services/options'
 import { getSession } from '@/lib/session'
+import { ApiError } from '@/lib/api'
 import { Role } from '@/lib/types'
 import { cn } from '@/lib/cn'
 
@@ -103,15 +104,26 @@ function SettingsPage() {
     queryFn: () => optionsService.list(),
   })
   const map = useMemo(() => optionsToMap(data ?? []), [data])
+  const [err, setErr] = useState<string | null>(null)
 
   const update = useMutation({
     mutationFn: ({ key, value }: { key: string; value: string }) => optionsService.update(key, value),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['options'] }),
+    onSuccess: () => {
+      setErr(null)
+      qc.invalidateQueries({ queryKey: ['options'] })
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.message : t('settings.saveFailed')),
   })
 
   return (
     <div className="mx-auto w-full max-w-[1100px] flex-1 px-6 py-8 lg:px-10">
       <PageHeader kicker={t('settings.kicker')} title={t('settings.title')} lead={t('settings.lead')} />
+
+      {err && (
+        <div className="mb-4 rounded-lg border border-[color:var(--coral)]/30 bg-[color:var(--coral)]/8 px-3 py-2 text-sm text-[color:var(--coral)]">
+          {err}
+        </div>
+      )}
 
       {isLoading && (
         <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] px-5 py-16 text-center text-sm text-[color:var(--muted)]">

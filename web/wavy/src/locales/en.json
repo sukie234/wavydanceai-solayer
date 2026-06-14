@@ -101,7 +101,8 @@
           "noModels": "No chat models available",
           "noModelsHint": "Your group has no chat-capable models enabled yet. Ask an admin to add one.",
           "backHome": "Back to console",
-          "topup": "Top up"
+          "topup": "Top up",
+          "token": "Could not load your playground API token — refresh the page to retry."
         }
       },
       "image": {
@@ -497,6 +498,7 @@
     "loading": "Loading options…",
     "save": "Save",
     "saved": "Saved",
+    "saveFailed": "Save failed",
     "sec": {
       "auth": { "title": "Login & registration", "desc": "Control how users sign in to solayer.org." },
       "channels": { "title": "Channels & routing", "desc": "How channels behave on failure and how usage is tracked." },
@@ -698,6 +700,7 @@
       "col": { "name": "Name", "key": "Code", "quota": "Quota", "status": "Status" },
       "deleteTitle": "Delete redemption",
       "deleteConfirm": "Delete redemption \"{{name}}\"?",
+      "deleteFailed": "Delete failed",
       "success": {
         "title": "{{count}} code(s) created",
         "lead": "Copy them now — they're shown only once. You can find them in the table afterwards, but only the first 8 characters are displayed.",
@@ -715,6 +718,7 @@
     "newKey": "New key",
     "empty": "No API keys yet — click \"New key\" to create your first one.",
     "deleteConfirm": "Delete key \"{{name}}\"? This cannot be undone.",
+    "actionFailed": "Operation failed",
     "copyKey": "Copy full key",
     "copied": "Copied!",
     "col": {
@@ -744,6 +748,7 @@
     "todoAdd": "Channel creation UI is not implemented yet — use the API or the legacy theme for now.",
     "empty": "No channels configured.",
     "deleteConfirm": "Delete channel \"{{name}}\"?",
+    "actionFailed": "Operation failed",
     "col": {
       "name": "Channel",
       "group": "Group",

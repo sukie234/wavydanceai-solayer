@@ -45,12 +45,26 @@ export function PasskeyCard() {
 
   const rename = useMutation({
     mutationFn: ({ id, name }: { id: number; name: string }) => passkeyService.rename(id, name),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['passkeys'] }),
+    onSuccess: () => {
+      setError(null)
+      qc.invalidateQueries({ queryKey: ['passkeys'] })
+    },
+    onError: e => {
+      const msg = (e as Error).message
+      setError(msg === 'passkey disabled' ? t('profile.passkey.disabled') : msg)
+    },
   })
 
   const remove = useMutation({
     mutationFn: (id: number) => passkeyService.remove(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['passkeys'] }),
+    onSuccess: () => {
+      setError(null)
+      qc.invalidateQueries({ queryKey: ['passkeys'] })
+    },
+    onError: e => {
+      const msg = (e as Error).message
+      setError(msg === 'passkey disabled' ? t('profile.passkey.disabled') : msg)
+    },
   })
 
   // Feature flag off (or status still loading) — hide the whole section, same
