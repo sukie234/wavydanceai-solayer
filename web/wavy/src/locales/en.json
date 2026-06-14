@@ -619,6 +619,12 @@
     "noGateways": "No payment gateways are enabled yet. Ask an admin to turn one on under Settings → Payments.",
     "quotaUnit": "quota",
     "errBelowMin": "Amount is below the minimum.",
+    "ucard": {
+      "brand": "Solayer U-Card",
+      "cashback": "15% cashback on every top-up",
+      "sub": "Pay with your Solayer U-Card and earn quota back on every top-up.",
+      "badge": "15% cashback"
+    },
     "amount": {
       "label": "Step 1",
       "title": "Pick an amount",

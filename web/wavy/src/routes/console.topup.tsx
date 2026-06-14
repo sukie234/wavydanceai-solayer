@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { CreditCard, Coins, Bitcoin, Loader2, CheckCircle2, Clock, XCircle, ExternalLink, Wrench } from 'lucide-react'
 import { PageHeader } from '@/components/console/PageHeader'
+import { UCardCashbackBanner } from '@/components/console/topup/UCardCashbackBanner'
 import { DataTable, StatusPill, type Column } from '@/components/console/DataTable'
 import { topupService } from '@/lib/services/topup'
 import { usePrompt } from '@/components/ui/AppDialogs'
@@ -49,6 +50,8 @@ function TopupPage() {
 
   return (
     <PageShell>
+      <UCardCashbackBanner />
+
       <RechargeCard
         info={info}
         onSuccess={() => qc.invalidateQueries({ queryKey: ['my-topups'] })}

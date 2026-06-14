@@ -619,6 +619,12 @@
     "noGateways": "尚未启用任何支付通道。请联系管理员在 设置 → 支付 中开启。",
     "quotaUnit": "额度",
     "errBelowMin": "金额低于最小限额。",
+    "ucard": {
+      "brand": "Solayer U-Card",
+      "cashback": "每笔充值返现 15%",
+      "sub": "使用 Solayer U-Card 支付，每笔充值都返还额度。",
+      "badge": "15% 返现"
+    },
     "amount": {
       "label": "第 1 步",
       "title": "选择金额",
