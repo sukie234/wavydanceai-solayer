@@ -29,16 +29,20 @@ describe('formatNum', () => {
 })
 
 describe('parseRatio', () => {
-  it('accepts non-negative finite numbers (0 = free model)', () => {
+  it('accepts finite numbers (0 = free model)', () => {
     expect(parseRatio('0.35')).toBe(0.35)
     expect(parseRatio('0')).toBe(0)
     expect(parseRatio(' 2 ')).toBe(2)
   })
 
-  it('rejects empty, negative, and non-numeric input', () => {
+  it('accepts negative ratios — the backend ships them as sentinels (openrouter/auto = -500000)', () => {
+    expect(parseRatio('-500000')).toBe(-500000)
+    expect(parseRatio('-1')).toBe(-1)
+  })
+
+  it('rejects empty, non-finite, and non-numeric input', () => {
     expect(parseRatio('')).toBeNull()
     expect(parseRatio('  ')).toBeNull()
-    expect(parseRatio('-1')).toBeNull()
     expect(parseRatio('abc')).toBeNull()
     expect(parseRatio('Infinity')).toBeNull()
   })
@@ -49,11 +53,17 @@ describe('parseRatioMap', () => {
     expect(parseRatioMap('{"gpt-4o": 1.25, "free": 0}')).toEqual({ 'gpt-4o': 1.25, free: 0 })
   })
 
-  it('rejects malformed JSON, arrays, and bad values', () => {
+  it('parses a map containing the backend negative sentinel without discarding it', () => {
+    expect(parseRatioMap('{"openrouter/auto": -500000, "gpt-4o": 1.25}')).toEqual({
+      'openrouter/auto': -500000,
+      'gpt-4o': 1.25,
+    })
+  })
+
+  it('rejects malformed JSON, arrays, and non-numeric values', () => {
     expect(parseRatioMap('not json')).toBeNull()
     expect(parseRatioMap('[1,2]')).toBeNull()
     expect(parseRatioMap('"str"')).toBeNull()
     expect(parseRatioMap('{"a": "1"}')).toBeNull()
-    expect(parseRatioMap('{"a": -1}')).toBeNull()
   })
 })

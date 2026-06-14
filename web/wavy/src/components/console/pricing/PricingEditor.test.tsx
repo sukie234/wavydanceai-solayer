@@ -143,11 +143,11 @@ describe('<PricingEditor> dirty state and save', () => {
     expect(onSave).not.toHaveBeenCalled()
   })
 
-  it('an invalid number blocks saving', async () => {
+  it('a non-numeric ratio blocks saving', async () => {
     renderEditor()
     const ratio = screen.getByLabelText('claude-3-haiku model ratio')
     await userEvent.clear(ratio)
-    await userEvent.type(ratio, '-1')
+    await userEvent.type(ratio, 'abc')
     expect(modelsSection().getByRole('button', { name: 'Save' })).toBeDisabled()
     expect(modelsSection().getByText('Fix the highlighted values before saving.')).toBeInTheDocument()
   })
