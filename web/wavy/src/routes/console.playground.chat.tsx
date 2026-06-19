@@ -203,7 +203,7 @@ function PlaygroundChat() {
             untitledLabelKey="console.playground.chat.untitled"
           />
 
-          <div className="flex min-w-0 flex-col">
+          <div className="flex min-h-0 min-w-0 flex-col">
             {active ? (
               <>
                 <MessageList messages={active.messages} />

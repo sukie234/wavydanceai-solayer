@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { AlertTriangle, Loader2 } from 'lucide-react'
+import { AlertTriangle, Download, Loader2 } from 'lucide-react'
 import type { Modality } from '../modelSpecs'
 import type { TaskState } from './useMediaGenerate'
 import type { MediaJob } from './types'
@@ -92,29 +92,39 @@ function JobCard({
           }
         >
           {job.results.map((r, i) => (
-            <a
+            <div
               key={`${job.id}-${i}`}
-              href={r.url}
-              target="_blank"
-              rel="noreferrer"
-              className="block overflow-hidden rounded-xl border border-[color:var(--border)] bg-[color:var(--bg2)] transition-colors hover:border-[color:var(--cyan)]"
+              className="group relative overflow-hidden rounded-xl border border-[color:var(--border)] bg-[color:var(--bg2)]"
             >
               {modality === 'image' ? (
-                <img
-                  src={r.url}
-                  alt={`${job.prompt.slice(0, 60)}`}
-                  className="h-auto w-full object-cover"
-                  loading="lazy"
-                />
+                <>
+                  {/* Image results are data: URLs, so the download attribute
+                      works directly — no server storage needed. */}
+                  <a href={r.url} target="_blank" rel="noreferrer" className="block">
+                    <img
+                      src={r.url}
+                      alt={`${job.prompt.slice(0, 60)}`}
+                      className="h-auto w-full object-cover"
+                      loading="lazy"
+                    />
+                  </a>
+                  <a
+                    href={r.url}
+                    download={`${job.model}-${i + 1}.png`}
+                    title={t('console.playground.download')}
+                    className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-lg border border-[color:var(--border)] bg-[color:var(--bg)]/80 px-2 py-1 font-mono text-[11px] text-[color:var(--text)] opacity-0 backdrop-blur transition hover:border-[color:var(--cyan)] focus-visible:opacity-100 group-hover:opacity-100"
+                  >
+                    <Download className="h-3 w-3" />
+                    {t('console.playground.download')}
+                  </a>
+                </>
               ) : (
-                <video
-                  src={r.url}
-                  className="h-auto w-full"
-                  controls
-                  preload="metadata"
-                />
+                // Cross-origin video links can't be force-downloaded via the
+                // download attribute; the native player's controls menu offers
+                // download (no controlsList="nodownload" set).
+                <video src={r.url} className="h-auto w-full" controls preload="metadata" />
               )}
-            </a>
+            </div>
           ))}
         </div>
       )}
