@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// Pricing is now a redirect into the merged /console/channels page. Stub the
+// Models is now a redirect into the merged /console/channels page. Stub the
 // router surface so `throw redirect(...)` rejects with the location object.
 vi.mock('@tanstack/react-router', () => ({
   createFileRoute: () => (options: unknown) => ({ options }),
   redirect: vi.fn((loc: unknown) => loc),
 }))
 
-import { Route } from './console.pricing'
+import { Route } from './console.models'
 
 function beforeLoad(): Promise<unknown> {
   const { options } = Route as unknown as { options: { beforeLoad: () => Promise<unknown> } }
@@ -18,7 +18,7 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-describe('/console/pricing redirect', () => {
+describe('/console/models redirect', () => {
   it('redirects to the merged /console/channels page', async () => {
     await expect(beforeLoad()).rejects.toEqual({ to: '/console/channels' })
   })

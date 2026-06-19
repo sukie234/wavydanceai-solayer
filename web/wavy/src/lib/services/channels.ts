@@ -7,6 +7,23 @@ export const channelsService = {
     return unwrap(res) ?? []
   },
 
+  /** Drain every channel page into one array. Page 0 sets the page size; we
+   * keep paging while pages come back full and stop once one comes back short.
+   * Used to derive the full set of provided models across all channels. */
+  async listAll(): Promise<Channel[]> {
+    const first = await channelsService.list(0)
+    if (first.length === 0) return []
+    const pageSize = first.length
+    const all = [...first]
+    // Hard cap so a backend that never shrinks a page can't loop forever.
+    for (let p = 1; p < 1000; p++) {
+      const next = await channelsService.list(p)
+      all.push(...next)
+      if (next.length < pageSize) break
+    }
+    return all
+  },
+
   async get(id: number): Promise<Channel> {
     const res = await api.get<ApiResponse<Channel>>(`/channel/${id}`)
     return unwrap(res)

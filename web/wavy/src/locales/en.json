@@ -576,7 +576,8 @@
       "colInput": "Input $/M",
       "colCompletion": "Compl. ratio",
       "colOutput": "Output $/M",
-      "default": "default"
+      "default": "default",
+      "unpriced": "{{count}} unpriced — billing at default until set"
     },
     "raw": {
       "GroupRatio": "User group → multiplier. Applied on top of every model price.",

@@ -6,14 +6,12 @@ import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard,
   PlugZap,
-  Boxes,
   KeyRound,
   ScrollText,
   BarChart3,
   Receipt,
   Wallet,
   Users,
-  CircleDollarSign,
   Settings,
   UserCircle,
   Sparkles,
@@ -33,8 +31,6 @@ type NavItem = {
 
 const OPERATIONS: NavItem[] = [
   { to: '/console', icon: LayoutDashboard, i18n: 'console.nav.overview' },
-  { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels', minRole: Role.AdminUser },
-  { to: '/console/models', icon: Boxes, i18n: 'console.nav.models', minRole: Role.AdminUser },
   { to: '/console/playground', icon: Sparkles, i18n: 'console.nav.playground' },
   { to: '/console/tokens', icon: KeyRound, i18n: 'console.nav.tokens' },
   { to: '/console/logs', icon: ScrollText, i18n: 'console.nav.logs' },
@@ -47,8 +43,9 @@ const OPERATIONS: NavItem[] = [
 const ACCOUNT: NavItem[] = [
   // Profile is for every signed-in user — no role gate.
   { to: '/console/profile', icon: UserCircle, i18n: 'console.nav.profile' },
+  // Channels (admin) + the root-only pricing editor live on one merged page.
+  { to: '/console/channels', icon: PlugZap, i18n: 'console.nav.channels', minRole: Role.AdminUser },
   { to: '/console/users', icon: Users, i18n: 'console.nav.users', minRole: Role.AdminUser },
-  { to: '/console/pricing', icon: CircleDollarSign, i18n: 'console.nav.pricing', minRole: Role.RootUser },
   { to: '/console/settings', icon: Settings, i18n: 'console.nav.settings', minRole: Role.RootUser },
 ]
 
