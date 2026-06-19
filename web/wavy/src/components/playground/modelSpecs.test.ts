@@ -84,17 +84,20 @@ describe('buildRequestBody', () => {
     })
   })
 
-  it('produces a nested input body for kie-style specs', () => {
+  it('puts the prompt at the top level for gpt-image-2 (OpenAI-flat)', () => {
     const spec = resolveModelSpec('image', 'gpt-image-2-text-to-image')
-    const body = buildRequestBody(
-      spec,
-      'gpt-image-2-text-to-image',
-      'a cat',
-      { aspect_ratio: '16:9', resolution: '2K' },
-    )
+    expect(spec.bodyShape).toBe('openai-flat')
+    const body = buildRequestBody(spec, 'gpt-image-2-text-to-image', 'a cat', {
+      size: '1024x1024',
+      quality: 'high',
+      n: 1,
+    })
     expect(body).toEqual({
       model: 'gpt-image-2-text-to-image',
-      input: { prompt: 'a cat', aspect_ratio: '16:9', resolution: '2K' },
+      prompt: 'a cat',
+      size: '1024x1024',
+      quality: 'high',
+      n: 1,
     })
   })
 

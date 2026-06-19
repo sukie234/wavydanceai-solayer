@@ -45,13 +45,10 @@ export interface ParamField {
 /**
  * How the request body is shaped.
  *
- *   - `openai-flat`: top-level `{ model, prompt, ...params }`. Used by the
- *     OpenAI-compatible `/v1/images/generations` relay we already support.
- *   - `kie-nested`: `{ model, input: { prompt, ...params } }`. Used by kie.ai
- *     style task-based providers (gpt-image-2, kling, sora-2). Falls through
- *     the relay as a passthrough JSON body to the upstream channel.
+ *   - `openai-flat`: top-level `{ model, prompt, ...params }` — the
+ *     OpenAI-compatible shape every upstream we relay to (WorldRouter) speaks.
  */
-export type BodyShape = 'openai-flat' | 'kie-nested'
+export type BodyShape = 'openai-flat'
 
 export interface ModelSpec {
   id: string
@@ -187,41 +184,37 @@ const GPT_IMAGE: ModelSpec = {
 const GPT_IMAGE_2: ModelSpec = {
   id: 'gpt-image-2',
   modality: 'image',
-  bodyShape: 'kie-nested',
+  bodyShape: 'openai-flat',
   endpoint: '/v1/images/generations',
   promptMaxLength: 20_000,
   fields: [
     {
-      key: 'aspect_ratio',
-      labelKey: 'aspectRatio',
-      default: 'auto',
+      key: 'size',
+      labelKey: 'size',
+      default: '1024x1024',
       spec: {
         kind: 'enum',
         options: [
-          { value: 'auto' },
-          { value: '1:1' },
-          { value: '3:2' },
-          { value: '2:3' },
-          { value: '4:3' },
-          { value: '3:4' },
-          { value: '16:9' },
-          { value: '9:16' },
-          { value: '21:9' },
-          { value: '9:21' },
-          { value: '2:1' },
-          { value: '1:2' },
+          { value: '1024x1024' },
+          { value: '1536x1024' },
+          { value: '1024x1536' },
         ],
       },
     },
     {
-      key: 'resolution',
-      labelKey: 'resolution',
-      default: '1K',
+      key: 'quality',
+      labelKey: 'quality',
+      default: 'medium',
       spec: {
         kind: 'enum',
-        options: [{ value: '1K' }, { value: '2K' }, { value: '4K' }],
+        options: [{ value: 'low' }, { value: 'medium' }, { value: 'high' }],
       },
-      hintKey: 'gptImage2ResolutionHint',
+    },
+    {
+      key: 'n',
+      labelKey: 'count',
+      default: 1,
+      spec: { kind: 'number', min: 1, max: 4, step: 1 },
     },
   ],
 }
@@ -653,7 +646,6 @@ export function buildRequestBody(
   model: string,
   prompt: string,
   params: Record<string, unknown>,
-  extras?: { inputUrls?: string[] },
 ): Record<string, unknown> {
   const fieldByKey = new Map(spec.fields.map((f) => [f.key, f]))
   const filtered: Record<string, unknown> = {}
@@ -663,10 +655,5 @@ export function buildRequestBody(
     filtered[k] = field.asString ? String(v) : v
   }
 
-  if (spec.bodyShape === 'openai-flat') {
-    return { model, prompt, ...filtered }
-  }
-  const input: Record<string, unknown> = { prompt, ...filtered }
-  if (extras?.inputUrls?.length) input.input_urls = extras.inputUrls
-  return { model, input }
+  return { model, prompt, ...filtered }
 }
