@@ -7,12 +7,25 @@ import { ApiError } from '@/lib/api'
 import type { Channel } from '@/lib/types'
 import '@/lib/i18n'
 
+// Controllable route context — the component reads isRoot from here (set in
+// beforeLoad) to gate the pricing editor. Mutate per test.
+const routeContext = vi.hoisted(() => ({ isRoot: false }))
+
 // Route-level component test: stub the router surface so we can grab the
 // component off the route options without a full <RouterProvider> (no router
 // test helper yet — TESTING.md).
 vi.mock('@tanstack/react-router', () => ({
-  createFileRoute: () => (options: unknown) => ({ options }),
+  createFileRoute: () => (options: unknown) => ({
+    options,
+    useRouteContext: () => routeContext,
+  }),
   redirect: vi.fn((loc: unknown) => loc),
+}))
+
+// Stub the root-only pricing editor so the gate can be asserted without its
+// own data dependencies (optionsService / channelsService.listAll).
+vi.mock('@/components/console/pricing/PricingSection', () => ({
+  PricingSection: () => <div>PRICING_EDITOR</div>,
 }))
 
 vi.mock('@/lib/services/channels', async (importOriginal) => {
@@ -79,6 +92,26 @@ function renderPage() {
 beforeEach(() => {
   vi.clearAllMocks()
   mockList.mockResolvedValue([channel])
+  routeContext.isRoot = false
+})
+
+describe('/console/channels pricing gate', () => {
+  it('hides the pricing editor for non-root admins', async () => {
+    routeContext.isRoot = false
+
+    renderPage()
+    await screen.findByText('worldrouter')
+
+    expect(screen.queryByText('PRICING_EDITOR')).toBeNull()
+  })
+
+  it('shows the pricing editor for root', async () => {
+    routeContext.isRoot = true
+
+    renderPage()
+
+    expect(await screen.findByText('PRICING_EDITOR')).toBeInTheDocument()
+  })
 })
 
 describe('/console/channels mutation errors', () => {
