@@ -29,7 +29,7 @@ export function DocsTopbar() {
         <Link to="/console" className="hidden sm:inline-flex">
           <Button variant="ghost" size="sm">{t('nav.console')}</Button>
         </Link>
-        <Link to="/register">
+        <Link to="/console/tokens">
           <Button size="sm">{t('nav.getStarted')}</Button>
         </Link>
       </div>

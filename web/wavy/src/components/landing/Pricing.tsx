@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
@@ -99,7 +100,9 @@ function Tier({
           </li>
         ))}
       </ul>
-      <Button variant={variant}>{cta}</Button>
+      <Link to="/console/tokens">
+        <Button variant={variant}>{cta}</Button>
+      </Link>
     </div>
   )
 }
