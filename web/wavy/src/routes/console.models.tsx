@@ -117,7 +117,7 @@ function ModelsPage() {
       <DataTable
         columns={cols}
         rows={filtered}
-        rowKey={(m) => m.id}
+        rowKey={(m) => `${m.id}::${m.owned_by}`}
         loading={isLoading}
         emptyHint={filter || owner ? t('models.noMatch') : t('models.empty')}
         minRows={10}
