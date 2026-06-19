@@ -64,6 +64,8 @@
       "kicker": "Playground",
       "title": "Playground",
       "subtitle": "Try any model with your own quota — no SDK needed.",
+      "download": "Download",
+      "interrupted": "Generation interrupted — please try again",
       "modality": {
         "chat": "Chat",
         "chatDesc": "Talk to LLMs with full parameter control.",

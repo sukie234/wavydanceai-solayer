@@ -99,10 +99,21 @@ export function StatusPill({ active, label }: { active: boolean; label: string }
   )
 }
 
-export function Pager({ p, onP, hasMore }: { p: number; onP: (next: number) => void; hasMore: boolean }) {
+export function Pager({
+  p,
+  onP,
+  hasMore,
+  total,
+}: {
+  p: number
+  onP: (next: number) => void
+  hasMore: boolean
+  /** Total page count. When known (client-side paging), shows "Page X / total". */
+  total?: number
+}) {
   return (
     <div className="mt-4 flex items-center justify-between font-mono text-xs text-[color:var(--muted)]">
-      <span>Page {p + 1}</span>
+      <span>{total ? `Page ${p + 1} / ${total}` : `Page ${p + 1}`}</span>
       <div className="flex gap-2">
         <button
           type="button"

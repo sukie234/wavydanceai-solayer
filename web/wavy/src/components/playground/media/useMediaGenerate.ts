@@ -30,6 +30,11 @@ interface UseMediaGenerate {
    * Throws on network / API error so the caller can mark the job as failed.
    */
   generate: (args: GenerateArgs) => Promise<MediaResult[]>
+  /**
+   * Resumes polling a previously-submitted video task by id (e.g. a pending
+   * job revived after a page reload). Resolves with the result URLs.
+   */
+  resume: (taskId: string, apiKey: string) => Promise<MediaResult[]>
   abort: () => void
 }
 
@@ -106,7 +111,39 @@ export function useMediaGenerate(): UseMediaGenerate {
     }
   }, [])
 
-  return { busy, error, task, generate, abort }
+  /**
+   * Resumes polling an already-submitted video task by id — used to revive a
+   * pending job after a reload / tab revisit, so the progress indicator keeps
+   * updating and the job settles even though the original generate() call is
+   * gone. Drives the same `task` state and returns the result URLs.
+   */
+  const resume = useCallback(async (taskId: string, apiKey: string): Promise<MediaResult[]> => {
+    setError(null)
+    setBusy(true)
+    const ctrl = new AbortController()
+    ctrlRef.current = ctrl
+    try {
+      const data = await fetchJson(`/v1/videos/${encodeURIComponent(taskId)}`, apiKey, ctrl.signal)
+      const videoTask = parseVideoTask(data)
+      if (!videoTask) {
+        throw new Error('unexpected response while polling video task')
+      }
+      return await pollVideoTask(videoTask, apiKey, ctrl.signal, setTask)
+    } catch (e) {
+      if ((e as { name?: string }).name === 'AbortError') {
+        return []
+      }
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
+      throw e
+    } finally {
+      setBusy(false)
+      setTask(null)
+      ctrlRef.current = null
+    }
+  }, [])
+
+  return { busy, error, task, generate, resume, abort }
 }
 
 /**

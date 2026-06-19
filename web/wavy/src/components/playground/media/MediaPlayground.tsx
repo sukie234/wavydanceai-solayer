@@ -79,7 +79,7 @@ export function MediaPlayground({ modality }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [models.join('|'), active?.id])
 
-  const { busy, error, task, generate, abort } = useMediaGenerate()
+  const { busy, error, task, generate, resume, abort } = useMediaGenerate()
 
   const persist = useCallback(
     (next: MediaSession) => {
@@ -87,6 +87,22 @@ export function MediaPlayground({ modality }: Props) {
       setSessions(mediaSessionStore.list(modality))
     },
     [modality],
+  )
+
+  // Patch a single job in any session without changing focus. Re-reads the
+  // freshest copy from the store so background polling can't clobber edits
+  // the user made in the meantime.
+  const patchJob = useCallback(
+    (sessionId: string, jobId: string, patch: Partial<MediaSession['jobs'][number]>) => {
+      const current = mediaSessionStore.list(modality).find((s) => s.id === sessionId)
+      if (!current) return
+      const idx = current.jobs.findIndex((j) => j.id === jobId)
+      if (idx < 0) return
+      const updated = [...current.jobs]
+      updated[idx] = { ...updated[idx], ...patch, updatedAt: Date.now() }
+      persist({ ...current, jobs: updated })
+    },
+    [modality, persist],
   )
 
   const updateActive = useCallback(
@@ -133,18 +149,7 @@ export function MediaPlayground({ modality }: Props) {
     }
     updateActive(optimistic)
 
-    // Patch the job record in the freshest copy of the session — the closure's
-    // `active` goes stale across the await.
-    const patchJob = (patch: Partial<MediaSession['jobs'][number]>) => {
-      const current = mediaSessionStore.list(modality).find((s) => s.id === active.id)
-      if (!current) return
-      const idx = current.jobs.findIndex((j) => j.id === job.id)
-      if (idx < 0) return
-      const updated = [...current.jobs]
-      updated[idx] = { ...updated[idx], ...patch, updatedAt: Date.now() }
-      updateActive({ ...current, jobs: updated })
-    }
-
+    const sessionId = active.id
     try {
       const results = await generate({
         apiKey: token,
@@ -154,11 +159,11 @@ export function MediaPlayground({ modality }: Props) {
         params: active.params,
         // Persist the relay task id so the job survives a refresh with a
         // pointer back to GET /v1/videos/:id.
-        onTask: (taskId) => patchJob({ taskId }),
+        onTask: (taskId) => patchJob(sessionId, job.id, { taskId }),
       })
-      patchJob({ status: 'succeeded', results })
+      patchJob(sessionId, job.id, { status: 'succeeded', results })
     } catch (e) {
-      patchJob({
+      patchJob(sessionId, job.id, {
         status: 'failed',
         error: e instanceof Error ? e.message : String(e),
       })
@@ -166,6 +171,68 @@ export function MediaPlayground({ modality }: Props) {
       qc.invalidateQueries({ queryKey: ['self'] })
     }
   }
+
+  // Resume polling for a pending video job left over from a previous mount
+  // (page reload / tab revisit). The original generate() promise is gone, so
+  // without this the progress indicator would hang and the job would never
+  // settle. Only the active session's most-recent pending task is resumed —
+  // the submit button is disabled while one is in flight, so there's at most
+  // one. A fresh submit doesn't retrigger this (active.id is unchanged), so it
+  // never double-polls a job generate() is already driving.
+  useEffect(() => {
+    if (modality !== 'video' || !token || !active) return
+    const pending = [...active.jobs].reverse().find((j) => j.status === 'pending' && j.taskId)
+    if (!pending?.taskId) return
+    const sessionId = active.id
+    let cancelled = false
+    resume(pending.taskId, token)
+      .then((results) => {
+        if (cancelled || results.length === 0) return
+        patchJob(sessionId, pending.id, { status: 'succeeded', results })
+      })
+      .catch((e) => {
+        if (cancelled) return
+        patchJob(sessionId, pending.id, {
+          status: 'failed',
+          error: e instanceof Error ? e.message : String(e),
+        })
+      })
+    return () => {
+      cancelled = true
+      abort()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active?.id, token, modality])
+
+  // On mount, settle stale 'pending' jobs from a previous session: their
+  // generate() promise died with the old mount. Resumable video tasks (with a
+  // taskId) are revived by the effect above; everything else — notably any
+  // interrupted synchronous image — is marked failed so it stops showing an
+  // infinite spinner and the composer unlocks.
+  useEffect(() => {
+    let sweptAny = false
+    for (const s of mediaSessionStore.list(modality)) {
+      let changed = false
+      const jobs = s.jobs.map((j) => {
+        if (j.status !== 'pending') return j
+        if (modality === 'video' && j.taskId) return j
+        changed = true
+        return {
+          ...j,
+          status: 'failed' as const,
+          error: t('console.playground.interrupted'),
+          updatedAt: Date.now(),
+        }
+      })
+      if (changed) {
+        mediaSessionStore.save(modality, { ...s, jobs })
+        sweptAny = true
+      }
+    }
+    if (sweptAny) setSessions(mediaSessionStore.list(modality))
+    // run once per mount; modality is stable for a mounted playground
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const noModels = !loadingModels && models.length === 0
   const remainingQuota = user?.quota ?? 0
@@ -243,7 +310,7 @@ export function MediaPlayground({ modality }: Props) {
             untitledLabelKey="console.playground.chat.untitled"
           />
 
-          <div className="flex min-w-0 flex-col">
+          <div className="flex min-h-0 min-w-0 flex-col">
             {active ? (
               <>
                 <ResultGallery modality={modality} jobs={active.jobs} activeTask={task} />

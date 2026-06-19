@@ -38,7 +38,9 @@ export function Hero() {
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Button size="lg">{t('hero.ctaPrimary')}</Button>
+            <Link to="/console/tokens">
+              <Button size="lg">{t('hero.ctaPrimary')}</Button>
+            </Link>
             <Link to="/docs">
               <Button variant="ghost" size="lg">
                 {t('hero.ctaSecondary')}

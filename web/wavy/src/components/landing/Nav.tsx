@@ -48,7 +48,9 @@ export function Nav() {
           <Link to="/console" className="hidden sm:inline-flex">
             <Button variant="ghost" size="sm">{t('nav.console')}</Button>
           </Link>
-          <Button size="sm">{t('nav.getStarted')}</Button>
+          <Link to="/console/tokens">
+            <Button size="sm">{t('nav.getStarted')}</Button>
+          </Link>
         </div>
       </div>
     </nav>

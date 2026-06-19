@@ -64,6 +64,8 @@
       "kicker": "Playground",
       "title": "Playground",
       "subtitle": "用你自己的额度直接体验任意模型，无需 SDK。",
+      "download": "下载",
+      "interrupted": "生成已中断，请重试",
       "modality": {
         "chat": "对话",
         "chatDesc": "可调参数的对话窗口，调用 LLM。",

@@ -227,6 +227,45 @@ describe('useMediaGenerate — async video tasks (POST /v1/videos)', () => {
     expect((pollInit.headers as Record<string, string>).Authorization).toBe('Bearer sk-rawkey')
   })
 
+  it('resume() re-polls GET /v1/videos/:id and resolves with metadata.url', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonRes(videoTask('in_progress', { progress: 60 })))
+      .mockResolvedValueOnce(
+        jsonRes(
+          videoTask('completed', {
+            progress: 100,
+            metadata: { url: 'https://cdn.example.com/resumed.mp4' },
+          }),
+        ),
+      )
+    const { result } = renderHook(() => useMediaGenerate())
+    let p!: Promise<MediaResult[]>
+    act(() => {
+      p = result.current.resume('task_1', 'rawkey')
+    })
+
+    // Initial GET settles → progress indicator reflects the live status.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0)
+    })
+    expect(result.current.task).toEqual({ id: 'task_1', status: 'in_progress', progress: 60 })
+
+    // Next poll → completed.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5_000)
+    })
+    const urls = await p
+    expect(urls).toEqual([
+      expect.objectContaining({ url: 'https://cdn.example.com/resumed.mp4' }),
+    ])
+
+    // No POST submit — resume starts straight at GET /v1/videos/:id.
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const [firstUrl, firstInit] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(firstUrl).toBe('/v1/videos/task_1')
+    expect(firstInit.method).toBe('GET')
+  })
+
   it('rejects with error.message when the task fails', async () => {
     fetchMock
       .mockResolvedValueOnce(jsonRes(videoTask('queued')))
