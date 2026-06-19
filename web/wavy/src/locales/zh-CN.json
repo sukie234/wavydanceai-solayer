@@ -574,7 +574,8 @@
       "colInput": "输入价 $/M",
       "colCompletion": "输出/输入比",
       "colOutput": "输出价 $/M",
-      "default": "默认"
+      "default": "默认",
+      "unpriced": "{{count}} 个未定价 — 未设置前按默认计费"
     },
     "raw": {
       "GroupRatio": "用户组 → 加成倍率，统一乘在所有模型价格上。",

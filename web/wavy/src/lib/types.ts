@@ -118,17 +118,6 @@ export interface LogFilters {
   channel?: number
 }
 
-/** OpenAI-format model row returned by `GET /api/channel/models`. */
-export interface ChannelModel {
-  id: string
-  object: string
-  created: number
-  owned_by: string
-  parent: string | null
-  permission: unknown[]
-  root: string
-}
-
 /** Per-day per-model log aggregate returned by `GET /api/user/dashboard`. */
 export interface DashboardEntry {
   Day: string
