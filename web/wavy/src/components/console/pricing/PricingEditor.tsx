@@ -464,7 +464,7 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
             </div>
             {maxPage > 0 && (
               <div className="px-5 pb-3">
-                <Pager p={page} onP={setPageState} hasMore={page < maxPage} />
+                <Pager p={page} onP={setPageState} hasMore={page < maxPage} total={maxPage + 1} />
               </div>
             )}
           </SectionCard>
