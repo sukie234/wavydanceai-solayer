@@ -209,6 +209,61 @@ describe('<PricingEditor> free models and orphan completion keys', () => {
   })
 })
 
+describe('<PricingEditor> channel-scoped (providedModels)', () => {
+  it('renders a row per provided model — priced pre-filled, unpriced blank', () => {
+    renderEditor({
+      modelRatio: { 'gpt-4o': 1.25, 'claude-3-haiku': 0.35 },
+      completionRatio: {},
+      providedModels: ['gpt-4o', 'gemini-1.5-pro'], // claude not provided → hidden
+    })
+    expect(screen.getByLabelText('gpt-4o model ratio')).toHaveValue('1.25')
+    // provided but unpriced → blank row to fill in
+    expect(screen.getByLabelText('gemini-1.5-pro model ratio')).toHaveValue('')
+    // priced but not provided → not shown
+    expect(screen.queryByLabelText('claude-3-haiku model ratio')).not.toBeInTheDocument()
+  })
+
+  it('flags how many provided models are still unpriced', () => {
+    renderEditor({
+      modelRatio: { 'gpt-4o': 1.25 },
+      completionRatio: {},
+      providedModels: ['gpt-4o', 'gemini-1.5-pro', 'deepseek-chat'],
+    })
+    expect(modelsSection().getByText('2 unpriced — billing at default until set')).toBeInTheDocument()
+  })
+
+  it('a blank unpriced row alone is not dirty and does not block saving', () => {
+    renderEditor({
+      modelRatio: { 'gpt-4o': 1.25 },
+      completionRatio: {},
+      providedModels: ['gpt-4o', 'gemini-1.5-pro'],
+    })
+    expect(modelsSection().getByRole('button', { name: 'Save' })).toBeDisabled()
+  })
+
+  it('saving preserves ratios for models no channel provides (no wipe)', async () => {
+    const { onSaveBatch } = renderEditor({
+      modelRatio: { 'gpt-4o': 1.25, 'claude-3-haiku': 0.35 },
+      completionRatio: { 'claude-3-haiku': 4 },
+      providedModels: ['gpt-4o', 'gemini-1.5-pro'],
+    })
+    // price the previously-unpriced provided model
+    const ratio = screen.getByLabelText('gemini-1.5-pro model ratio')
+    await userEvent.type(ratio, '1')
+    await userEvent.click(modelsSection().getByRole('button', { name: 'Save' }))
+    await confirmApply()
+
+    const [keys] = onSaveBatch.mock.calls[0]
+    // hidden non-provided claude-3-haiku ratio + completion survive untouched
+    expect(JSON.parse(keys.ModelRatio as string)).toEqual({
+      'gpt-4o': 1.25,
+      'gemini-1.5-pro': 1,
+      'claude-3-haiku': 0.35,
+    })
+    expect(JSON.parse(keys.CompletionRatio as string)).toEqual({ 'claude-3-haiku': 4 })
+  })
+})
+
 describe('<PricingEditor> raw JSON mode', () => {
   it('switches to three JSON textareas and saves a pasted blob', async () => {
     const { onSave } = renderEditor()

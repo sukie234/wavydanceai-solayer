@@ -16,6 +16,11 @@ type Props = {
   groupRatio: RatioMap
   modelRatio: RatioMap
   completionRatio: RatioMap
+  /** When set, the model table is scoped to these provider-supplied models
+   *  (the union of every channel's `models`). Models priced but not provided
+   *  are hidden yet preserved on save; provided-but-unpriced models show as
+   *  blank rows to fill in. Omit for the full unscoped ModelRatio table. */
+  providedModels?: string[]
   onSave: (key: RatioKey, value: string) => Promise<void>
   /** Persist several ratio keys atomically (used for the model section, which
    *  saves ModelRatio + CompletionRatio together). */
@@ -55,11 +60,56 @@ function makeModelRow(name: string, ratio: string, completion: string): ModelRow
   }
 }
 
-function modelRowsFrom(model: RatioMap, completion: RatioMap): ModelRow[] {
-  return Object.entries(model).map(([name, ratio]) => {
-    const c = completion[name]
-    return makeModelRow(name, formatNum(ratio), c === undefined ? '' : formatNum(c))
-  })
+type RatioMaps = { model: RatioMap; completion: RatioMap }
+
+/** Seed the table rows. With `provided`, one row per provider-supplied model
+ * (deduped, sorted), pre-filled from the ratio maps where an entry exists and
+ * left blank where it doesn't. Without it, one row per priced model. */
+function buildModelRows(
+  provided: string[] | undefined,
+  model: RatioMap,
+  completion: RatioMap,
+): ModelRow[] {
+  const seed = (name: string) =>
+    makeModelRow(
+      name,
+      model[name] === undefined ? '' : formatNum(model[name]),
+      completion[name] === undefined ? '' : formatNum(completion[name]),
+    )
+  if (provided) {
+    const names = [...new Set(provided.map((s) => s.trim()).filter(Boolean))].sort()
+    return names.map(seed)
+  }
+  return Object.keys(model).map(seed)
+}
+
+/** Reproduce the persisted ModelRatio / CompletionRatio from the table rows,
+ * preserving any saved entry no row claims — so a channel-scoped table never
+ * wipes ratios for models it doesn't show. A blank ratio writes no entry
+ * (unpriced → backend default); a blank completion writes none either. */
+function buildModelMaps(rows: ModelRow[], saved: RatioMaps): RatioMaps {
+  const claimed = new Set(rows.map((r) => r.name.trim()).filter(Boolean))
+  const model: RatioMap = {}
+  const completion: RatioMap = {}
+  for (const [k, v] of Object.entries(saved.model)) if (!claimed.has(k)) model[k] = v
+  for (const [k, v] of Object.entries(saved.completion)) if (!claimed.has(k)) completion[k] = v
+  for (const r of rows) {
+    const name = r.name.trim()
+    if (!name) continue
+    const ratio = parseRatio(r.ratio)
+    if (ratio !== null) model[name] = ratio
+    if (r.completion.trim() !== '') {
+      const c = parseRatio(r.completion)
+      if (c !== null) completion[name] = c
+    }
+  }
+  return { model, completion }
+}
+
+function ratiosEqual(a: RatioMap, b: RatioMap): boolean {
+  const ak = Object.keys(a)
+  if (ak.length !== Object.keys(b).length) return false
+  return ak.every((k) => b[k] === a[k])
 }
 
 type ModelField = 'name' | 'ratio' | 'inputPrice' | 'completion' | 'outputPrice'
@@ -111,7 +161,14 @@ function dupNames(names: string[]): Set<string> {
 
 const pretty = (map: RatioMap) => JSON.stringify(map, null, 2)
 
-export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave, onSaveBatch }: Props) {
+export function PricingEditor({
+  groupRatio,
+  modelRatio,
+  completionRatio,
+  providedModels,
+  onSave,
+  onSaveBatch,
+}: Props) {
   const { t } = useTranslation()
   const confirm = useConfirm()
 
@@ -131,7 +188,7 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
   }))
 
   const [groups, setGroups] = useState(() => groupRowsFrom(groupRatio))
-  const [models, setModels] = useState(() => modelRowsFrom(modelRatio, completionRatio))
+  const [models, setModels] = useState(() => buildModelRows(providedModels, modelRatio, completionRatio))
 
   const [q, setQ] = useState('')
   const [pageState, setPageState] = useState(0)
@@ -156,14 +213,23 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
     const sv = saved.group[r.name.trim()]
     return sv === undefined || r.ratio !== formatNum(sv)
   }
+  // Blank ratio on a known model (an unpriced provided model) is not "dirty" —
+  // it matches the absence of a saved entry. Only a real value change is.
   const modelRowDirty = (r: ModelRow) => {
-    const sv = saved.model[r.name.trim()]
-    if (sv === undefined || r.ratio !== formatNum(sv)) return true
-    const sc = saved.completion[r.name.trim()]
-    return r.completion !== (sc === undefined ? '' : formatNum(sc))
+    const name = r.name.trim()
+    const ratioWas = saved.model[name] === undefined ? '' : formatNum(saved.model[name])
+    if (r.ratio.trim() !== ratioWas) return true
+    const complWas = saved.completion[name] === undefined ? '' : formatNum(saved.completion[name])
+    return r.completion.trim() !== complWas
   }
   const groupsDirty = groups.length !== Object.keys(saved.group).length || groups.some(groupRowDirty)
-  const modelsDirty = models.length !== Object.keys(saved.model).length || models.some(modelRowDirty)
+  // Compare the maps the table would persist against the last-saved maps. This
+  // catches edits, additions and deletions in both scoped and unscoped modes,
+  // while preserved (non-provided) entries stay equal and read as clean.
+  const modelsDirty = useMemo(() => {
+    const built = buildModelMaps(models, saved)
+    return !ratiosEqual(built.model, saved.model) || !ratiosEqual(built.completion, saved.completion)
+  }, [models, saved])
   const rawDirtyOf = (key: RatioKey) => rawTexts[key] !== pretty(saved[FIELD_OF[key]])
   const anyDirty = raw
     ? (['GroupRatio', 'ModelRatio', 'CompletionRatio'] as const).some(rawDirtyOf)
@@ -185,7 +251,7 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
   const modelRowInvalid = (r: ModelRow) =>
     r.name.trim() === '' ||
     modelDups.has(r.name.trim()) ||
-    parseRatio(r.ratio) === null ||
+    (r.ratio.trim() !== '' && parseRatio(r.ratio) === null) ||
     (r.completion.trim() !== '' && parseRatio(r.completion) === null) ||
     outputPriceInvalid(r)
   const groupsInvalid = groups.some(groupRowInvalid)
@@ -227,18 +293,7 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
 
   function saveModels() {
     void runSave('models', async () => {
-      const modelMap: RatioMap = {}
-      for (const r of models) modelMap[r.name.trim()] = parseRatio(r.ratio)!
-      // CompletionRatio entries whose key never appeared in the table
-      // (prefix-style keys without a ModelRatio entry) are preserved as-is —
-      // unless a row with that exact name now exists, which takes over.
-      const completionMap: RatioMap = Object.fromEntries(
-        Object.entries(saved.completion).filter(([k]) => !(k in saved.model) && !(k in modelMap)),
-      )
-      for (const r of models) {
-        const name = r.name.trim()
-        if (r.completion.trim() !== '') completionMap[name] = parseRatio(r.completion)!
-      }
+      const { model: modelMap, completion: completionMap } = buildModelMaps(models, saved)
       // Persist both maps in one atomic call so a mid-save failure can never
       // leave ModelRatio saved without CompletionRatio (or vice versa).
       await onSaveBatch({
@@ -273,7 +328,7 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
     }
     if (raw) {
       setGroups(groupRowsFrom(saved.group))
-      setModels(modelRowsFrom(saved.model, saved.completion))
+      setModels(buildModelRows(providedModels, saved.model, saved.completion))
       setRaw(false)
     } else {
       setRawTexts({
@@ -295,6 +350,12 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
   const maxPage = Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1)
   const page = Math.min(pageState, maxPage)
   const pageRows = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+
+  // Provided-but-unpriced models bill at the backend's 30x fallback until set —
+  // surface the count so they don't slip through silently.
+  const unpriced = providedModels
+    ? models.filter((r) => r.name.trim() !== '' && r.ratio.trim() === '').length
+    : 0
 
   function addModel() {
     setModels((rows) => [{ ...makeModelRow('', '', '') }, ...rows])
@@ -425,6 +486,11 @@ export function PricingEditor({ groupRatio, modelRatio, completionRatio, onSave,
               <span className="font-mono text-xs text-[color:var(--muted)]">
                 {t('ratios.models.count', { shown: filtered.length, total: models.length })}
               </span>
+              {unpriced > 0 && (
+                <span className="font-mono text-xs text-[color:var(--coral)]">
+                  {t('ratios.models.unpriced', { count: unpriced })}
+                </span>
+              )}
               <Button type="button" variant="ghost" size="sm" className="ml-auto" onClick={addModel}>
                 <Plus className="h-3.5 w-3.5" />
                 {t('ratios.models.add')}
@@ -510,14 +576,14 @@ function ModelRowView({
         label={`${name} model ratio`}
         value={row.ratio}
         dirty={dirty}
-        invalid={parseRatio(row.ratio) === null}
+        invalid={row.ratio.trim() !== '' && parseRatio(row.ratio) === null}
         onChange={(v) => onEdit('ratio', v)}
       />
       <CellInput
         label={`${name} input price`}
         value={row.inputPrice}
         dirty={dirty}
-        invalid={parseRatio(row.ratio) === null}
+        invalid={row.ratio.trim() !== '' && parseRatio(row.ratio) === null}
         onChange={(v) => onEdit('inputPrice', v)}
       />
       <CellInput
